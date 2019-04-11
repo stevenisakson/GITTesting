@@ -1,0 +1,61 @@
+<apex:page id="thepage" showheader="false" standardController="Event" extensions="CallSummaryController" standardStylesheets="true">
+    <apex:includeScript value="{!URLFOR($Resource.jQueryResources, 'external/jquery/jquery.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jQueryResources, 'jquery-ui.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jQueryResources, 'jquery-ui.css')}" />
+
+
+
+    <apex:form id="mainFrm"> 
+        <body onload="">
+            <apex:pageBlock mode="edit" id="VisitReport">
+
+                
+                <div align = "center">
+                    <apex:commandButton value="Save" action="{!updateTable}" reRender="error1Id" styleClass="buttonStyle" style="font-weight:bold;width:70px;font-size:13px;font-family:verdana"/>
+                   <apex:commandlink action="{!sendVisitReportExternal}" target="_blank" style="text-decoration:none">
+                            <apex:commandButton value="Email External Notes" reRender="error1Id" styleClass="buttonStyle" style="font-weight:bold;width:180px;font-size:13px;font-family:verdana"/>
+                     </apex:commandLink>
+                      
+                </div>
+               
+                
+                <apex:outputPanel id="opTabs" layout="block" >
+<p style="font-size:13px;font-family:verdana">
+                    <apex:outputpanel style="width:10%;">
+                        <apex:pageMessages id="error1Id"/>
+                    </apex:outputpanel> </p>
+                
+                    <div id="tabs" style="display:none;">
+                        <ul>
+                            <li><a style="font-size:12px" href="#tabs-2">{!$Label.Visit_Report_Internal_Call_Notes}</a></li>
+                            <li><a style="font-size:12px" href="#tabs-1">{!$Label.Visit_Report_External_Call_Notes}</a></li>  
+                         <!--   <li><a href="#tabs-3">{!$Label.Visit_Report_Additional_Information}</a></li>-->
+                        </ul>
+                            <div id="tabs-1"><apex:inputField id="tab1id" value="{!CallSummaryRecord.External_Call_Notes__c}" styleClass="inputFocus" /></div>
+                            <div id="tabs-2"><apex:inputField id="tab2id" value="{!CallSummaryRecord.Internal_Call_Notes__c}"/></div>
+                          <!--  <div id="tabs-3"> </div>-->
+                    </div>
+                </apex:outputPanel>
+            </apex:pageBlock>
+        </body>
+    </apex:form>
+
+    <script>
+        function displayTab(param){
+            var tabinterval= setInterval(function(){
+                 try{
+                     if (jQuery){
+                         window.clearInterval(tabinterval);
+                         jQuery( "#tabs" ).tabs();
+                         jQuery('#tabs').css("display", "block");
+                     }
+
+
+                 }catch(err){
+                    setInterval(tabinterval,50);
+                 }
+             },50);
+        }
+        displayTab('1');
+    </script>
+</apex:page>

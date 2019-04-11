@@ -1,0 +1,23 @@
+.THIS {
+}
+.THIS .slds-form-element__label{
+    Display : none;
+}
+.THIS .hideLabel .slds-form-element__label{
+   display:none;
+}
+.THIS .largeinputwidth{
+    width:135px;
+}
+.THIS .smallinputwidth{
+    width:75px;
+}
+.THIS .verysmallinputwidth{
+    width:35px;
+}
+.THIS .mediuminputwidth{
+    width:130px;
+}
+.THIS .largeinputextrawidth{
+    width:150px;
+}

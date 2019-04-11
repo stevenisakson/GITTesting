@@ -1,0 +1,136 @@
+<aura:component controller="Cargill_Lt_AttachmentUpload" implements="force:appHostable,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    <aura:attribute name="monthlypresent" type="boolean" default="True"/> 
+    <aura:attribute name="quarterlypresent" type="boolean" default="True"/>
+    <aura:attribute name="prospectpresent" type="boolean" default="True"/>
+    <aura:attribute name="traningpresent" type="boolean" default="False"/>
+    <aura:attribute name="growthpresent" type="boolean" default="false"/>
+    <aura:attribute name="productofferingpresent" type="boolean" default="True"/>
+    <aura:handler name="init" value="{!this}" action="{!c.refreshDashboards}" />
+    <aura:attribute name="deviceType" type="boolean"/>
+    
+    
+    <aura:if isTrue="{!v.deviceType}">
+        <div align="Center" style="margin-left: 10px;margin-top: 10px;color:Red">
+            <span class="slds-text-heading_small"><b>View Dashboard</b></span>
+        </div>
+        <br/>
+        <div align="Center">
+            <ui:button class="slds-button_neutral" aura:id="btnNeutral" press="{!c.refreshDashboards}">
+                <img src="{!$Resource.Visual_Refresh}" alt="Refresh" width="50" height="25"> </img>
+            </ui:button>
+            <lightning:spinner aura:id="mySpinner" alternativeText="Processing.." title="Processing.." variant="brand" size="large" class="slds-hide"/>
+        </div>
+        
+        
+        <table>
+            <tr>
+                <td>
+                    <div style="margin-left: 10px;margin-top: 10px;color:#3498DB">
+                        <span class="slds-text-heading_small">Display Metrics</span>
+                    </div>
+                    <aura:if  isTrue="{!(v.monthlypresent)}" >
+                        <div style="padding:15px;">
+                            <img src="{!$Resource.Cargill_CommunityGreenCircle}" alt="Display" width="100" height="50"> </img> 
+                        </div>
+                        <aura:set attribute="else">
+                            <div style="padding:15px;">
+                                <img src="{!$Resource.Cargill_CommunityRedCircle}" alt="Display" width="100" height="50"> </img>
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                </td>
+                <td>&nbsp;&nbsp;</td>
+                <td>
+                    <div style="margin-left: 10px;margin-top: 10px;color:#3498DB">
+                        <span class="slds-text-heading_small">Training Metrics</span>
+                    </div>
+                    <aura:if  isTrue="{!(v.traningpresent)}" >
+                        <div style="padding:15px;">
+                            <img src="{!$Resource.Cargill_CommunityGreenCircle}" alt="Training" width="100" height="50"> </img> 
+                        </div>
+                        <aura:set attribute="else">
+                            <div style="padding:15px;">
+                                <img src="{!$Resource.Cargill_CommunityRedCircle}" alt="Training" width="100" height="50"> </img>
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                </td>
+            </tr>
+            <tr>
+                
+            </tr>
+            
+            <tr>
+                <td>
+                    <div style="margin-left: 10px;margin-top: 10px;color:#3498DB">
+                        <span class="slds-text-heading_small">Events Metrics</span>
+                    </div>
+                    <aura:if  isTrue="{!(v.quarterlypresent)}" >
+                        <div style="padding:15px;">
+                            <img src="{!$Resource.Cargill_CommunityGreenCircle}" alt="Events" width="100" height="50"> </img> 
+                        </div>
+                        <aura:set attribute="else">
+                            <div style="padding:15px;">
+                                <img src="{!$Resource.Cargill_CommunityRedCircle}" alt="Events" width="100" height="50"> </img>
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                </td>
+                <td>&nbsp;&nbsp;</td>
+                <td>
+                    
+                    <div style="margin-left: 10px;margin-top: 10px;color:#3498DB">
+                        <span class="slds-text-heading_small">Prospect Metrics</span>
+                    </div>
+                    <aura:if  isTrue="{!(v.prospectpresent)}" >
+                        <div style="padding:15px;">
+                            <img src="{!$Resource.Cargill_CommunityGreenCircle}" alt="Prospect" width="100" height="50"> </img> 
+                        </div>
+                        <aura:set attribute="else">
+                            <div style="padding:15px;">
+                                <img src="{!$Resource.Cargill_CommunityRedCircle}" alt="Prospect" width="100" height="50"> </img>
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                </td>
+            </tr>
+            
+            
+            <tr>
+                <td>
+                    <div style="margin-left: 10px;margin-top: 10px;color:#3498DB">
+                        <span class="slds-text-heading_small">Growth Trend</span>
+                    </div>
+                    
+                    <aura:if  isTrue="{!(v.growthpresent)}" >
+                        <div style="padding:15px;">
+                            <img src="{!$Resource.Cargill_CommunityGreenCircle}" alt="Growth" width="100" height="50"> </img> 
+                        </div>
+                        <aura:set attribute="else">
+                            <div style="padding:15px;">
+                                <img src="{!$Resource.Cargill_CommunityRedCircle}" alt="Growth" width="100" height="50"> </img>
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                </td>
+                <td>&nbsp;&nbsp;</td>
+                <td>
+                    <div style="margin-left: 10px;margin-top: 10px;color:#3498DB">
+                        <span class="slds-text-heading_small">Product Offering</span>
+                    </div>
+                    
+                    <aura:if  isTrue="{!(v.productofferingpresent)}" >
+                        <div style="padding:15px;">
+                            <img src="{!$Resource.Cargill_CommunityGreenCircle}" alt="Growth" width="100" height="50"> </img> 
+                        </div>
+                        <aura:set attribute="else">
+                            <div style="padding:15px;">
+                                <img src="{!$Resource.Cargill_CommunityRedCircle}" alt="Growth" width="100" height="50"> </img>
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                </td>
+            </tr>
+        </table>
+    </aura:if>
+</aura:component>

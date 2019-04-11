@@ -1,0 +1,7 @@
+.THIS .overridden {
+   
+    color:red;
+}
+.THIS .overridden:focus{
+     color:red;
+}

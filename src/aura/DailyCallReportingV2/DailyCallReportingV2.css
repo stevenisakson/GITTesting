@@ -1,0 +1,38 @@
+.THIS {
+}
+.THIS .hiderow{
+    Display : none;
+}
+.THIS .slds-form-element__label{
+  
+}
+.THIS .hideLabel .slds-form-element__label{
+   display:none;
+}
+.THIS .largeinputwidth{
+    width:135px;
+}
+.THIS .smallinputwidth{
+    width:75px;
+}
+.THIS .smallinputwidth1{
+    width:50px;
+}
+.THIS .verysmallinputwidth{
+    width:35px;
+}
+.THIS .verysmallinputwidth1{
+    width:15px;
+}
+.THIS .mediuminputwidth{
+    width:110px;
+}
+.THIS .largeinputextrawidth{
+    width:150px;
+}
+.THIS .xxlargeinputextrawidth{
+    width:175px;
+}
+.THIS .smallLabel{
+    font-size:0.75rem;
+}

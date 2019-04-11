@@ -1,0 +1,14 @@
+<aura:component controller="ThirdpartyValidationRequestController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
+	
+    <aura:attribute name="account" type="Account[]"/>
+    <aura:attribute name="recordId" type="Id" /> 
+    <aura:attribute name="checkbox" type="Boolean" default="true"/>
+    <aura:attribute name="request"  type="string" />
+   
+    <aura:handler name="init" value="{!this}" action="{!c.doInitAction}"/>
+ 
+    {!v.request}
+ 	 <br/>
+     <br/>   
+    <button  class=" slds-float_right" onclick="{!c.closeModel}" >Close</button >
+</aura:component>

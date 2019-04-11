@@ -1,0 +1,22 @@
+<apex:component controller="RebateApprovalTemplate" access="global">
+    <apex:attribute name="RebId" type="Id" description="Id of the rebate" assignTo="{!rebateId}"/>
+    <table border = "2" cellspacing = "5">
+        <tr>
+            <td>Status</td>
+            <td>Assigmed to</td>
+            <td>Actual Approver</td>
+            <td>DATE</td>
+            <td>Comments</td>                  
+        </tr>
+         <apex:repeat var="cx" value="{!RebateApproval}">
+        <tr>
+            <td>{!cx.Status}</td>
+            <td>{!cx.AssignedTo }</td>
+            <td>{!cx.ActualApprover}</td>
+            <td>{!cx.ApprovedDATE}</td>
+            <td>{!cx.Comments}</td>
+                     
+        </tr>
+        </apex:repeat>        
+    </table> 
+</apex:component>

@@ -1,0 +1,166 @@
+<aura:component controller="Cargill_Lt_AttachmentUpload" implements="force:appHostable,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> <!-- calling doInit method in Component Controller -->
+    <aura:attribute name="asofDate" type="Date" />
+    <aura:attribute type="Cargill_Growth_Metrics__c[]" name="childgrowthdata"/>
+    <aura:attribute type="Cargill_Growth_Metrics__c[]" name="parentgrowthdata"/>
+    <aura:attribute type="String" name="accountName"/>
+    <!--<aura:attribute name="ContactData" type="Cargill_Growth_Metrics__c[]"/>-->
+    <!-- Attribute Declration For Pagination -->
+    
+    <!--<aura:attribute name="columns" type="List"/>
+    <aura:attribute name="Parentcolumns" type="List"/>-->
+    <aura:attribute name="isSending" type="boolean" />
+    <aura:attribute name="PaginationList" type="Cargill_Growth_Metrics__c"/>
+    <aura:attribute name="startPage" type="Integer" />
+    <aura:attribute name="endPage" type="Integer"/>
+    <aura:attribute name="totalRecords" type="Integer"/>
+    <aura:attribute name="paginationFlag" type="boolean" default="false"/>
+    <aura:attribute name="pageSize" type="Integer" default="12"/>
+    
+    <div class="container-fluid">
+        
+        <div align="Center" style="margin-left: 10px;margin-top: 10px;color:black">
+            <span class="slds-text-heading_medium">{!v.accountName} Growth Trends</span>
+            <br/>
+            As of Date : {!v.asofDate}<br/>
+        </div>
+        <!--
+        <lightning:datatable data="{! v.parentgrowthdata }" class="slds-m-top_small"
+                             columns="{! v.Parentcolumns }" 
+                             keyField="id" hideCheckboxColumn="true"/>
+        
+        <br/><br/>
+        
+        <lightning:datatable data="{! v.PaginationList }" class="slds-m-top_medium"
+                             columns="{! v.columns }" 
+                             keyField="id" hideCheckboxColumn="true"/>
+        <br/>
+        <lightning:buttonGroup >
+            <lightning:button label="Previous" disabled="{!v.startPage == 0}"  
+                              onclick="{!c.previous}" variant="brand"
+                              iconName='utility:back'/>
+            &nbsp; &nbsp; &nbsp;
+            <lightning:button label="Next" disabled="{!v.endPage >= v.totalRecords}" 
+                              onclick="{!c.next}" variant="brand"
+                              iconName='utility:forward' iconPosition='right'/>
+        </lightning:buttonGroup>
+        
+        -->
+        <br/><br/>
+        <!--<div class="slds-scrollable">
+            <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <th scope="col">
+                            <strong><div class="slds-truncate" title="YTD Tons">YTD Tons</div></strong>
+                        </th>
+                        <th scope="col">
+                            <strong><div class="slds-truncate" title="YTD Goal">YTD Goal</div></strong>
+                        </th>
+                        <th scope="col">
+                            <strong><div class="slds-truncate" title="Pace">Pace</div></strong>
+                        </th>
+                        <th scope="col">
+                            <strong><div class="slds-truncate" title="Full Year Tons Goal">Full Year Tons Goal</div></strong>
+                        </th>
+                        <th scope="col">
+                            <strong><div class="slds-truncate" title="Tons Needed to Hit Goal">Tons Needed to Hit Goal</div></strong>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <aura:iteration items="{!v.parentgrowthdata}" var="con"> 
+                        
+                        <tr>
+                            
+                            <th scope="row" data-label="YTD Tons">
+                                <div class="slds-truncate" title="{!con.YTD_Tons__c}">{!con.YTD_Tons__c}</div>
+                            </th>
+                            
+                            <th scope="row" data-label="YTD Goal">
+                                <div class="slds-truncate" title="{!con.YTD_Goal__c}">{!con.YTD_Goal__c}</div>
+                            </th>
+                            
+                            
+                            
+                            <th scope="row" data-label="Pace">
+                                <div class="slds-truncate" title="{!con.Pace__c}">{!con.Pace__c}</div>
+                            </th>
+                            
+                            <th scope="row" data-label="Full Year Tons Goal">
+                                <div class="slds-truncate" title="{!con.Full_Year_Tons_Goal__c}">{!con.Full_Year_Tons_Goal__c}</div>
+                            </th>
+                            <th scope="row" data-label="Tons Needed to Hit Goal">
+                                <div class="slds-truncate" title="{!con.Tons_Needed_to_Hit_Goal__c}">{!con.Tons_Needed_to_Hit_Goal__c}</div>
+                            </th>
+                        </tr>
+                    </aura:iteration> 
+                </tbody>
+            </table>
+        </div>
+        
+        <br/><br/>-->
+        <div class="slds-scrollable">
+            <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        
+                        <th scope="col">
+                            <strong><div class="slds-truncate" title="Species">Species</div></strong>
+                        </th>
+                        <th scope="col">
+                            <strong><div class="slds-truncate" title="YTD Tons">YTD Tons</div></strong>
+                        </th>
+                        <th scope="col">
+                            <strong><div class="slds-truncate" title="YTD Goal">YTD Goal</div></strong>
+                        </th>
+                        <th scope="col">
+                            <strong><div class="slds-truncate" title="Pace">Pace %</div></strong>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <aura:iteration items="{!v.PaginationList}" var="con"> 
+                        
+                        <tr>
+                            <th scope="row" data-label="Species">
+                                <div class="slds-truncate" style="color:#3498DB;font-weight: bold;font-style: italic;" title="{!con.Product_Line__c}">{!con.Product_Line__c}</div>
+                            </th>
+                            <th scope="row" data-label="YTD Tons">
+                                <div class="slds-truncate" title="{!con.YTD_Tons__c}">{!con.YTD_Tons__c}</div>
+                            </th>
+                            <th scope="row" data-label="YTD Goal">
+                                <div class="slds-truncate" title="{!con.YTD_Goal__c}">{!con.YTD_Goal__c}</div>
+                            </th>
+                            <aura:if isTrue="{!con.Pace__c != null}">
+                                <th scope="row" data-label="Pace">
+                                    <div class="slds-truncate" title="{!con.Pace_Percent__c}">{!con.Pace_Percent__c} %</div>
+                                </th>
+                            </aura:if>
+                            
+                        </tr>
+                        
+                    </aura:iteration> 
+                </tbody>
+            </table>
+            <br/>
+            <aura:if isTrue="{!v.paginationFlag}">
+                <div align="center">
+                    <lightning:buttonGroup >
+                        <lightning:button label="Previous" disabled="{!v.startPage == 0}"  
+                                          onclick="{!c.previous}" variant="brand"
+                                          iconName='utility:back'/>
+                        &nbsp; &nbsp; &nbsp;
+                        <lightning:button label="Next" disabled="{!v.endPage >= v.totalRecords}" 
+                                          onclick="{!c.next}" variant="brand"
+                                          iconName='utility:forward' iconPosition='right'/>
+                    </lightning:buttonGroup>
+                </div>
+            </aura:if>
+            <br/>
+        </div>
+    </div>
+</aura:component>

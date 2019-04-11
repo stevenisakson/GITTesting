@@ -1,0 +1,718 @@
+<apex:page standardController="Account" extensions="labyrinthAccountDetail" sidebar="False" showHeader="False">
+ 
+ 
+ <!--scroll pageblock table  -->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+   <script src="{!$Resource.jqueryfixheadertable}"></script>
+   <apex:stylesheet value="{!$Resource.base}" />
+   <apex:stylesheet value="{!$Resource.themefile}" />
+   
+   
+       <script>
+        $(document).ready(function() {
+            $('.fixme').fixheadertable({
+               //  caption : 'My header is fixed !',
+                 height  : 100
+                 
+            });
+        });
+        </script>  
+         <style>
+           
+            .align
+            {
+            text-align:center;
+           
+            } 
+            
+        </style> 
+    
+       
+        <style>
+        .scroll
+        {
+            height:370px;
+            overflow:auto; 
+             
+        }
+        </style>
+
+   <!-- end scroll scripts  -->       
+           
+   <style>
+    
+    .pageDescription, .pageType {
+     color: white !important;
+     }
+    </style>  
+    
+  
+    
+     <script>
+        function OpenPage(sourcePage){
+            if(sourcePage == 'BI'){
+              <!-- var win=window.open('https://login.microsoftonline.com/common/oauth2/authorize?client_id=871c010f-5e61-4fb1-83ac-98610a7e9110&response_mode=form_post&response_type=code+id_token&scope=openid+profile&state=OpenIdConnect.AuthenticationProperties%3dvWeGhoiHrbEG9MtE1j76PJNx4vKj5t0MQgzd0I9BHAlSGhC4EucYwsc8VAPDo68bpEc7-JtIpbgVu5cB5Tljjd_B1hoQ5nFIh4fRWmic1wvor6i5KQ3YNAi-EJJ_Z9jYdvJtHbZ1Cai6cUj805fHnZhpzpYAi0oCGseKjksnbiJI3eYGNwqoxuy_-7P8Z7TUDe47mVToR5p6FsZIM7eSQ8IjAOw&nonce=636128849452492725.NzVhOWQ4OGEtMWM0Zi00M2U0LThkYmEtY2M4Y2VkMjQ4OTBjZjI0NDhlNzMtZTdmMC00NmEzLWE1NDEtNWUwNTUxZTYzOTRl&site_id=500453&redirect_uri=https%3a%2f%2fapp.powerbi.com%2fgroups%2fme%2fdashboards%2fc0b22938-29c0-48bd-858f-e81984f9cef1&post_logout_redirect_uri=https%3a%2f%2fapp.powerbi.com%2fgroups%2fme%2fdashboards%2fc0b22938-29c0-48bd-858f-e81984f9cef1&resource=https%3a%2f%2fanalysis.windows.net%2fpowerbi%2fapi&nux=1&msafed=0', '_blank'); -->
+                var win=window.open('https://app.powerbi.com/?noSignUpCheck=1', '_blank');
+               
+                win.focus();
+            }
+            if(sourcePage == 'DDW'){
+                var win=window.open('https://www.dairydatawarehouse.com/', '_blank');
+                win.focus();
+            }
+            if(sourcePage == 'SP'){
+              <!--  var win=window.open('https://cargilltest.sharepoint.com/sites/salesforce_sandbox/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2Fsalesforce%5Fsandbox%2FShared%20Documents%2FLabyrinth%2F{!accts.Id}--{!URLENCODE(LEFT(accts.Id,15))}', '_blank'); {!accts.Id} -->
+                var win=window.open('https://cargillonline.sharepoint.com/sites/dairyenteligen/Shared%20Documents/Forms/AllItems.aspx?RootFolder=%2Fsites%2Fdairyenteligen%2FShared%20Documents%2F{!accts.Id}', '_blank'); 
+                win.focus();
+            }
+        }
+    </script>
+    
+    <style type="text/css">
+            .myClass{
+            color:white !important;
+            background:#46bafb !important;
+            }
+    </style>
+    
+    <style>
+          .Header {
+           background: url(left.gif) no-repeat;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           
+          
+        }
+        
+       
+    </style>
+    
+   
+   
+        
+   <!-- <apex:sectionHeader subtitle="{!accts.Name}" title="Account deatils" style="background-color:#008B8B;">
+        <apex:outputLink style="color:Black; text-align: Left; float:right"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+    </apex:sectionHeader> -->
+       <apex:form id="myForm" styleClass="myFormStyle"> 
+       
+<div class="Header ">
+<table>
+    <tr>
+    <td style="padding-right: 10px;">
+     <img src="{!URLFOR($Resource.LabyrinthLogo)}"  width="300" height="75" id="phHeaderLogoImage"/>
+     </td>  
+    
+     <td >
+       <apex:outputLabel style="font-size: 12px; color:black" value="Account Details"></apex:outputLabel><br></br>
+       <apex:outputText value="{!accts.Name}" style="font-size: 22px; color:black;"></apex:outputText>
+     </td>
+     
+   </tr>
+  </table>
+           
+</div>
+ <apex:outputLink style="color:Black; text-align: Left; float:right;padding-right: 20px;"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+ <a href="javascript: history.go(-1)" style="color:Black; text-align: right; float:right;padding-right: 10px;">Back</a>
+   
+       
+    <!--      <div style="background-color:#008B8B;">
+            <apex:sectionHeader subtitle="{!accts.Name}" title="Account deatils">
+            <apex:outputLink style="color:Black; text-align: Left; float:right"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+            </apex:sectionHeader> 
+         </div>  -->
+        
+                        <apex:outputPanel style="float:centre">
+                            <div align="center" draggable="false" >
+                          
+                             
+                             <apex:commandButton value="BI"  title="Power BI" onclick="OpenPage('BI'); return false; " image="{!URLFOR($Resource.BI)}" style="height:50px;width:100px" />
+                             <apex:commandButton value="DDW" title="DDW" onclick="OpenPage('DDW'); return false;"  image="{!URLFOR($Resource.DDW)}" style="height:50px;width:100px"/>
+                             <apex:commandButton value="SP"  title="Share Point" onclick="OpenPage('SP'); return false;"  image="{!URLFOR($Resource.SP)}" style="height:50px;width:100px"/>
+                             
+                            </div>
+                         </apex:outputPanel>
+                         
+                         <br></br>
+        
+               
+        <apex:pageBlock mode="maindetail" id="block1" >
+        
+                     <!--    <apex:outputPanel style="float:centre">
+                            <div align="center" draggable="false" >
+                               <apex:commandButton value="Edit" action="{!editaccount}"  />
+                            </div>
+                         </apex:outputPanel>     --> 
+             
+                            
+        
+        <apex:pageBlockSection title="Account Detail" columns="2" id="AccountDetailPs">
+            
+            <apex:pageBlockSectionItem >
+            Account Owner
+             <apex:outputText value="{!Account.owner.name}"></apex:outputText>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+            Parent Account
+             <apex:outputLink value="/apex/LabyrinthAccountDetailPage?id={!Account.Parentid}">{!Account.Parent.name}</apex:outputLink>
+            
+            </apex:pageBlockSectionItem>
+            
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Account_Detail}" 
+                    var="field">
+              <apex:OutputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection id="one" title="Account Additional Information" columns="1">
+            
+            <apex:pageBlockSection title="Segment Information" columns="2" id="SegmentInformationPs">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Segment_Information}" 
+                    var="field">
+              <apex:OutputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Operational Information" columns="2" id="OperationalInformationPs">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Operational_Information}" 
+                    var="field">
+              <apex:OutputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+       
+        <apex:pageBlockSection title="Won/Lost Reason" columns="2" id="WonLostReasonPs">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Won_Lost_Reason}" 
+                    var="field">
+              <apex:OutputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Cargill Information" columns="2" id="CargillInformationPs">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Cargill_Information}" 
+                    var="field">
+              <apex:OutputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Address Information" columns="2" id="AddressInformationPs">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Address_Information}" 
+                    var="field">
+              <apex:OutputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Additional Information" columns="2" id="AdditionalInformationPs">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Additional_Information}" 
+                    var="field">
+              <apex:OutputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Additional Information" columns="2" id="AdditionalInformationPs1">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Additional_Information1}" 
+                    var="field">
+              <apex:OutputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="System Information" columns="2" id="SystemInformationPs">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.System_Information}" 
+                    var="field">
+              <apex:OutputField value="{!Account[field]}" />
+           </apex:repeat>
+            <apex:pageBlockSectionItem >
+           Created By
+             <apex:outputText value="{!Account.CreatedBy.name} {!Account.CreatedBy.CreatedDate}"></apex:outputText>
+            </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+            Last Modified By
+             <apex:outputText value="{!Account.LastModifiedBy.name} {!Account.LastModifiedDate}"></apex:outputText>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+           
+        
+        </apex:pageBlockSection>
+        
+     <!--   <apex:pageBlockSection title="External links">
+        <apex:outputPanel id="myExtPanel" >
+        <apex:pageMessages id="theMessages" />
+            <apex:pageBlockTable value="{!maxExternalSystemsList}" var="MAXEXT" align="Center">
+                        <apex:column headervalue="MAX Record Link">
+                                <apex:outputLink target="_blank" value="https://www.google.com">
+                                    <apex:outputtext value="{!MAXEXT.CDH_External_Record_num__c}" />
+                            </apex:outputLink> 
+                            
+                        </apex:column>
+                        <apex:column value="{!MAXEXT.CDH_External_System__c}"/>
+                        <apex:column value="{!MAXEXT.CDH_Golden_Record__c}"/>
+                       </apex:pageBlockTable>
+           </apex:outputPanel>
+       </apex:pageBlockSection> -->
+      
+       <apex:pageBlockSection title="External links" id="Applicationmapping" columns="2">
+        <apex:outputPanel id="myExtPanel" rendered="{!ddwExternalSystemsList.size>0}" >
+        
+            <apex:pageBlockTable value="{!ddwExternalSystemsList}" var="DDWEXT"   style="width:100%">
+                   <!--    <apex:column headervalue="DDW Record Link">
+                             <apex:outputLink target="_blank" value="https://www.dairydatawarehouse.com">
+                                    <apex:outputtext value="{!DDWEXT.External_Record_num__c}" />
+                            </apex:outputLink>
+                           
+                        </apex:column> -->
+                         <apex:column value="{!DDWEXT.Golden_Record__c}"/>
+                         <apex:column value="{!DDWEXT.External_System__c}"/>
+                        <apex:column value="{!DDWEXT.External_Record_num__c}"/>
+                       
+                       </apex:pageBlockTable>
+           </apex:outputPanel>
+           
+           <apex:outputPanel rendered="{!ddwExternalSystemsList.size<=0}">
+               No records to display
+           </apex:outputPanel>
+       </apex:pageBlockSection>   
+      
+                        
+       <apex:pageBlockSection columns="1" id="NotesandAttachments" Title="Notes & Attachments">
+              <apex:outputPanel rendered="{!attachments.size > 0}">                         
+                <apex:pageBlockTable value="{!attachments}" var="att">
+                    
+                   <apex:column headerValue="Action">
+                   <apex:commandLink value="View" onclick="window.open('/servlet/servlet.FileDownload?file={!att.id}')" reRender="none"/> |
+                    
+                   <apex:commandLink action="{!deleteattachment}" onclick="if(!confirm('Are you sure?')) return false;">Del
+                   <apex:param value="{!att.id}" name="idToDel" assignTo="{!attId}"/>
+                   </apex:commandLink> 
+                   </apex:column>
+                    
+                    
+                    <apex:column value="{!att.Name}"/>
+                    <apex:column value="{!att.BodyLength}" />
+                    <apex:column value="{!att.LastModifiedDate}"/>
+                                    
+                </apex:pageBlockTable>
+               </apex:outputPanel>
+              
+               <apex:outputPanel rendered="{!attachments.size <= 0}">
+                No records to display
+               </apex:outputPanel>           
+            </apex:pageBlockSection>
+      
+       
+          <!-- <apex:pageBlockSection columns="1" id="pagePanel2" Title="Custom Link to BI Tool">
+               <apex:outputLink target="_blank" value="https://www.google.com">
+                      <apex:outputtext value="BI lINK"/>
+               </apex:outputLink>
+            </apex:pageBlockSection>
+       
+            <apex:pageBlockSection columns="1" id="pagePanel3" Title="Custom Link to Max and DDW">
+                <apex:outputLink target="_blank" value="https://www.bing.com">
+                      <apex:outputtext value="MAX LINK"/>
+               </apex:outputLink>
+               <apex:outputLink target="_blank" value="http://www.dairydatawarehouse.com">
+                      <apex:outputtext value="DDW LINK"/>
+               </apex:outputLink>
+            </apex:pageBlockSection>
+        
+            <apex:pageBlockSection columns="1" id="pagePanel4" Title="Custom Link to Sharepoint">
+              <apex:outputLink target="_blank" value="https://portal.microsoftonline.com/">
+                      <apex:outputtext value="Sharepoint LINK" />
+               </apex:outputLink>
+            </apex:pageBlockSection> -->
+            
+            <apex:pageBlockSection columns="1" id="contactps" Title="Contacts"  >
+            
+                 <apex:pageBlockSectionItem dataStyle="text-align:center;">
+                       <apex:commandbutton value="New Contact" action="{!newContactCreation}" style="font-size: 10px;"/>
+                </apex:pageBlockSectionItem>
+                
+                 <apex:outputPanel rendered="{!conlist.size >0}">
+              <!--   <apex:outputpanel style="overflow:scroll;height:250px;" layout="block">  -->
+                 <apex:pageBlockTable value="{!conlist}" var="contact" rendered="{!conlist.size > 0}" styleclass="fixme">
+                      
+                       <apex:column headerValue="Action">
+                       <apex:outputLink title="" value="/apex/LabyrinthContactNewpage1?id={!contact.id}" >Edit </apex:outputLink>&nbsp;|&nbsp;
+                     
+                      <apex:commandLink action="{!deletecon}" onclick="if(!confirm('Are you sure?')) return false;">Del
+                       <apex:param value="{!contact.id}" name="idToDel" assignTo="{!conId}"/>
+                       </apex:commandLink>  
+                       </apex:column>
+                    
+                        <apex:column headervalue="Name" >
+                        <apex:outputLink value="/apex/LabyrinthContactDetailPage?id={!contact.id}">
+                        <apex:outputField value="{!contact.Name}"/>
+                        </apex:outputLink>
+                        </apex:column>
+                        
+                      <apex:column value="{!contact.Phone}"/>
+                      <apex:column value="{!contact.email}"/>
+                  </apex:pageBlockTable>
+                  </apex:outputPanel> 
+               <!--  </apex:outputPanel> -->
+                  
+                  <apex:outputPanel rendered="{!conlist.size <= 0}">
+                  No records to display
+                  </apex:outputPanel>
+             
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" id="OpenActivitiesps" Title="Open Activities" >
+                
+                        <apex:outputPanel style="float:centre">
+                            <div align="center" draggable="false" >
+                            <apex:commandbutton value="New Task" action="{!newTaskCreation}" style="font-size: 10px;"/> 
+                            <apex:commandbutton value="New Event" action="{!newEventCreation}" style="font-size: 10px;"/> 
+                            </div>
+                         </apex:outputPanel>
+                         
+                <apex:outputPanel rendered="{!accoa[0].OpenActivities.size >0}">
+            <!--    <apex:outputpanel style="overflow:scroll;height:250px;" layout="block">  -->      
+                <apex:pageBlockTable value="{!accoa[0].OpenActivities }" var="oa" rendered="{!accoa[0].OpenActivities.size > 0}" styleclass="fixme">
+                        
+                         <apex:column headerValue="Action">
+                         <apex:outputPanel rendered="{!oa.IsTask}">
+                         <apex:outputLink title="" value="/apex/LabyrinthTaskNewPage?id={!oa.id}&what_id={!oa.WhatId}" >Edit </apex:outputLink>&nbsp;|&nbsp;
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!oa.IsTask}">
+                         <apex:outputLink title="" value="/apex/LabyrinthTaskNewPage?id={!oa.id}&status=Completed&what_id={!oa.WhatId}" >Cls </apex:outputLink>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!oa.IsTask==false}">
+                         <apex:outputLink title="" value="/apex/LabyrinthEventNewPage?id={!oa.id}&what_id={!oa.WhatId}" >Edit </apex:outputLink>&nbsp;|&nbsp;
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!oa.IsTask==false}">
+                        <!-- <apex:outputLink title="" value="/apex/LabyrinthEventNewPage?id={!oa.id}" >Del </apex:outputLink> -->
+                          <apex:commandLink action="{!deleteev}" onclick="if(!confirm('Are you sure?')) return false;">Del
+                           <apex:param value="{!oa.id}" name="idToDel1" assignTo="{!evid}"/>
+                           </apex:commandLink> 
+                         </apex:outputPanel>
+                         </apex:column>
+                         
+                         <apex:column headerValue="Subject">
+                         <apex:outputPanel rendered="{!oa.IsTask}">
+                         <apex:outputLink title="" value="/apex/LabyrinthTaskDetailPage?id={!oa.id}" >
+                              {!oa.subject}
+                         </apex:outputLink>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!oa.IsTask==false}">
+                         <apex:outputLink title="" value="/apex/LabyrinthEventDeatilPage?id={!oa.id}" >
+                             {!oa.subject}
+                         </apex:outputLink>
+                         </apex:outputPanel>
+                         </apex:column>
+                         
+                         <apex:column headerValue="Name">
+                          <apex:outputLink title="" value="/apex/LabyrinthContactDetailPage?id={!oa.PrimaryWhoId}" >
+                              {!oa.PrimaryWho.name}
+                         </apex:outputLink>
+                         </apex:column>
+                         
+                         <apex:column headerValue="Related To">
+                          <apex:outputLink title="" value="/apex/LabyrinthAccountDetailPage?id={!oa.whatid}" >
+                              {!oa.what.name}
+                         </apex:outputLink>
+                         </apex:column>
+                        
+                        
+                        
+                       <!-- <apex:column value="{!oa.subject}"/>
+                        <apex:column value="{!oa.PrimaryWhoId}"/>
+                        <apex:column value="{!oa.WhatId}"/> -->
+                        <apex:column value="{!oa.IsTask}"/>
+                       <!-- <apex:column value="{!oa.Ownerid}"/> -->
+                       <apex:column headerValue="Assigned To">
+                       <apex:outputText value="{!oa.Owner.name}"></apex:outputText>
+                       </apex:column>
+                        <apex:column value="{!oa.ActivityDate}"/>
+                      </apex:pageBlockTable>
+                      </apex:outputPanel>
+                    <!--  </apex:outputPanel> -->
+                      
+                      <apex:outputPanel rendered="{!accoa[0].OpenActivities.size <=0}">
+                      No records to display
+                      </apex:outputPanel>
+                
+             
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" id="ActivityHistoryps" Title="Activity History">
+                
+                <apex:outputPanel rendered="{!accoah[0].ActivityHistories.size >0 }">
+               <!-- <apex:outputpanel style="overflow:scroll;height:250px;" layout="block">  -->                    
+                <apex:pageBlockTable value="{!accoah[0].ActivityHistories }" var="oah" rendered="{!accoah[0].ActivityHistories.size > 0}" styleclass="fixme">
+                        
+                         <apex:column headerValue="Action">
+                         <apex:outputPanel rendered="{!oah.IsTask}">
+                         <apex:outputLink title="" value="/apex/LabyrinthTaskNewPage?id={!oah.id}&what_id={!oah.WhatId}" >Edit </apex:outputLink>&nbsp;|&nbsp;
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!oah.IsTask}">
+                       <!--  <apex:outputLink title="" value="/apex/LabyrinthTaskNewPage?id={!oah.id}&status=Completed&what_id={!oah.WhatId}" >Cls </apex:outputLink> -->
+                         <apex:commandLink action="{!deleteta}" onclick="if(!confirm('Are you sure?')) return false;">Del
+                           <apex:param value="{!oah.id}" name="idToDel1" assignTo="{!taid}"/>
+                           </apex:commandLink> 
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!oah.IsTask==false}">
+                         <apex:outputLink title="" value="/apex/LabyrinthEventNewPage?id={!oah.id}&what_id={!oah.WhatId}" >Edit </apex:outputLink>&nbsp;|&nbsp;
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!oah.IsTask==false}">
+                      <!--   <apex:outputLink title="" value="/apex/LabyrinthEventNewPage?id={!oah.id}" >Del </apex:outputLink> -->
+                          <apex:commandLink action="{!deleteev}" onclick="if(!confirm('Are you sure?')) return false;">Del
+                           <apex:param value="{!oah.id}" name="idToDel1" assignTo="{!evid}"/>
+                           </apex:commandLink> 
+                         </apex:outputPanel>
+                         </apex:column>
+                         
+                         <apex:column headerValue="Subject">
+                         <apex:outputPanel rendered="{!oah.IsTask}">
+                         <apex:outputLink title="" value="/apex/LabyrinthTaskDetailPage?id={!oah.id}" >
+                              {!oah.subject}
+                         </apex:outputLink>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!oah.IsTask==false}">
+                         <apex:outputLink title="" value="/apex/LabyrinthEventDeatilPage?id={!oah.id}" >
+                             {!oah.subject}
+                         </apex:outputLink>
+                         </apex:outputPanel>
+                         </apex:column>
+                         
+                         <apex:column headerValue="Name">
+                          <apex:outputLink title="" value="/apex/LabyrinthContactDetailPage?id={!oah.PrimaryWhoId}" >
+                              {!oah.PrimaryWho.name}
+                         </apex:outputLink>
+                         </apex:column>
+                         
+                         <apex:column headerValue="Related To">
+                          <apex:outputLink title="" value="/apex/LabyrinthAccountDetailPage?id={!oah.whatid}" >
+                              {!oah.what.name}
+                         </apex:outputLink>
+                         </apex:column>
+                        
+                        
+                        
+                       <!-- <apex:column value="{!oa.subject}"/>
+                        <apex:column value="{!oa.PrimaryWhoId}"/>
+                        <apex:column value="{!oa.WhatId}"/> -->
+                        <apex:column value="{!oah.IsTask}"/>
+                        <apex:column headerValue="Assigned To">
+                       <apex:outputText value="{!oah.Owner.name}"></apex:outputText>
+                       </apex:column>
+                      <!--  <apex:column value="{!oah.Ownerid}"/>-->
+                        <apex:column value="{!oah.ActivityDate}"/>
+                      </apex:pageBlockTable>
+                     <!-- </apex:outputPanel> -->
+                      </apex:outputPanel> 
+                      
+                      <apex:outputPanel rendered="{!accoah[0].ActivityHistories.size <=0 }"> 
+                        No records to display
+                      </apex:outputPanel>
+             
+            </apex:pageBlockSection>
+            
+          <!--  <apex:pageBlockSection columns="1" id="NotesandAttachments" Title="Notes & Attachments">
+              <apex:outputPanel rendered="{!accattachments[0].NotesAndAttachments.size > 0}">                         
+                <apex:pageBlockTable value="{!accattachments[0].NotesAndAttachments}" var="att">
+                    
+                    <apex:column value="{!att.Title}"/>
+                    <apex:column value="{!att.isnote}"/>
+                                    
+                </apex:pageBlockTable>
+               </apex:outputPanel>
+              
+               <apex:outputPanel rendered="{!accattachments[0].NotesAndAttachments.size <= 0}">
+                No records to display
+               </apex:outputPanel>         
+            </apex:pageBlockSection> -->
+            
+                    
+                    
+                    
+                <script> twistSection(document.getElementById('{!$Component.block1.one}').getElementsByTagName('img')[0]) </script> 
+               
+       
+       </apex:pageBlock>
+     
+    <!-- <apex:relatedList list="Contacts" subject="{!accts}"></apex:relatedList> -->
+  <!--  <apex:pageBlock title="External system links mapping" >
+    <apex:pageBlockSection collapsible="false">
+        <apex:outputPanel id="myExtPanel" >
+        <apex:pageMessages id="theMessages" />
+            <apex:pageBlockTable value="{!maxExternalSystemsList}" var="MAXEXT" align="Center">
+                        <apex:column headervalue="MAX Record Link">
+                                <apex:outputLink target="_blank" value="https://www.google.com">
+                                    <apex:outputtext value="{!MAXEXT.CDH_External_Record_num__c}" />
+                            </apex:outputLink>
+                        </apex:column>
+                        <apex:column value="{!MAXEXT.CDH_External_System__c}"/>
+                        <apex:column value="{!MAXEXT.CDH_Golden_Record__c}"/>
+                       </apex:pageBlockTable>
+           </apex:outputPanel>
+       </apex:pageBlockSection>
+       
+       <apex:pageBlockSection collapsible="false">
+        <apex:outputPanel id="myExtPanel" >
+        <apex:pageMessages id="theMessages" />
+            <apex:pageBlockTable value="{!ddwExternalSystemsList}" var="DDWEXT" align="Center">
+                        <apex:column headervalue="DDW Record Link">
+                                <apex:outputLink target="_blank" value="https://www.dairydatawarehouse.com">
+                                    <apex:outputtext value="{!DDWEXT.CDH_External_Record_num__c}" />
+                            </apex:outputLink>
+                        </apex:column>
+                        <apex:column value="{!DDWEXT.CDH_External_System__c}"/>
+                        <apex:column value="{!DDWEXT.CDH_Golden_Record__c}"/>
+                       </apex:pageBlockTable>
+           </apex:outputPanel>
+       </apex:pageBlockSection> 
+    </apex:pageBlock> -->
+    
+       
+    <!--    <apex:pageBlock title="Contacts"  >
+        <apex:pageBlockButtons location="top" >
+            <apex:commandbutton value="New Contact" action="{!newContactCreation}" style="font-size: 10px;"/> 
+        </apex:pageBlockButtons>  
+                
+                  <apex:pageBlockTable value="{!conlist}" var="contact">
+                      
+                       <apex:column headerValue="Action">
+                       <apex:outputLink title="" value="/apex/LabyrinthContactNewpage1?id={!contact.id}" >Edit </apex:outputLink>&nbsp;|&nbsp;
+                     
+                      <apex:commandLink action="{!deletecon}" onclick="if(!confirm('Are you sure?')) return false;">Del
+                       <apex:param value="{!contact.id}" name="idToDel" assignTo="{!conId}"/>
+                       </apex:commandLink>  
+                       </apex:column>
+                    
+                        <apex:column headervalue="Name" >
+                        <apex:outputLink value="/apex/LabyrinthContactDetailPage?id={!contact.id}">
+                        <apex:outputField value="{!contact.Name}"/>
+                        </apex:outputLink>
+                        </apex:column>
+                        
+                      <apex:column value="{!contact.Phone}"/>
+                      <apex:column value="{!contact.email}"/>
+                  </apex:pageBlockTable>
+                                                     
+                 </apex:pageBlock>  -->
+               
+                
+            <!--     <apex:pageBlock title="Open Activities" >
+                    <apex:pageBlockButtons location="top" >
+                    <apex:commandbutton value="New Task" action="{!newTaskCreation}" style="font-size: 10px;"/> 
+                    </apex:pageBlockButtons>    
+                    
+                    <apex:pageBlockTable value="{!ListTasks}" var="task">
+                        
+                        <apex:column headerValue="Action">
+                        <apex:outputLink title="" value="/apex/LabyrinthTaskNewPage?id={!task.id}" >Edit </apex:outputLink>&nbsp;|&nbsp;
+                        <apex:outputLink title="" value="/apex/LabyrinthTaskNewPage?id={!task.id}&status=Completed" >Cls </apex:outputLink>
+                        </apex:column>
+                        
+                        <apex:column headervalue="Subject" >
+                        <apex:outputLink value="/apex/LabyrinthTaskDetailPage?id={!task.id}">
+                        <apex:outputField value="{!task.subject}"/>
+                        </apex:outputLink>
+                        </apex:column>
+                        
+                        <apex:column headervalue="Name" >
+                        <apex:outputLink value="/apex/LabyrinthContactDetailPage?id={!task.whoid}">
+                        <apex:outputField value="{!task.whoid}"/>
+                        </apex:outputLink>
+                        </apex:column>
+                        
+                        <apex:column headervalue="Related To" >
+                        <apex:outputLink value="/apex/LabyrinthAccountDetailPage?id={!task.whatid}">
+                        <apex:outputField value="{!task.whatid}"/>
+                        </apex:outputLink>
+                        </apex:column>
+                                             
+                       
+                        <apex:column value="{!task.ownerid}"/>
+                        <apex:column value="{!task.status}"/>
+                        
+                      </apex:pageBlockTable>
+                  </apex:pageBlock> -->
+                  
+              <!--    <apex:pageBlock title="Open Activities">
+                    <apex:pageBlockButtons location="top" >
+                    <apex:commandbutton value="New Task" action="{!newTaskCreation}" style="font-size: 10px;"/> 
+                    <apex:commandbutton value="New Event" action="{!newEventCreation}" style="font-size: 10px;"/> 
+                    </apex:pageBlockButtons>    
+                    
+                    <apex:pageBlockTable value="{!accoa[0].OpenActivities }" var="oa">
+                        
+                         <apex:column headerValue="Action">
+                         <apex:outputPanel rendered="{!oa.IsTask}">
+                         <apex:outputLink title="" value="/apex/LabyrinthTaskNewPage?id={!oa.id}&what_id={!oa.WhatId}" >Edit </apex:outputLink>&nbsp;|&nbsp;
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!oa.IsTask}">
+                         <apex:outputLink title="" value="/apex/LabyrinthTaskNewPage?id={!oa.id}&status=Completed&what_id={!oa.WhatId}" >Cls </apex:outputLink>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!oa.IsTask==false}">
+                         <apex:outputLink title="" value="/apex/LabyrinthEventNewPage?id={!oa.id}&what_id={!oa.WhatId}" >Edit </apex:outputLink>&nbsp;|&nbsp;
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!oa.IsTask==false}">
+                         <apex:outputLink title="" value="/apex/LabyrinthEventNewPage?id={!oa.id}" >Del </apex:outputLink>
+                         </apex:outputPanel>
+                         </apex:column>
+                         
+                         <apex:column headerValue="Subject">
+                         <apex:outputPanel rendered="{!oa.IsTask}">
+                         <apex:outputLink title="" value="/apex/LabyrinthTaskDetailPage?id={!oa.id}" >
+                              {!oa.subject}
+                         </apex:outputLink>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!oa.IsTask==false}">
+                         <apex:outputLink title="" value="/apex/LabyrinthEventDeatilPage?id={!oa.id}" >
+                             {!oa.subject}
+                         </apex:outputLink>
+                         </apex:outputPanel>
+                         </apex:column>
+                         
+                         <apex:column headerValue="Name">
+                          <apex:outputLink title="" value="/apex/LabyrinthContactDetailPage?id={!oa.PrimaryWhoId}" >
+                              {!oa.PrimaryWho.name}
+                         </apex:outputLink>
+                         </apex:column>
+                         
+                         <apex:column headerValue="Related To">
+                          <apex:outputLink title="" value="/apex/LabyrinthAccountDetailPage?id={!oa.whatid}" >
+                              {!oa.what.name}
+                         </apex:outputLink>
+                         </apex:column> -->
+                        
+                        
+                        
+                       <!-- <apex:column value="{!oa.subject}"/>
+                        <apex:column value="{!oa.PrimaryWhoId}"/>
+                        <apex:column value="{!oa.WhatId}"/> 
+                        <apex:column value="{!oa.IsTask}"/>
+                        <apex:column value="{!oa.OwnerId}"/>
+                        <apex:column value="{!oa.ActivityDate}"/>
+                      </apex:pageBlockTable> 
+                  </apex:pageBlock> -->
+                 
+           
+         
+    </apex:form> 
+    <!--  <apex:relatedList subject="{!account.id}" list="CombinedAttachments" /> -->
+     
+      <!--<apex:relatedList list="CDH_External_Systems__r"  subject="{!accts}" /> 
+          <apex:relatedList list="OpenActivities" subject="{!accts}"  />
+          <apex:relatedList list="ActivityHistories"  subject="{!accts}" /> 
+          <apex:relatedList list="OpenActivities" subject="{!accts}"  />
+      <apex:relatedList list="ActivityHistories"  subject="{!accts}" /> 
+      -->
+      
+      
+      
+      
+      <!--<apex:include id="sharepoint" pageName="sfexplorer__Explorer_Account_Page" />-->
+      
+      
+    <!---<apex:dataTable value="{!myCollection}" var="wrapper" columns="2">  
+      <apex:column >
+        <apex:outputText value="{!wrapper.counter}."/>
+      </apex:column>
+      <apex:column >
+        <apex:outputField value="{!wrapper.item.Name}"/>
+      </apex:column>
+    </apex:dataTable>-->
+      
+</apex:page>

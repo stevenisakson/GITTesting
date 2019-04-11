@@ -1,0 +1,9 @@
+<apex:page standardController="Account"  showHeader="false" sidebar="false">
+ <apex:sectionHeader title="{!account.id}"/>
+ <apex:detail relatedList="false" />
+  
+      <apex:relatedList list="Contacts" subject="{!Account}"></apex:relatedList> 
+      <apex:relatedList list="OpenActivities" subject="{!Account}"  />
+      <apex:relatedList list="ActivityHistories"  subject="{!Account}" /> 
+ 
+</apex:page>

@@ -1,0 +1,51 @@
+.THIS {
+}
+.THIS .box_padded {
+   
+}
+.THIS .slds-form-element__label {
+     display : none;
+     visibility : hidden;
+}
+.THIS .largeinputwidth{
+    width:150px;
+}
+.THIS .smallinputwidth{
+    width:75px;
+}
+.THIS .verysmallinputwidth{
+    width:65px;
+}
+.THIS .mediuminputwidth{
+    width:100px;
+}
+.THIS .wrapper{
+    overflow-wrap: break-word;
+    width:10px;
+}
+.THIS .bold_label{
+    font-weight:bold;
+  
+}
+.THIS .uiInput--input.input{
+   
+   padding:0px 0px 0px 0px;
+   text-align:center;
+}
+.THIS .slds-required{
+    font-weight:bold;
+    font-size:15px;
+}
+.THIS .formulaField{
+    padding:0px 0px 0px 0px;
+    text-align:center;
+}
+.THIS .errorInput{
+    border-color:red;
+}
+.THIS .errorSelect .slds-select {
+    border-color:red;
+}
+.THIS .errorText{
+    border-color:red;
+}

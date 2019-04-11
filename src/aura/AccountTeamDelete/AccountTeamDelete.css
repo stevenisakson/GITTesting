@@ -1,0 +1,63 @@
+.THIS .leftPaddingClass {
+    padding-left: 0.5rem;
+     width:20%;
+}
+ .THIS.allMainContainer {
+    background-color:#FFFFFF;
+    height:910px;
+}
+.THIS .pillSize{
+ width:100%;
+}
+.THIS .reduceSize{
+ width:25%;
+ 
+}
+.THIS .useralignment{
+position: absolute;
+    top: 4rem;
+    left: 1rem;
+ 
+}
+.THIS .informativetext{
+    position: absolute;
+    top: 2rem;
+    left: 1rem;    
+}
+.THIS .searchBoxplace1{
+    position: absolute;
+    top:3.5rem;
+	left: 3.5rem;
+    width:1000px;
+    resize: both;
+}
+.THIS .searchBoxplace2{
+    position: absolute;
+    top:2.5rem;
+    left: 3.5rem;
+    width:1000px;
+    resize: both;
+}
+.THIS .checkboxAlignment{
+    position: absolute;
+    top: 1rem;
+    left:22rem;
+  
+}
+.THIS .errorMessage{
+    color:red;
+}
+.THIS .header{
+  position: absolute;
+  left:1rem;
+  color: Black;
+  font-size: 18px;
+  font-family: Arial;
+  font-weight: bold;
+}
+.THIS .reduceResult{
+ position: absolute;
+ left: 12.5rem;
+ width:40%;
+ min-height:40px;margin-top:0px !important
+}

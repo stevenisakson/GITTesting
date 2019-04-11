@@ -1,0 +1,77 @@
+<aura:component controller="DCRRouteLookUpCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="isOpen" type='Boolean' default='false'/>
+    <aura:attribute name="isLoading" type='Boolean' default='false'/>
+    <aura:attribute name="selectedItem" type='sObject' default="{}"/>
+    <aura:attribute name="objectName" type='String' default="Account"/>
+    <aura:attribute name="styleclass" type='String'/>
+    
+    <aura:attribute name="parentRecord" type='sObject' />
+    
+    
+    <aura:attribute name="selectedItemName" type='String' default=""/>
+    <aura:attribute name="searchKeyWord" type='String' default=""/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:handler name="itemSelected" event="c:rowEvent" action="{!c.setSelectedItem}"/>
+    <aura:method name="clearSearch" action="{!c.clear}">
+    
+    </aura:method>
+    <aura:method name="setSearchKeyword" action="{!c.doInit}">
+      
+    </aura:method>
+    <aura:attribute name="resultList" type="List"/>
+  
+        <div class="slds-form-element" onmouseleave="{!c.hide}">
+            <label class="slds-form-element__label" for="combobox-id-1">Contact</label>
+            <div class="slds-form-element__control">
+                <div class="slds-combobox_container">
+                    <div class="{!if(v.isOpen,'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open','slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click')}" aria-expanded="true" aria-haspopup="listbox" role="combobox" aura:id="mycombo" >
+                        <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                            <ui:inputText class="{!'slds-input slds-combobox__input '+v.styleclass}" click="{!c.search}" keyup="{!c.search}" updateOn="keyup" value="{!v.searchKeyWord}"/>
+                            <!--<span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                                <aura:if isTrue="{!v.isLoading}">
+                                     <lightning:spinner size="small" variant="brand"/>
+                                    
+                                </aura:if>
+                            </span>-->
+                        </div>
+                        <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" role="listbox" style="margin-top:0px;width:100%;">
+                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                <aura:if isTrue="{!!v.isLoading}">
+                                    <aura:iteration items="{!v.resultList}" var="item">
+                                        <c:ComboboxListItem item="{!item}"/>
+                                    </aura:iteration>
+                                </aura:if>
+                                <aura:if isTrue="{!v.isLoading}">
+                                    <li role="presentation" class="slds-listbox__item">
+                                        <div id="option1" onclick="{!c.select}" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                                           
+                                            <span class="slds-media__body">
+                                                <span class="slds-truncate" title="Searching...">
+                                                    <aura:if isTrue="{!v.isLoading}">
+                                                        <lightning:spinner size="small" variant="brand"/>
+                                                        
+                                                    </aura:if>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </aura:if>
+                                <!--<aura:if isTrue="{!and(!v.isLoading,v.resultList.length==0)}">
+                                    <li role="presentation" class="slds-listbox__item">
+                                        <div id="option1" onclick="{!c.select}" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                                           
+                                            <span class="slds-media__body">
+                                                <span class="slds-truncate" title="No Records">No Records</span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </aura:if>-->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+  
+</aura:component>

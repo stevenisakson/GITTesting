@@ -1,0 +1,225 @@
+<aura:component controller="Cres_PlanningMonthCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" access="global" >
+    
+    <aura:attribute name="newplan" type="Boolean" default="false"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+    <aura:attribute name="recordId" type="string"  description="The  id of the current record planmonth record" />
+    
+    <aura:attribute name="planmonth" type="Sobject"/>
+    
+    <aura:attribute name="selectedApp1" type="String" />
+    <aura:attribute name="selectedApp2" type="String" />
+    
+    <aura:attribute name="planYearDisplay" type="String" />
+    <aura:attribute name="planMonthDisplay" type="String" />
+    <aura:attribute name="territoryDisplay" type="String" />
+    
+    <aura:attribute name="plandayerror" type="list"/>
+    <aura:attribute name="plandaylist" type="List" />
+    <aura:attribute name="activityPickList" type="List" />
+    <aura:attribute name="filteredPlanDate" type="String" />
+    
+    <aura:attribute name="selectedLookUpRecord" type="Route__c" default="{}" description="Route Name "/>
+    <aura:attribute name="newPlanday" type="Planning_Month__c"/>
+    <aura:attribute name="simpleNewPlanday" type="Planning_Month__c" default="{Plan_Date__c:'',Activity_End_Date__c:'',First_Half__c:'',Second_Half__c:''}"/>
+    
+    <aura:attribute name="pageReference" type="Object"/>
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.reInit}"/>
+    <lightning:navigation aura:id="navService"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    
+    
+    <!--declare events hendlers-->  
+    <aura:handler name="Plandayrecords" event="c:Cres_plandayrecordsevent" action="{!c.refresh}" discription="reload the days planned,working days section when plan day is added/deleted"/>
+    <aura:if isTrue="{!v.recordId}">
+        
+        <lightning:recordEditForm 
+                                  objectApiName="Planning_Month__c" 
+                                  aura:id="planDayForm"
+                                  recordId="{!v.recordId}"
+                                  onsuccess="{!c.onSuccess}"
+                                  onsubmit="{!c.onSubmit}"
+                                  onerror="{!c.onError}"
+                                  onload="{!c.onload}"
+                                  >
+            
+            <div class="slds-page-header">
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span class="slds-page-header__title slds-truncate">Planned Month Details</span>
+                                            
+                                        </h1>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-meta">
+                        <p class="slds-page-header__meta-text mydiv">{!v.planYearDisplay}•{!v.planMonthDisplay}•{!v.territoryDisplay}<br/>{!v.planmonth.Target__r.Employee_Link_To__r.Name}</p>
+                    </div>
+                    
+                </div>
+                <ul class="slds-page-header__detail-list">
+                    
+                    <li class="slds-page-header__detail-item mydiv">
+                        <div class="slds-text-title slds-truncate" title="Status">Number of working<br/> Days</div>
+                        <lightning:outputField fieldName="Number_of_Working_Days__c" />
+                        <!--<div class="slds-text-title slds-truncate" title="Close Date">Close Date</div>
+                    <div title="11/1/2018">11/1/2018</div>-->
+                    </li>
+                    <li class="slds-page-header__detail-item">
+                        <div class="slds-text-title slds-truncate" title="Days Planned">Days Planned</div>
+                        
+                        <ui:outputtext value="{!v.planmonth.Days_Planned__c}"/>
+                    </li>
+                    <li class="slds-page-header__detail-item">
+                        <div class="slds-text-title slds-truncate" title="Amount">Missed Days</div>
+                        
+                        <ui:outputtext value="{!v.planmonth.No_of_days_missed__c}"/>
+                    </li>
+                    <li class="slds-page-header__detail-item mydiv">
+                        <div class="slds-text-title slds-truncate" title="Status">Status</div>
+                        <lightning:outputField fieldName="Status__c" />
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+            
+            <div class="slds-box slds-theme_default" >
+                
+                <div class="slds-grid slds-wrap">
+                    <!-- Display Lightning Data Service errors -->
+                    <div class="slds-col slds-size_12-of-12">
+                        <aura:if isTrue="{!v.plandayerror.length>0}">
+                            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" >
+                                <aura:iteration items="{!v.plandayerror}" var="err">
+                                    <aura:if isTrue="{!err!=''}">    
+                                        {!err}<br></br>
+                                    </aura:if>
+                                </aura:iteration>
+                                <div class="slds-notify__close">
+                                    <lightning:buttonIcon iconName="utility:close" variant="border-inverse" onclick="{!c.clearError}"/>
+                                </div>
+                            </div>
+                        </aura:if>
+                    </div>
+                    <aura:if isTrue="{!v.isLoading}">
+                        <lightning:spinner variant="brand"/>
+                    </aura:if>
+                   
+                    <!--<div class="slds-col slds-size_12-of-12">
+                            <lightning:outputField fieldName="Plan_Year__c" />
+                        </div>
+                        <div class="slds-col slds-size_12-of-12">
+                            <lightning:outputField fieldName="Month_Planned__c" />
+                        </div>
+                        <div class="slds-col slds-size_12-of-12">
+                            <lightning:outputField fieldName="Territory_Name__c" />
+                        </div>
+                        <div class="slds-col slds-size_12-of-12">
+                            <lightning:outputField fieldName="Number_of_Working_Days__c" />
+                        </div>
+                        <div class="slds-col slds-size_12-of-12" title="Days Planned">
+                            <label class="slds-form-element__label" for="select-01">Days Planned</label><br/>
+                            <ui:outputtext value="{!v.planmonth.Days_Planned__c}"/>
+                        </div>
+                        <div class="slds-col slds-size_12-of-12" title="Missed Days">
+                            <label class="slds-form-element__label" for="select-01">Missed Days</label><br/>
+                            <ui:outputtext value="{!v.planmonth.No_of_days_missed__c}"/>
+                        </div>-->
+                    <!--div class="slds-col slds-size_12-of-12">
+                                <aura:if isTrue="{!v.planmonth.isReadOnly__c}">
+                                    <lightning:outputField  label="Approver 1" class="slds-truncate"   fieldName="Approver_1__c" />
+                                    <aura:set attribute="else">
+                                        <lightning:inputField   label="Approver 1" fieldName="Approver_1__c" />
+                                    </aura:set>
+                                </aura:if>
+                            </div> 
+                            
+                            <div class="slds-col slds-size_12-of-12">
+                                <aura:if isTrue="{!v.planmonth.isReadOnly__c}">
+                                    <lightning:outputField  label="Approver 1" class="slds-truncate"   fieldName="Approver_1__c" />
+                                    <aura:set attribute="else">
+                                        <lightning:inputField   label="Approver 1" fieldName="Approver_2__c" />
+                                    </aura:set>
+                                </aura:if>
+                            </div-->
+                    
+                    <div class="slds-col slds-size_12-of-12">
+                        
+                        <aura:if isTrue="{!v.planmonth.isReadOnly__c}">
+                            <lightning:outputField  label="Approver 1" class="slds-truncate"   fieldName="Approver_1__c" />
+                            <aura:set attribute="else">
+                                
+                                <c:Cres_userlookup objectAPIName="user" label="Approver 1" selectedRecord="{!v.selectedApp1}"/>
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        
+                        <aura:if isTrue="{!v.planmonth.isReadOnly__c}">
+                            <lightning:outputField  label="Approver 2" class="slds-truncate"   fieldName="Approver_2__c" />
+                            <aura:set attribute="else">
+                                
+                                <c:Cres_userlookup objectAPIName="user" label="Approver 2" selectedRecord="{!v.selectedApp2}"/>
+                            </aura:set>
+                        </aura:if>
+                        
+                    </div>
+                    
+                    <!-- <div class="slds-col slds-size_12-of-12">
+                        <lightning:outputField fieldName="Status__c" />
+                    </div>-->
+                    
+                    <div class="slds-col slds-size_6-of-12 slds-align_absolute-center slds-p-top_small" title="Save"> 
+                        <lightning:button iconName="utility:save" class="fullWidthBtn" variant="brand" label="Submit" type="submit" disabled="{!v.planmonth.isReadOnly__c}" name="Save" title="Submit"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12 slds-align_absolute-center slds-p-top_small slds-p-left_xxx-small" title="Save"> 
+                        <lightning:button class="fullWidthBtn" variant="brand" label="Back"  name="Back" title="Back" onclick="{!c.back}" iconName="utility:back"/>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12 slds-align_absolute-center slds-p-top_small" title="Save"> 
+                        <lightning:button class="fullWidthBtn" variant="brand" disabled="{!v.planmonth.isReadOnly__c}" onclick="{!c.addRow}" title="Add New Plan Day" iconName="utility:add">Add Activity</lightning:button>
+                    </div>
+                </div>
+            </div>
+            
+        </lightning:recordEditForm>
+        
+       
+        <!--<lightning:select label="" value="{!v.filteredPlanDate}">
+            <aura:iteration items="{!v.plandaylist}" var="planday" indexVar="index">
+                <option value="{!planday.Plan_Date__c}">{!planday.Plan_Date__c}</option>
+                
+            </aura:iteration>
+            
+            
+        </lightning:select>-->
+        
+        
+        <aura:iteration items="{!v.plandaylist}" var="planday" indexVar="index">
+            
+            
+            <c:Cres_PlanDayRowEditableMob territoryId="{!v.planmonth.TerritoryId__c}" firsthalflist="{!v.activityPickList}"  index="{!index}" plandaylist="{!v.plandaylist}" userType="{!v.planmonth.User_Type__c}" isReadOnly="{!v.planmonth.isReadOnly__c}" planDay="{!planday}" planMonthId="{!v.recordId}"/>
+            
+        </aura:iteration>
+        
+        <aura:set attribute="else">
+            <div class="slds-box slds-theme_default" >
+                <div class="slds-align_absolute-center" style="height: 5rem;">{!$Label.c.Cres_Route_SelectPlanMonth}</div>
+            </div>
+        </aura:set>
+        
+    </aura:if>    
+</aura:component>

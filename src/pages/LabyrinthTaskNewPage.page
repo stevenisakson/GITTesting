@@ -1,0 +1,101 @@
+<apex:page standardController="Task" extensions="LabyrinthTaskNewPage_ctrl" showHeader="false">
+  <head>
+                <style type="text/css">
+                       @page {
+                                
+                                     div.header {
+                                      padding: 10px;
+                                      position: running(header);
+                           }
+                       div.footer {
+                                display: block;
+                             padding: 5px;
+                               position: running(footer);
+                               padding: 1em;
+                              top: 40px;
+                      }
+                                  
+                    </style>
+                     
+                    <style>
+    
+                        .pageDescription, .pageType {
+                         color: white !important;
+                         }
+                    </style>
+                    <style>
+                      .Header {
+                       background: url(left.gif) no-repeat;
+                       padding-top: 5px;
+                       padding-bottom: 5px;
+                        }
+                    </style>
+</head>
+          <!-- <div class="header">
+              <div><apex:image url="{!$Resource.LabyrinthPortalHeader}" width="100%" height="100%"/></div>
+           </div> -->
+  <apex:form >
+  
+  <div class="Header">
+<table>
+    <tr>
+    <td style="padding-right: 10px;">
+     <img src="{!URLFOR($Resource.LabyrinthLogo)}"  width="300" height="75" id="phHeaderLogoImage"/>
+     </td>  
+    
+     <td >
+       <apex:outputLabel style="font-size: 12px; color:Black" value="Task"></apex:outputLabel><br></br>
+       <apex:outputText value="{!if(ta.Id==null,'New Task',ta.subject)}" style="font-size: 22px; color:Black;"></apex:outputText>
+     </td>
+     
+   </tr>
+  </table>
+           
+</div>
+<apex:outputLink style="color:Black; text-align: Left; float:right; padding-right: 20px;"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+<a href="javascript: history.go(-1)" style="color:Black; text-align: right; float:right;padding-right: 10px;">Back</a>
+  
+    
+          <!--<div style="background-color:#008B8B;">
+            <apex:sectionHeader title="Task" subtitle="{!if(ta.Id==null,'New Task',ta.subject)}" >
+            <!--<apex:outputLink style="color:white; text-align: Left; padding-left: 1180px; " target="_blank" value="/home/home.jsp">Home</apex:outputLink>&nbsp;<b style="Color:White;">|</b> -->
+           <!-- <apex:outputLink style="color:Black; text-align: Left; float:right"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+            </apex:sectionHeader> 
+        </div> -->
+        <apex:pageBlock mode="maindetail">
+            <apex:pageMessages />
+            <apex:outputPanel style="float:centre">
+                 <div align="center" draggable="false" >
+                 <apex:commandButton value="Save" action="{!save}"/>
+                 <apex:commandButton value="Cancel" action="{!cancel}"/> 
+                 </div>               
+            </apex:outputPanel> 
+            <apex:pageBlockSection title="Task Information">
+                  <apex:inputField value="{!ta.ownerid}"/>
+                  <apex:inputField value="{!ta.whatid}"/>
+                  <apex:inputField value="{!ta.Subject}" required="true"/>
+                  <apex:inputField value="{!ta.Whoid}"/>
+                  <apex:inputField value="{!ta.ActivityDate}" required="true"/>
+                <!--  <apex:inputField value="{!ta.RecurrenceInterval}"/> -->
+                  <apex:inputField value="{!ta.Business_Unit__c}" />
+                  <apex:inputField value="{!ta.Description}" style="width: 360px; height: 40px"/>
+            </apex:pageBlockSection>
+            
+          <apex:pageBlockSection title="Additional Information">
+          <apex:inputField value="{!ta.Segment__c}"/>
+          <apex:inputField value="{!ta.Status}"/>
+          <apex:inputField value="{!ta.Product_Line__c}"/>
+          <apex:inputField value="{!ta.Priority}"/>
+          <apex:inputField value="{!ta.Group__c}"/>
+       <!--  <apex:OutputField value="{!task.What.Phone}"/> -->
+          <apex:inputField value="{!ta.Class__c}"/>
+          
+        <!--  <apex:OutputField value="{!task.what.Email}"/> -->
+          <apex:inputField value="{!ta.Product_Function__c}"/>
+         </apex:pageBlockSection> 
+         
+         
+           </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

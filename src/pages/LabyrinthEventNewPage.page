@@ -1,0 +1,115 @@
+<apex:page standardController="Event" extensions="LabyrinthEventNewPage_ctrl" showHeader="false">
+<head>
+                <style type="text/css">
+                       @page {
+                                
+                                     div.header {
+                                      padding: 10px;
+                                      position: running(header);
+                           }
+                       div.footer {
+                                display: block;
+                             padding: 5px;
+                               position: running(footer);
+                               padding: 1em;
+                              top: 40px;
+                      }
+                                  
+                    </style>
+                    
+                    <style>
+    
+                        .pageDescription, .pageType {
+                         color: white !important;
+                         }
+                    </style>  
+</head>
+          <!-- <div class="header">
+              <div><apex:image url="{!$Resource.LabyrinthPortalHeader}" width="100%" height="100%"/></div>
+           </div> -->
+           
+           <style type="text/css">
+            .dateFormat{
+               visibility:hidden;
+            }
+            </style>
+           
+           
+           
+<apex:form >
+        
+<div>
+<table>
+    <tr>
+    <td style="padding-right: 10px;">
+     <img src="{!URLFOR($Resource.LabyrinthLogo)}"  width="300" height="75" id="phHeaderLogoImage"/>
+     </td>  
+    
+     <td >
+       <apex:outputLabel style="font-size: 12px; color:Black;" value="{!if(ev.Id==null,'Calendar','Calendar Event edit')}"></apex:outputLabel><br></br>
+       <apex:outputText value="{!if(ev.Id==null,'New Event',ev.Subject)}" style="font-size: 22px; color:Black;"></apex:outputText>
+     </td>
+     
+   </tr>
+  </table>
+   <apex:outputLink style="color:Black; text-align: Left; float:right; padding-right: 20px;"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+   <a href="javascript: history.go(-1)" style="color:Black; text-align: right; float:right;padding-right: 10px;">Back</a>
+  
+            
+</div>
+       <!--  <div style="background-color:#008B8B;">
+            <apex:sectionHeader subtitle="{!if(ev.Id==null,'New Event',ev.Subject)}" title="{!if(ev.Id==null,'Calendar','Calendar Event edit')}">
+            <!--<apex:outputLink style="color:white; text-align: Left; padding-left: 1180px; " target="_blank" value="/home/home.jsp">Home</apex:outputLink>&nbsp;<b style="Color:White;">|</b> -->
+         <!--   <apex:outputLink style="color:Black; text-align: Left; float:right"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+            </apex:sectionHeader> 
+        </div> -->
+
+    <apex:pageBlock title="Event Edit" mode="maindetail">
+          <apex:pageMessages />
+          <apex:pageBlockButtons >
+          <apex:commandButton value="Save" action="{!Save}"/>
+          <apex:commandButton value="Cancel" action="{!Cancel}"/>
+          </apex:pageBlockButtons>
+   
+          <apex:pageBlockSection title="Calendar Details">
+          <apex:inputField value="{!ev.ownerid}"/>
+          <apex:inputField value="{!ev.whatid}"/>
+          <apex:inputField value="{!ev.Subject}" required="true"/>
+          <apex:inputField value="{!ev.Whoid}"/>
+         <!-- <apex:inputField value="{!ev.StartDateTime}" required="true"/> -->
+           <apex:pageBlockSectionItem >
+           Event Start Date and Time
+           <apex:actionRegion >
+              <apex:inputfield value="{!ev.StartDateTime}"  required="true"  >
+                <apex:actionSupport event="onchange" action="{!enddateselect}" rerender="edate"/>
+              </apex:inputfield>
+            </apex:actionRegion>
+        </apex:pageBlockSectionItem>
+          <apex:inputField value="{!ev.Business_Unit__c}"/>
+          
+          <apex:inputField value="{!ev.EndDateTime}"  required="true" id="edate"/>
+          <apex:inputField value="{!ev.Sub_Type__c}"/>
+         
+          
+          </apex:pageBlockSection>
+          
+          <apex:pageBlockSection title="Other Information" columns="1">
+          <apex:inputField value="{!ev.Location}"/>
+          <apex:inputField value="{!ev.ShowAs}"/>
+          </apex:pageBlockSection>
+          
+          <apex:pageBlockSection title="Description Information">
+          <apex:inputField value="{!ev.Description}" style="width: 360px; height: 40px"/>
+          </apex:pageBlockSection>
+          
+        <!--  <apex:pageBlockSection title="Attachments">
+          <apex:pageBlockSectionItem >
+          <apex:outputLabel value="File" for="file"/>
+          <apex:inputFile value="{!attachment.body}" filename="{!attachment.name}" id="file"/>
+          </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>  -->
+   
+    </apex:pageBlock>
+</apex:form>
+
+</apex:page>

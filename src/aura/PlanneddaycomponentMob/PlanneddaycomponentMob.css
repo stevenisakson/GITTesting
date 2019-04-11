@@ -1,0 +1,8 @@
+.THIS {
+}
+.THIS .mydiv .slds-form-element__label{
+    display:none;
+}
+.THIS .fullWidthBtn{
+    width:100%;
+}

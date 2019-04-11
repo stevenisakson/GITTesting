@@ -1,0 +1,467 @@
+<aura:component controller="Cres_PlanningMonthCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" access="global" >
+    
+    <aura:attribute name="planDay" type="SObject" description="sObject used by Record Edit Form"/>
+    <aura:attribute name="mode" type="String" default="View" description="mode of the Form Edit/ReadOnly"/>
+    <aura:attribute name="userType" type="String" default=""/>
+    <aura:attribute name="index" type="Integer" description='index position of the child'/>
+    <aura:attribute name="plandaylist" type="List" />
+    <aura:attribute name="planMonthId" type="String" description="plan month Id of plan days"/>
+    <aura:attribute name="territoryId" type="String" description="territory Id for which Route should be displayed"/>
+    <aura:attribute name="isReadOnly" type="Boolean" description="false"/>
+    <aura:attribute name="plandayerror" type="list" description="errors"/>
+    <aura:attribute name="selectedRoute" type="SObject" default="{}"/>
+    <aura:registerEvent name="appEventToPlanMonth" type="c:Cres_AppEvent" description="to be fired when a new plan day is added/deleted to PlanMonth Section"/>
+    
+    <aura:attribute name="showCustomers" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:registerevent name="Plandayrecords" type="c:Cres_plandayrecordsevent" description="to be fired when a new plan day is added/deleted to Plan Day section"/>
+    <aura:handler name="deleteModelEvent" event="c:DeleteConfirmModalEvent" action="{!c.deleteRec}" description="to show Delete popup"/> 
+    
+    <aura:attribute name="ObjectName" type="String" default="Planning_Month__c" access="global"/> <!-- Object Name as String-->
+    <aura:attribute name="firsthalf" type="String" default="First_Half__c" access="global"/>  <!-- Field Name as String-->
+    <aura:attribute name="firsthalflist" type="List" />  
+    
+    <aura:attribute name="secondhalf" type="String" default="Second_Half__c" access="global"/>  <!-- Field Name as String-->
+    <aura:attribute name="secondhalflist" type="String[]" />  <!-- Picklist Values of sceondhakf Field -->
+    
+    <aura:attribute name="firsthalfsel" type="String" default="" />
+    <aura:attribute name="secondhalfsel" type="String" default=""/>
+    
+    <aura:attribute name="vsabool" type="Boolean" description="false"/>
+    <aura:attribute name="rsmbool" type="Boolean" description="false"/>
+    
+    <aura:attribute name="displayDate" type="String" default=""/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+    
+    
+  
+
+   <!-- <aura:if isTrue="{!v.index==0}">
+        <article class="slds-card">
+            <div class="slds-card__header slds-grid">
+                <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">
+                          
+                                <span><b>Planned Days</b></span>
+                          
+                        </h2>
+                    </div>
+                    <div class="slds-no-flex">
+                        <lightning:button class="fullWidthBtn" disabled="{!v.isReadOnly}" onclick="{!c.addRow}" title="Add New Plan Day" iconName="utility:add">Add Activity</lightning:button>
+                    </div>
+                </header>
+            </div>
+        </article>
+        
+    </aura:if>-->
+   
+
+    <!--Body Section-->
+   <!-- <lightning:recordEditForm 
+                              objectApiName="Planning_Month__c" 
+                              aura:id="planDayForm"
+                              onload="{!c.onload}"
+                              recordId="{!v.planDay.Id}"
+                              recordTypeId="0124C000000GwrQQAS"
+                              onsubmit="{!c.onSubmit}"
+                              onerror="{!c.onError}"
+                              
+                              onsuccess="{!c.onSuccess}">
+        -->
+        <article class="slds-card slds-m-top_x-small">
+            <div class="slds-card__header slds-grid">
+                <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title mydiv">
+                            
+                            <span style="font-weight:bold"><b><!--<lightning:outputField fieldName="Plan_Date__c" />-->{!v.displayDate} </b></span>
+                            
+                        </h2>
+                    </div>
+                    
+                </header>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_12-of-12" style="padding:2px 1px 2px 1px;">
+                        <aura:if isTrue="{!v.plandayerror.length>0}">
+                            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" >
+                                <aura:iteration items="{!v.plandayerror}" var="err">
+                                    <aura:if isTrue="{!err!=''}">    
+                                        {!err}<br></br>
+                                    </aura:if>
+                                </aura:iteration>
+                                <div class="slds-notify__close">
+                                    <lightning:buttonIcon variant="border-inverse" onclick="{!c.clearError}" iconName="utility:close"/>
+                                </div>
+                            </div>
+                        </aura:if>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <aura:if isTrue="{!v.isLoading}">
+                            <lightning:spinner variant="brand"/>
+                        </aura:if>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            {!v.planDay.Route__r.Name}
+                            <!--<lightning:outputField fieldName="Route__c" /> -->
+                            <aura:set attribute="else">
+                                
+                               
+                                    <c:DCRRouteLookUp selectedParentRecordId="{!v.territoryId}" label="Route" objectAPIName="Route__c" selectedRecord="{!v.selectedRoute}"/>
+                              
+                                
+                                <!--<lightning:inputField fieldName="Route__c" /> -->
+                            </aura:set>  
+                        </aura:if>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <ui:outputText value="Plan Date" class="slds-form-element__label nextLine"/>
+                            
+                            {!v.planDay.Plan_Date__c}
+                            <!-- <lightning:outputField fieldName="Plan_Date__c" /> -->
+                            <aura:set attribute="else">
+                                 <ui:outputText value="Plan Date" class="slds-form-element__label nextLine"/>
+                                <!-- <lightning:inputField fieldName="Plan_Date__c"/> -->
+                                <ui:inputDate value="{!v.planDay.Plan_Date__c}"/>
+                                
+                            </aura:set>  
+                        </aura:if>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-left_xxx-small">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <!--<lightning:outputField fieldName="Activity_End_Date__c" /> -->
+                            <ui:outputText value="Activity End Date" class="slds-form-element__label nextLine"/>
+                            {!v.planDay.Activity_End_Date__c}
+                            <aura:set attribute="else">
+                                <ui:outputText value="Activity End Date" class="slds-form-element__label nextLine"/>
+                                <ui:inputDate value="{!v.planDay.Activity_End_Date__c}"/>
+                                <!-- <lightning:inputField fieldName="Activity_End_Date__c" /> -->
+                            </aura:set>  
+                        </aura:if>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 ">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                             <ui:outputText value="First Half" class="slds-form-element__label nextLine"/>
+                             {!v.planDay.First_Half__c}
+                            <!--<lightning:outputField fieldName="First_Half__c" /> -->
+                            <aura:set attribute="else">
+                                <lightning:select label="First Half" value="{!v.planDay.First_Half__c}">
+                                    <aura:iteration items="{!v.firsthalflist}" var="val">
+                                        <option value="{!val}"> {!val}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            
+                                <!--<lightning:inputField fieldName="First_Half__c" /> -->
+                            </aura:set>  
+                        </aura:if>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-left_xxx-small">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                             <ui:outputText value="Second Half" class="slds-form-element__label nextLine"/>
+                             {!v.planDay.Second_Half__c}
+                            <!--<lightning:outputField fieldName="Second_Half__c" /> -->
+                            <aura:set attribute="else">
+                                <lightning:select label="Second Half" value="{!v.planDay.Second_Half__c}">
+                                    <aura:iteration items="{!v.firsthalflist}" var="val">
+                                        <option value="{!val}"> {!val}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </aura:set>  
+                        </aura:if>
+                    </div>
+                    
+                   
+                    
+                    
+                    
+                    <aura:if isTrue="{!v.userType!='VSA'}"> 
+                        <div class="slds-col slds-size_3-of-12">
+                            <aura:if isTrue="{!v.mode=='View'}">
+                                <ui:outputText value="VSA JFW" class="slds-form-element__label nextLine"/>
+                                <!--<lightning:outputField fieldName="VSA_JFW__c" /> -->
+                                <ui:outputCheckbox value="{!v.planDay.VSA_JFW__c}"/>  
+                               
+                                <aura:set attribute="else">
+                                       <ui:outputText value="VSA JFW" class="slds-form-element__label nextLine"/>
+                                            <!--
+                                            <lightning:inputField fieldName="VSA_JFW__c" /> -->
+                                       <ui:inputCheckbox value="{!v.planDay.VSA_JFW__c}"/> 
+                                </aura:set>
+                                      
+                            </aura:if>
+                        </div>
+                    </aura:if>
+                    
+                    
+                    <aura:if isTrue="{!v.userType!='ASM'}"> 
+                        <div class="slds-col slds-size_3-of-12 slds-form-element__control">
+                            <aura:if isTrue="{!v.mode=='View'}">
+                                <ui:outputText value="ASM JFW" class="slds-form-element__label nextLine"/>
+                               <!-- <lightning:outputField fieldName="ASM_JFW__c" /> -->
+                                <ui:outputCheckbox value="{!v.planDay.ASM_JFW__c}"/>
+                                <aura:set attribute="else">
+                                    <ui:outputText value="ASM JFW" class="slds-form-element__label nextLine"/>
+                                    <ui:inputCheckbox value="{!v.planDay.ASM_JFW__c}"/> 
+                                         
+                                </aura:set>
+                            </aura:if>
+                        </div>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.userType!='RSM'}"> 
+                        <div class="slds-col slds-size_3-of-12 slds-form-element__control">
+                            <aura:if isTrue="{!v.mode=='View'}">
+                                <ui:outputText value="RSM JFW" class="slds-form-element__label nextLine"/>
+                                <ui:inputCheckbox value="{!v.planDay.RSM_JFW__c}"/>
+                                <!--<lightning:outputField fieldName="RSM_JFW__c" /> -->
+                                <aura:set attribute="else">
+                                     <ui:outputText value="RSM JFW" class="slds-form-element__label nextLine"/>
+                                    <ui:inputCheckbox value="{!v.planDay.RSM_JFW__c}"/> 
+                                    
+                                </aura:set>
+                            </aura:if>
+                        </div>
+                    </aura:if>
+                    
+                    <div class="slds-col slds-size_6-of-12">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <ui:outputText value="Other JFW" class="slds-form-element__label nextLine"/>
+                            <!--<lightning:outputField fieldName="Other_JFW__c" /> -->
+                            <ui:outputText value="{!v.planDay.Other_JFW__c}"/>
+                            <aura:set attribute="else">
+                                <ui:outputText value="Other JFW" class="slds-form-element__label nextLine"/>
+                                <ui:inputText value="{!v.planDay.Other_JFW__c}" /> 
+                            </aura:set>  
+                        </aura:if>
+                    </div>
+                     <div class="slds-col slds-size_12-of-12">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <ui:outputText value="Comment" class="slds-form-element__label nextLine"/>
+                           <!-- <lightning:outputField fieldName="Comments__c" /> -->
+                              {!v.planDay.Comments__c}
+                            <aura:set attribute="else">
+                                 <ui:outputText value="Comment" class="slds-form-element__label nextLine"/>
+                                <ui:inputText value="{!v.planDay.Comments__c}" /> 
+                            </aura:set>
+                            
+                        </aura:if>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12 slds-p-top_x-small">
+                        <div class="slds-float_right">
+                            <aura:if isTrue="{!v.mode=='Edit'}">
+                                <lightning:buttonIcon variant="brand" iconName="utility:save" disabled="{!v.isReadOnly}" title="Save"  onclick="{!c.save}" name="Save" />
+                                <!--Should not show Close Button in the first row if there are no other rows added-->
+                                <aura:if isTrue="{!if(v.plandaylist.length==1 &amp;&amp; v.index==0 &amp;&amp; v.planDay.Id==null,false,true)}">
+                                    <lightning:buttonIcon variant="brand" iconName="utility:close"   disabled="{!v.isReadOnly}" title="Cancel" name="Cancel" onclick="{!c.cancel}"  />
+                                </aura:if>
+                                <aura:set attribute="else">
+                                    
+                                    <lightning:buttonIcon  variant="brand" iconName="utility:edit" title="Edit" disabled="{!v.isReadOnly}"  name="Edit"  onclick="{!c.edit}"/>
+                                    
+                                    <lightning:buttonIcon  variant="brand" iconName="utility:delete"  title="Delete" disabled="{!v.isReadOnly}" name="Delete"  onclick="{!c.showDeletePopUp}"/>
+                                    <a onclick="{!c.toggleCustomers}" class="slds-p-left_xx-small"><lightning:Icon  iconName="custom:custom15"   name="Edit" title="Route Customers" /></a>
+                                </aura:set>
+                            </aura:if>
+                        </div>
+                    </div>
+                    {!v.body}
+                    <aura:if isTrue="{!v.showCustomers}">
+                        <div class="slds-col slds-size_12-of-12 slds-p-top_x-small">
+                            <article class="slds-card  slds-card_boundary">
+                                <div class="slds-card__body slds-card__body_inner" style="padding:0px 0px 0px 0px;">
+                                    <c:Cres_PlannedCustomerPanelmob recordId="{!v.planDay.Route__c}" aura:id="customers"/>
+                                </div>
+                            </article>
+                        </div>
+                    </aura:if>
+                    
+                    
+                    <lightning:inputField aura:id="relatedPlanningMonth" fieldName="Related_Planning_Month__c" class="slds-hide" />
+                    <lightning:inputField aura:id="routeFieldId" fieldName="Route__c" class="slds-hide" /> 
+                    
+                    
+                </div>
+            </div>
+            
+        </article>
+  <!--  </lightning:recordEditForm> -->
+    
+    <!--<div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_12-of-12">
+                    
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Route__c" /> 
+                        <aura:set attribute="else">
+                            <label class="slds-form-element__label" for="select-01">Route</label><br/>
+                            <aura:if isTrue="{!v.selectedRoute}">
+                                <c:DCRRouteLookUp selectedParentRecordId="{!v.territoryId}" objectAPIName="Route__c" selectedRecord="{!v.selectedRoute}"/>
+                            </aura:if>
+                            
+                         
+                        </aura:set>  
+                    </aura:if>
+                </div>
+                
+                <div class="slds-col slds-size_12-of-12">
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Plan_Date__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="Plan_Date__c"/> 
+                        </aura:set>  
+                    </aura:if>
+                </div>
+                
+                
+                <div class="slds-col slds-size_12-of-12">
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:inputField fieldName="Activity_End_Date__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="Activity_End_Date__c" /> 
+                        </aura:set>  
+                    </aura:if>
+                </div>
+                <div class="slds-col slds-size_12-of-12 slds-hide">
+                    <lightning:inputField fieldName="Second_Half__c" value=""/> 
+                    <lightning:inputField fieldName="First_Half__c" value=""/> 
+                </div>
+                
+                <div class="slds-col slds-size_12-of-12">
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="First_Half__c" /> 
+                        <aura:set attribute="else">
+                            
+                            <lightning:select label="First Half" value="{!v.firsthalfsel}">
+                                <aura:iteration items="{!v.firsthalflist}" var="val">
+                                    <option value="{!val}"> {!val}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                            
+                        </aura:set>  
+                    </aura:if>
+                </div>
+                
+                
+                
+                <div class="slds-col slds-size_12-of-12">
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Second_Half__c"/> 
+                        <aura:set attribute="else">
+                            
+                            <lightning:select label="Second Half" value="{!v.secondhalfsel}">
+                                <aura:iteration items="{!v.secondhalflist}" var="val">
+                                    <option value="{!val}"> {!val}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                        </aura:set>  
+                    </aura:if>
+                </div>
+                <aura:if isTrue="{!v.userType!='ASM'}"> 
+                    <div class="slds-col slds-size_6-of-12">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <lightning:outputField fieldName="VSA_JFW__c" /> 
+                            <aura:set attribute="else">
+                              
+                                <label class="slds-checkbox__label" for="checkbox-8">
+                                    <span class="slds-checkbox_faux"></span>
+                                    <span class="slds-form-element__label">VSA JEW</span>
+                                </label>
+                                <ui:inputCheckbox aura:id="checkboxvsa" value="{!v.vsabool}"/>
+                            </aura:set>  
+                        </aura:if>
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.userType!='RSM'}"> 
+                    <div class="slds-col slds-size_6-of-12 slds-form-element__control">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <lightning:outputField fieldName="RSM_JFW__c" /> 
+                            <aura:set attribute="else">
+                               
+                                <label class="slds-checkbox__label" for="checkbox-8">
+                                    <span class="slds-checkbox_faux"></span>
+                                    <span class="slds-form-element__label">RSM JFW</span>
+                                </label>
+                                <ui:inputCheckbox aura:id="checkboxrsm" value="{!v.rsmbool}"/>
+                            </aura:set>  
+                        </aura:if>
+                    </div>
+                </aura:if>
+                
+                <div class="slds-col slds-size_12-of-12">
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Other_JFW__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="Other_JFW__c" /> 
+                        </aura:set>  
+                    </aura:if>
+                </div>
+                
+                <div class="slds-col slds-size_12-of-12">
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Comments__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="Comments__c" /> 
+                        </aura:set>
+                        
+                    </aura:if>
+                </div>
+                
+                <div class="slds-col slds-size_12-of-12">
+                    
+                    <aura:if isTrue="{!v.mode=='Edit'}">
+                        <lightning:buttonIcon iconName="utility:save" disabled="{!v.isReadOnly}" title="Save"  type="submit" name="Save" />
+                     
+                        <aura:if isTrue="{!if(v.plandaylist.length==1 &amp;&amp; v.index==0 &amp;&amp; v.planDay.Id==null,false,true)}">
+                            <lightning:buttonIcon iconName="utility:close"   disabled="{!v.isReadOnly}" title="Cancel" name="Cancel" onclick="{!c.cancel}"  />
+                        </aura:if>
+                        <aura:set attribute="else">
+                            
+                            <lightning:buttonIcon  iconName="utility:edit" title="Edit" disabled="{!v.isReadOnly}"  name="Edit"  onclick="{!c.edit}"/>
+                            
+                            <lightning:buttonIcon  iconName="utility:delete"  title="Delete" disabled="{!v.isReadOnly}" name="Delete"  onclick="{!c.showDeletePopUp}"/>
+                            <a onclick="{!c.toggleCustomers}" class="slds-p-left_xx-small"><lightning:Icon  iconName="custom:custom15"   name="Edit" title="Route Customers" /></a>
+                        </aura:set>
+                    </aura:if>
+                    
+                </div>
+                
+                
+            </div>
+            
+            <div class="slds-col slds-size_12-of-12 slds-align_absolute-center slds-p-top_medium">
+                
+                <aura:if isTrue="{!v.mode=='Edit'}">
+                    <lightning:buttonIcon iconName="utility:save" disabled="{!v.isReadOnly}" title="Save"  type="submit" name="Save" />
+                  
+                    <aura:if isTrue="{!if(v.plandaylist.length==1 &amp;&amp; v.index==0 &amp;&amp; v.planDay.Id==null,false,true)}">
+                        <lightning:buttonIcon iconName="utility:close"   disabled="{!v.isReadOnly}" title="Cancel" name="Cancel" onclick="{!c.cancel}"  />
+                    </aura:if>
+                    <aura:set attribute="else">
+                        
+                        <lightning:buttonIcon  iconName="utility:edit" title="Edit" disabled="{!v.isReadOnly}"  name="Edit"  onclick="{!c.edit}"/>
+                        
+                        <lightning:buttonIcon  iconName="utility:delete"  title="Delete" disabled="{!v.isReadOnly}" name="Delete"  onclick="{!c.showDeletePopUp}"/>
+                        <a onclick="{!c.toggleCustomers}" class="slds-p-left_xx-small"><lightning:Icon  iconName="custom:custom15"   name="Edit" title="Route Customers" /></a>
+                    </aura:set>
+                </aura:if>
+                
+            </div>
+            
+            <lightning:inputField aura:id="relatedPlanningMonth" fieldName="Related_Planning_Month__c" class="slds-hide" />
+            <lightning:inputField aura:id="routeFieldId" fieldName="Route__c" class="slds-hide" /> 
+            
+            
+            
+        </lightning:recordEditForm> 
+        <aura:if isTrue="{!v.showCustomers}">
+            <c:Cres_PlannedCustomerPanelmob recordId="{!v.planDay.Route__c}" aura:id="customers"/>
+        </aura:if>
+       -->
+    
+    
+</aura:component>

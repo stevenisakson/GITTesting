@@ -1,0 +1,148 @@
+<apex:page standardController="Account" extensions="LabyrinthAccountNewPage" showHeader="false" >
+   <head>
+                <style type="text/css">
+                       @page {
+                                
+                                     div.header {
+                                      padding: 10px;
+                                      position: running(header);
+                           }
+                       div.footer {
+                                display: block;
+                             padding: 5px;
+                               position: running(footer);
+                               padding: 1em;
+                              top: 40px;
+                      }
+                                  
+                    </style>
+</head>
+         <!--  <div class="header">
+              <div><apex:image url="{!$Resource.LabyrinthPortalHeader}" width="100%" height="100%"/></div>
+           </div>
+          -->
+           
+   <style>
+    
+    .pageDescription, .pageType {
+     color: White!important;
+     }
+    </style>
+    
+   
+    
+   
+   <!-- <apex:sectionHeader subtitle="{!acc.Name}" title="Account deatils"/> -->
+       <apex:form id="myForm" styleClass="myFormStyle"> 
+      
+<div class="Header">
+<table>
+
+    <tr>
+    <td style="padding-right: 10px;">
+     <img src="{!URLFOR($Resource.LabyrinthLogo)}"  width="200" height="75" id="phHeaderLogoImage"/>
+     </td>  
+    
+     <td >
+       <apex:outputLabel style="font-size: 12px; color:black;" value="Account deatils"></apex:outputLabel><br></br>
+       <apex:outputText value="{!acc.Name}" style="font-size: 22px; color:black;"></apex:outputText>
+     </td>
+     
+   </tr>
+</table>
+</div>
+<apex:outputLink style="color:Black; text-align: Left; float:right"  value="/apex/AccountlandingPage">Home</apex:outputLink> 
+         
+       <!--  <div style="background-color:#008B8B;">
+            <apex:sectionHeader subtitle="{!acc.Name}" title="Account deatils">
+            <!--<apex:outputLink style="color:white; text-align: Left; padding-left: 1180px; " target="_blank" value="/home/home.jsp">Home</apex:outputLink>&nbsp;<b style="Color:White;">|</b> -->
+         <!--   <apex:outputLink style="color:Black; text-align: Left; float:right"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+            </apex:sectionHeader> 
+        </div> -->
+               
+        <apex:pageBlock mode="maindetail" >
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlockButtons location="top">
+        <apex:commandButton value="Save" action="{!save}"/>
+        <apex:commandButton value="Cancel" action="{!Cancel}"/>
+        </apex:pageBlockButtons>
+        
+        <apex:pageBlockSection title="Account Detail" columns="2">
+           <apex:pageBlockSectionItem >
+             Account Owner
+             <apex:outputText value="{!account.owner.name}"></apex:outputText>
+            </apex:pageBlockSectionItem>
+            
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Account_Detail}" 
+                    var="field">
+              <apex:InputField value="{!acc[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Segment Information" columns="2">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Segment_Information}" 
+                    var="field">
+              <apex:InputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Operational Information" columns="2">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Operational_Information}" 
+                    var="field">
+              <apex:InputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+       
+        <apex:pageBlockSection title="Won/Lost Reason" columns="2">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Won_Lost_Reason}" 
+                    var="field">
+              <apex:InputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Cargill Information" columns="2">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Cargill_Information}" 
+                    var="field">
+              <apex:InputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Address Information" columns="2">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Address_Information}" 
+                    var="field">
+              <apex:InputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+       
+        
+        <apex:pageBlockSection title="Additional Information" columns="2">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Additional_Information}" 
+                    var="field">
+              <apex:InputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Additional Information" columns="2">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.Additional_Information1}" 
+                    var="field">
+              <apex:InputField value="{!Account[field]}" style="width: 360px; height: 40px" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="System Information" columns="2">
+           <apex:repeat value="{!$ObjectType.Account.FieldSets.System_Information}" 
+                    var="field">
+              <apex:InputField value="{!Account[field]}" />
+           </apex:repeat>
+        </apex:pageBlockSection>
+       
+            
+          
+       </apex:pageBlock>
+     
+   
+           
+         
+    </apex:form> 
+</apex:page>

@@ -1,0 +1,98 @@
+<!--******************************************************************
+** Author: Anjerico Caburnay (Accenture)
+** Date: 08-01-16
+** Controller: DynamicRequestCX
+** Description: VF Page for Creating/Editing RequestLineItem
+** Date Last Modified: 08-03-16
+** History-----------------------------------------------------
+******************************************************************-->
+
+<apex:page sidebar="true" showHeader="true" title="Request" controller="DynamicRequestController">
+<style>
+.TextBox {
+            border-width:0.1px;
+            width:150px;
+         }
+.bPageBlock .labelCol, body .print .topics-label {
+                                                    text-align: center;
+                                                 }
+.bEditBlock .detailList .dataCol, .bEditBlock .detailList .data2Col {
+                                                                        padding-right: 2px;
+                                                                        padding-bottom: 0;
+                                                                        padding-left: 0px;
+                                                                    }
+.bPageBlock .detailList .labelCol {
+                                    width: 10%;
+                                  }
+
+</style>
+       <apex:form >
+            <apex:pageMessages />
+        <apex:pageBlock mode="edit" title="{!$Label.New_request}" rendered="{!renderNew}">
+            <div align = "center">
+                <apex:commandButton value="{!$Label.Save}" action="{!save}" styleClass=" btn btn-primary"/>
+                <apex:commandButton value="{!$Label.Cancel}" action="{!cancel}" immediate="true" styleClass=" btn btn-primary"/>   
+            </div>
+            
+           <apex:pageBlockSection title="{!$Label.Request_Information}" columns="2">
+                <apex:outputField value="{!accountInfo.Name}"/>
+                <apex:inputText label="{!$Label.Description}" value="{!reqDescription}" style="width:150px;margin:0px 0px 0px 2px;"/>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="{!$Label.Protected_Information}" columns="1">
+                
+                <apex:pageblockTable value="{!csFields}" var="FieldName" style="width:100%">
+                    <apex:column headerValue="{!$Label.Field_Name}" value="{!FieldName.Field_Label__c}"/>
+                    <apex:column headerValue="{!$Label.Existing_Value}" >
+                        <apex:outputField value="{!fields[0].accOld[FieldName.Field_Name__c]}"/>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.Requested_Value}">
+                        <apex:inputField value="{!fields[0].accNew[FieldName.Field_Name__c]}" styleClass="TextBox"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+              
+            </apex:pageBlockSection>    
+            
+            <div align = "center">
+                <apex:commandButton value="Save" action="{!save}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}" immediate="true"/>   
+            </div>
+        
+        </apex:pageBlock>
+        
+        <apex:pageBlock mode="edit" title="{!$Label.Edit_Request}" rendered="{!renderEdit}">
+            <div align = "center">
+                <apex:commandButton value="{!$Label.Save}" action="{!save}"/>
+                <apex:commandButton value="{!$Label.Cancel}" action="{!cancel}" immediate="true"/>   
+            </div>
+            
+            <apex:pageBlockSection title="{!$Label.Request_Information}" columns="2">
+                
+                <apex:outputField value="{!accountInfo.Name}"/>
+                <apex:outputField value="{!getRequestInfo.Description__c}" style="width:150px;margin:0px 0px 0px 2px;"/>
+                 
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="{!$Label.Protected_Information}" columns="1">
+                
+                <apex:pageblockTable value="{!csFields}" var="FieldName">
+                    <apex:column headerValue="Field Name" value="{!FieldName.Field_Label__c}"/>
+                    <apex:column headerValue="Existing Value" >
+                        <apex:outputField value="{!fields[0].accOld[FieldName.Field_Name__c]}"/>
+                    </apex:column>
+                    <apex:column headerValue="Requested Value">
+                        <apex:inputField value="{!fields[0].accNew[FieldName.Field_Name__c]}" styleClass="TextBox" />
+                    </apex:column>
+                </apex:pageBlockTable>
+              
+            </apex:pageBlockSection>    
+            
+            <div align = "center">
+                <apex:commandButton value="{!$Label.Save}" action="{!save}"/>
+                <apex:commandButton value="{!$Label.Cancel}" action="{!cancel}"  immediate="true"/>   
+            </div>
+        
+        </apex:pageBlock>
+    </apex:form>
+    
+</apex:page>

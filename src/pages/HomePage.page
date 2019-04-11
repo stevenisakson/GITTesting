@@ -1,0 +1,26 @@
+<apex:page >
+
+<script type="text/javascript">
+    function open()
+    {         
+         
+            if (window.location.pathname =='/apex/HomePage')
+                {
+                       
+                       window.top.location.href ='/apex/AccountlandingPage';
+                }
+              
+    } 
+    var previousOnload = window.onload; 
+    window.onload = function() { 
+        if (previousOnload) { 
+        previousOnload(); 
+        } 
+        
+          
+         <!-- window.top.location.href ='/apex/Accountslandingpage'; -->
+         open(); 
+         
+         } 
+</script>
+</apex:page>

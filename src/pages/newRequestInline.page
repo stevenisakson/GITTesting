@@ -1,0 +1,72 @@
+<!--
+Name:        newRequestInline
+Date:        08 AUG 16
+Description: Controller for newReq_DS page
+History:     08 AUG 16 - Regina Ligan - created controller
+             09 AUG 16 - Sam Oberes - added actionfunction and js to be able to save RLI status.
+-->
+
+<apex:page sidebar="true" showHeader="true" standardController="Request__c" extensions="newRequestInlineController" standardStylesheets="false">
+<head>
+        <!-- Latest compiled and minified CSS -->
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+ 
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+ 
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    </head>
+    <apex:includeScript value="https://code.jquery.com/jquery-1.4.2.js"  />
+    <script type="text/javascript">
+        $j = jQuery.noConflict();
+        function JS_doSave(elem)
+        {
+            console    .log('DBG: elem >>> ' + elem);
+            AF_doSave($j(elem).parent().find('[type=hidden]').val(), $j(elem).val());
+        }
+    </script>
+    
+    <apex:form >
+    <form>
+      <div class="form-group">
+        <apex:actionFunction name="AF_doSave" action="{!CTRLR_doSave}" rerender="">   
+            <apex:param name="requestLineItemId" value=""/>
+            <apex:param name="currentStatus" value=""/>
+        </apex:actionFunction>
+
+                <div class = "table-responsive">
+
+                <table class="table table-bordered table-striped">
+                     
+                     <tr>
+                     <th>Field Name</th>
+                     <th>Existing Value</th>
+                     <th>Requested Value</th>                     
+                     <th>Status</th>                                                               
+                     </tr>
+                     
+                     <apex:repeat value="{!csFields}" var="rli">
+                      <tr>
+                       <td>{!rli.Field_Label__c}</td>
+                       <td>{!rli.Existing_Value_Display__c}</td>
+                       <td>{!rli.New_Value_Display__c}</td>
+                       <td>
+                          <apex:selectList id="statuses" value="{!rli.Status__c}" size="1" onchange="JS_doSave(this)" disabled="{!IF(rli.Request__r.Status__c=='Approved'||rli.Request__r.Status__c=='Rejected'||NOT($ObjectType.RequestLineItem__c.Fields.Status__c.updateable), true, false)}">
+                          <apex:selectOptions value="{!statuses}"/>
+                          </apex:selectList>
+                          <apex:inputHidden value="{!rli.Id}" id="hiddenField"/> 
+                       </td>
+                      </tr>
+                     </apex:repeat>
+  
+              </table>
+                </div>
+        
+       
+    </div>
+    </form>
+  </apex:form>
+    
+</apex:page>

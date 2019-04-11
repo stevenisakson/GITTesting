@@ -1,0 +1,46 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <!-- Description:
+      Child component of PotentialEstList.
+      
+    -->
+    <aura:attribute name="est_item" type='sObject' description="stores one master potential record"/>
+    <aura:attribute name="mode" type='String' description="store the mode of app.Bound with parent component"/>
+    <aura:attribute name="index" type='Integer' description="index variable starting from 0..n"/>
+    
+    <aura:registerEvent name="potential_edit" type='c:rowEvent' description="fires Edit event to edit a Potential Records"/>
+    <aura:attribute name="isAccountLocked" type='Boolean' default='false' description="bound with parent component.used to hide or show the Edit/Delete/New button"/>
+    
+    
+    
+    <!--Below lines for showing the text values in red,if the values is overridden-->
+    <tr style="{!if(v.est_item.overridden_count>0,'color:red','')}">
+        <td data-label="Calculation Name">
+            <div class="slds-truncate" title="Calculation Name">{!v.est_item.estName}</div>           
+        </td>
+        
+        <td>
+            <div class="slds-truncate" title="Calculation Name">{!v.est_item.Total_Annual_Volume_MT}</div>
+        </td>
+        <td>
+            <div class="slds-truncate" title="Calculation Name">{!v.est_item.share_of_volume}</div>
+        </td>
+        
+        <td>
+            <div class="slds-truncate" title="Calculation Name">{!v.est_item.Total_Potential}</div>
+        </td>
+        <td data-label="Share of wallet">
+            <div class="slds-truncate" title="Share of wallet">{!v.est_item.share_of_wallet}</div>           
+        </td>
+        
+        <td>
+            <div class="slds-float--right">
+                <aura:if isTrue="{!!v.isAccountLocked}">
+                    <button class="slds-button slds-button_neutral" onclick='{!c.editpotential}'>{!$Label.c.POT_Edit}</button>
+                    <button class="slds-button slds-button_neutral" onclick='{!c.deletepotential}'>{!$Label.c.POT_Delete}</button>
+                </aura:if>
+            </div>
+        </td>
+        
+    </tr>
+    {!v.body}
+</aura:component>

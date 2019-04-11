@@ -1,0 +1,217 @@
+<!--
+/********************************************************************************************* 
+* @author:      Robbie Macatbag
+* @date:        6 March 2015
+* @description: Controller class for POC_RequestPDF visualforce page
+* @parameters:  NA
+* @revision:      
+**********************************************************************************************/
+-->
+<apex:page standardController="Request__c" extensions="RequestPDFController" renderAs="pdf" applyBodyTag="false">
+    <head>
+        <style>
+            body { 
+                font-family: 'Arial Unicode MS'; 
+            }
+            
+            h1 {
+                font-family: "Times New Roman";
+            }
+            h2 {
+                font-family: "Times New Roman";
+            }
+            h3 {
+                font-family: "Times New Roman";
+            }
+            .fieldLabel{
+                font-family: "Times New Roman";
+                font-weight: bold;
+                width: 20%;
+                text-align: right;
+                font-size: 14px;
+                padding-right: 5px;
+            }
+            
+            .fieldValue{
+                font-family: 'Arial Unicode MS'; 
+                width: 30%;
+                text-align: left;
+                font-size: 14px;
+                padding-right: 3px;
+                padding-right: 1px;
+            }
+            
+            .fieldValueLarge{
+                font-family: 'Arial Unicode MS'; 
+                width: 80%;
+                text-align: left;
+                font-size: 14px;
+                padding-right: 3px;
+                padding-right: 1px;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <apex:image url="{!URLFOR($Resource.CargillPageFiles,
+                  'Images/CargillLogoS.png')}" />
+        <center>
+            <h1>{!Request__c.RecordType.name}</h1>
+        </center>
+ <!--       
+        <h2>
+        Request Detail
+        </h2>
+        <br/>
+        <h3>
+        Request Information
+        </h3>-->
+            <table width="100%">
+                <tr>
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Name.Label}" /></td>
+                    <td class="fieldValue"><apex:outputText value="{!Request__c.Name}" /></td>
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Status__c.Label}" /></td>
+                    <td class="fieldValue"><apex:outputText value="{!Request__c.Status__c}" /></td>
+                </tr>
+                
+                
+                <tr>
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Account__c.Label}" /></td>
+                    <td class="fieldValue"><apex:outputText value="{!Request__c.Account__r.name}" /></td>
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Physical_Address_Country__c.Label}" /></td>
+                    <td class="fieldValue"><apex:outputText value="{!Request__c.Physical_Address_Country__c}" /></td>
+                </tr>
+                
+                
+                <td>
+                </td>
+                <td>
+                </td>
+                    </table>
+                <table width="100%">
+                    <tr>
+                        <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Securities__c.Label}" /></td>
+                        <td class="fieldValue"><apex:outputText value="{!Request__c.Securities__c}"  escape="false"/></td>
+                        <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Physical_Address_Street__c.Label}" /></td>
+                        <td class="fieldValue"><apex:outputText value="{!Request__c.Physical_Address_Street__c}" /></td>
+                    </tr>
+                    </table>
+                    <table width="100%">
+                    <tr>
+                        <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Account_Team_Members_Changed__c.Label}" /></td>
+                        <td class="fieldValue"><apex:outputText value="{!IF(Request__c.Account_Team_Members_Changed__c, 'Yes','No')}"  escape="false"/></td>
+                        <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Physical_Address_City__c.Label}" /></td>
+                        <td class="fieldValue"><apex:outputText value="{!Request__c.Physical_Address_City__c}" /></td>
+                       <td>
+                       </td>
+                    </tr>
+                    </table>
+                    
+                     <table width="100%">
+                <tr>
+                    <td class="fieldLabel">Owner</td>
+                    <td class="fieldValue"><apex:outputText value="{!Request__c.Owner.name}" /></td>
+                    
+                </tr>
+                <tr>
+                    
+                    <td class="fieldLabel">Created By</td>
+                    <td class="fieldValue"><apex:outputText value="{!Request__c.CreatedBy.name}" /></td>
+                    <td class="fieldLabel"></td>
+                    <td class="fieldValue"></td>
+                </tr>
+                <tr>
+                    
+                    <td class="fieldLabel">Notes/Comments</td>
+                    <td class="fieldValue"><apex:outputText value="{!Request__c.Description__c}" /></td>
+                    <td class="fieldLabel"></td>
+                    <td class="fieldValue"></td>
+                </tr>
+            </table>
+        <br/> 
+        
+        
+            
+         <!--       
+            <h3>    
+                Financial/Other Information
+            </h3>-->
+            <table width="100%">
+                <tr>
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Requested_Credit_Limit__c.Label}" /></td>
+                    <td class="fieldValue"><apex:outputText value="{!Request__c.Requested_Credit_Limit__c}" /></td> 
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Margin_Estimate__c.Label}" /></td>
+                    <td class="fieldValue"><apex:outputText value="{!Request__c.Margin_Estimate__c}" /></td>
+                </tr>
+                <tr>
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Limit_Change_Reason__c.Label}" /></td>
+                    <td class="fieldValue"><apex:outputText value="{!Request__c.Limit_Change_Reason__c}" /></td>
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Volume_Estimate__c.Label}" /></td>
+                    <td class="fieldValue"><apex:outputText value="{!Request__c.Volume_Estimate__c}" /></td>
+                </tr>
+                <tr>
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Payment_Terms__c.Label}" /></td>
+                    <td class="fieldValue"><apex:outputText value="{!Request__c.Payment_Terms__c}" /></td>
+                </tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                </table>
+                <table width="100%">
+                <tr>
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Assets__c.Label}" /></td>
+                    <td class="fieldValueLarge"><apex:outputText value="{!Request__c.Assets__c}" /></td>
+                 </tr>   
+                  <tr>  
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Liabilities__c.Label}" /></td>
+                    <td class="fieldValueLarge"><apex:outputText value="{!Request__c.Liabilities__c}" /></td>
+                </tr>
+                <tr>
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Other_Activity_Production__c.Label}" /></td>
+                    <td class="fieldValueLarge"><apex:outputText value="{!Request__c.Other_Activity_Production__c}" /></td>
+                </tr>
+                 <tr>  
+                    <td class="fieldLabel"><apex:outputLabel value="{!$ObjectType.Request__c.fields.Securities__c.Label}" /></td>
+                    <td class="fieldValueLarge"><apex:outputText value="{!Request__c.Securities__c}" /></td>
+                </tr>
+                
+            </table>
+            
+            
+             <br/> 
+            <apex:pageBlock >
+                   
+                <apex:outputPanel rendered="{!withAccounts}">
+             <!--    <h3>Account Information</h3> -->
+                </apex:outputPanel>
+    
+                <apex:pageBlockTable value="{!relatedAccount}" var="account" align="center" border="1" width="100%" Title="Accounts" rendered="{!withAccounts}">
+                    <apex:column value="{!account.name}"/>
+                    <apex:column value="{!account.Brand__c}"/>
+                    <apex:column value="{!account.RecordType.Name}"/>
+                    <!--<apex:column value="{!contact.email}"/>-->
+                </apex:pageBlockTable>
+                
+                <apex:outputPanel rendered="{!withContacts}">
+                
+                <br/> 
+              <!--   <h3>Account Customer 360 Records</h3> -->
+                </apex:outputPanel>
+                 <!-- Commented By Shalu Req 4.6
+                <apex:pageBlockTable value="{!customerList}" var="contact" align="center" border="1" width="100%" Title="Contacts" rendered="{!withContacts}">
+                    <!--<apex:column value="{!contact.name}"/>-->
+                    <!-- Commented By Shalu Req 4.6 
+                    <apex:column value="{!contact.Segment_Step_1__c}"/>
+                    <apex:column value="{!contact.X9_Box_Step_2__c}"/>
+                    <!--<apex:column value="{!contact.email}"/>-->
+                    <!-- Commented By Shalu Req 4.6
+                </apex:pageBlockTable>
+                -->
+                
+                
+            </apex:pageBlock>
+    </body> 
+    
+    
+</apex:page>

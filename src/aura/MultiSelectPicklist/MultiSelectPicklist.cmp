@@ -1,0 +1,54 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="label" type="String"/>
+    <aura:attribute name="isDropDownOpen" type="boolean" default="false"/>
+    <aura:attribute name="options" type="List"/>
+    <aura:attribute name="selectedList" type="List" default="[]"/>
+    <aura:attribute name="numberOfChecked" type="Integer" default="0"/>
+    <aura:handler name="selectionChanged" event="c:rowEvent" action="{!c.selectionChanged}"/>
+    
+    <aura:method action="{!c.initOptions}" name="initOptions">
+        <aura:attribute name="options" type="List"/>
+    </aura:method>
+    <aura:method action="{!c.getSelectedOptions}" name="getSelectedOptions">
+     
+    </aura:method>
+    
+    <div class="slds-form-element" onmouseleave="{!c.closeDropDown}">
+        <label class="slds-form-element__label" for="combobox-unique-id-21">{!v.label}</label>
+        <div class="slds-form-element__control">
+            <div class="slds-combobox_container">
+                <div class="{!'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click '+(v.isDropDownOpen? 'slds-is-open':'')}" aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                        <ui:inputText click="{!c.openDropDown}"  class="slds-input slds-combobox__input slds-combobox__input-value" value="{!v.numberOfChecked+' Options Selected'}"
+                               />
+                        
+                        <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right" title="Description of icon when needed">
+                            <a onclick="{!c.toggleDropDown}"><lightning:icon iconName="utility:down" size="xx-small"/>
+                            <span class="slds-assistive-text">Description of icon when needed</span></a>
+                        </span>	
+                        
+                    </div>
+                    <div id="listbox-unique-id" role="listbox">
+                        <ul class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid" role="presentation">
+                            <aura:iteration items="{!v.options}" var="item">
+                                <c:MultiSelectPicklistItem item="{!item}"/>
+                            </aura:iteration>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="listbox-selections-unique-id" role="listbox" aria-orientation="horizontal">
+                <ul class="slds-listbox slds-listbox_horizontal slds-p-top_xxx-small" role="group" aria-label="Selected Options:">
+                    <aura:iteration items="{!v.options}" var="item">
+                        
+                        <aura:if isTrue="{!item.checked}">
+                            <c:MultiSelectedItem item="{!item}"/>
+                        </aura:if>
+                    </aura:iteration>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+</aura:component>

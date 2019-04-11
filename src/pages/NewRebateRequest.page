@@ -1,0 +1,426 @@
+<!--
+********************************************************************************************* 
+* @author:      Robbie Macatbag
+* @date:        20 October 2015
+* @description: Visualforce page for creating Rebate Request and Rebate Request Line in one page
+* @revision:    23 March 2015 Robbie Macatbag: added fields to pop-up form and table. 
+* @revision:    12 May 2016 Tomasz Dusza: moving Date From and To to the begenning since it provides
+*               better user experience when displaying list of child accounts. 
+**********************************************************************************************
+style="overflow:auto;width:750px;height:250px"
+-->
+<apex:page standardController="CAR_RebateReqs__c" extensions="NewRebateRequestController" lightningStylesheets="true">
+ <!--<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> -->
+    <style type="text/css">
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 50%;
+            padding:10px;
+            position:fixed;
+           /* These are the 3 css properties you will need to change so the popup 
+            displays in the center of the screen. First set the width. Then set 
+            margin-left to negative half of what the width is. You can add 
+            the height property for a fixed size pop up if you want.*/
+            width: 1100px;
+            margin-left: -500px;
+            top:15%;
+        }
+        .popupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 1000%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+    </style>
+     
+      <!-- Style Panel Satrts--->   
+    <style type="text/css">   
+        .imgclass:hover{   
+            background-image: url(/img/help/helpOrbs.gif);   
+            background-repeat: no-repeat;   
+            width: 16px;   
+            height: 15px;      
+            background-position: right;   
+          
+        }   
+        .imgclass{   
+            background-image: url(/img/help/helpOrbs.gif);   
+            background-repeat: no-repeat;   
+            width: 16px;   
+            height: 15px;   
+        } 
+        
+        .pbHeader {
+            font-size: 17px;
+            font-weight:bold;
+        }
+
+    </style>   
+    <!-- Style Panel Ends---> 
+    <apex:form id="form0">
+        <chatter:feedWithFollowers entityId="{!currentRebateRequest.Id}"/>
+    </apex:form>
+    <apex:Slds />
+    <div class = "slds-scope">
+    <apex:form id="form1">
+        <apex:actionFunction name="deleteRebateRequestRecordJS" action="{!delete}" />
+        <apex:actionFunction name="standardDeleteJS" action="{!delete}" />
+        <apex:actionFunction name="checkConditionsJS" action="{!checkConditions}" rerender="popUpWindow"/>
+        <apex:actionFunction name="filterAccountListJS" action="{!filterAccountList}" rerender="accountCheckList" />
+        <apex:pageBlock title="Rebate Request" id="rebateRequestBlock">
+            
+            <apex:pageMessages />
+            <apex:pageBlockButtons location="top" >
+                <apex:commandButton action="{!saveProgress}" value="{!$Label.VF_Save}" styleClass="slds-button slds-button_neutral"/>
+                <apex:commandButton action="{!cancel}" value="{!$Label.VF_Cancel}" immediate="true"
+                     rendered="{!!isView}" styleClass="slds-button slds-button_neutral"/>
+                <apex:commandButton action="{!edit}" value="{!$Label.VF_Edit}" rendered="{!isView}" styleClass="slds-button slds-button_neutral"/>
+                <apex:commandButton onclick="return DeleteAlert();"  value="{!$Label.VF_Delete}" rendered="{!isView}" styleClass="slds-button slds-button_neutral"/>
+                <apex:commandButton action="{!cloneRecord}" value="{!$Label.VF_Clone}" rendered="{!isView}" immediate="true" styleClass="slds-button slds-button_neutral"/>
+                <apex:commandButton action="{!submitForApproval}" value="Submit for Approval" rendered="{!isView||isEditting}" styleClass="slds-button slds-button_neutral"/>
+            </apex:pageBlockButtons>
+            
+            <apex:pageblockSection rendered="{!isView}">
+                <apex:outputfield value="{!currentRebateRequest.Valid_From__c}" />
+                <apex:outputfield value="{!currentRebateRequest.Valid_To__c}" />
+                <apex:outputfield value="{!currentRebateRequest.CAR_Account__c}" id="rebateRequestPayer"/>
+                <apex:outputfield value="{!currentRebateRequest.ERP_ID__c}" /><!--
+                <apex:outputfield value="{!currentRebateRequest.Customer_Health_Actual_Margin__c}" />
+                <apex:outputfield value="{!currentRebateRequest.Customer_Health_Target_Margin__c}" />-->
+                <apex:outputField value="{!currentRebateRequest.CAR_Status__c}" id="rebateReququestStatus"/>
+                <apex:outputfield value="{!currentRebateRequest.Needs_Manager_Approval__c}" />
+                <apex:outputfield value="{!currentRebateRequest.Comments__c}" style="width:400px" />
+                <apex:outputfield value="{!currentRebateRequest.Parent__c}" />
+            </apex:pageblockSection>
+            <apex:pageblockSection rendered="{!!isView}">
+                <apex:inputfield value="{!currentRebateRequest.Valid_From__c}"/>
+                <apex:inputfield value="{!currentRebateRequest.Valid_To__c}"/>
+                <apex:inputfield value="{!currentRebateRequest.CAR_Account__c}" id="rebateRequestPayer" onchange="filterAccountListJS();"/>
+                <apex:inputfield value="{!currentRebateRequest.ERP_ID__c}" /><!--
+                <apex:inputfield value="{!currentRebateRequest.Customer_Health_Actual_Margin__c}" />
+                <apex:inputfield value="{!currentRebateRequest.Customer_Health_Target_Margin__c}" />-->
+                <apex:outputField value="{!currentRebateRequest.CAR_Status__c}" id="rebateReququestStatus"/>
+                <apex:inputfield value="{!currentRebateRequest.Needs_Manager_Approval__c}" />
+                <apex:inputfield value="{!currentRebateRequest.Comments__c}" style="width:400px"/>
+                <apex:inputfield value="{!currentRebateRequest.Inform_Supervisor__c}" />
+                <apex:inputfield value="{!currentRebateRequest.Parent__c}" />
+            </apex:pageblockSection>
+        </apex:pageBlock>
+        
+        <apex:pageBlock Title="Ship to Account(s)" id="accountCheckList"  >
+           
+            <apex:pageMessages />
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton action="{!selectShipToOption}" value="{!$Label.VF_Select_All}"  rerender="accountCheckList" rendered="{!!isView}" immediate="true" styleClass="slds-button slds-button_neutral" >
+                    <apex:param name="selectAllChoice" value="true" assignTo="{!selectAllChoice}"/>
+                 </apex:commandButton>
+                 <apex:commandButton action="{!selectShipToOption}" value="{!$Label.VF_Deselect_All}"  rerender="accountCheckList" rendered="{!!isView}" immediate="true" styleClass="slds-button slds-button_neutral" >
+                    <apex:param name="selectAllChoice" value="false" assignTo="{!selectAllChoice}"/>
+                 </apex:commandButton>
+                
+            </apex:pageBlockButtons>
+            <apex:outputPanel id="accountSearch"><!-- rendered="{!withPayer}" -->
+                <br/>
+                <Strong>{!$Label.VF_Search}:</Strong><br/>
+                    {!$Label.VF_Name}:&nbsp;<apex:inputText value="{!accountFilter.Name}"/> &nbsp;
+                    {!$Label.VF_Include_Payer}:<apex:inputfield value="{!currentRebateRequest.Include_Payer__c}" styleclass="slds-checkbox_faux" />
+                     <!--  <span class="slds-checkbox">
+                            <input type="checkbox" name="options" id="checkbox-6" value="{!currentRebateRequest.Include_Payer__c}" />
+                            <label class="slds-checkbox__label" for="checkbox-6">
+                                <span class="slds-checkbox_faux"></span>
+                                <span class="slds-form-element__label">Include Payer</span>
+                            </label>
+                        </span>--><!-- Commented 4 link as part of user story - 75144 - Sprint 4 - Rebate request process - current issues -->
+                                  
+                    <!--{!$Label.VF_Include_Payer}:<apex:inputcheckbox value="{!includePayer}"/>-->
+                    <!--&nbsp;&nbsp;Territory:&nbsp;<apex:inputfield value="{!accountFilter.Territory__c}"/>-->
+                    &nbsp;&nbsp;&nbsp;<!--<apex:commandLink value="{!$Label.VF_Search}" onclick="filterAccountListJS();" rerender="accountCheckList" immediate="true" /> -->
+                                    <apex:commandButton value="{!$Label.VF_Search}" action="{!filterAccountList}"  rerender="accountCheckList" status="status" styleClass="slds-button slds-button--brand btn-lg"/>
+                    <br/>
+                    <br/>
+            </apex:outputPanel>
+            <apex:actionStatus id="status">
+                <apex:facet name="start">
+                    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.75; z-index: 1000; background-color: black;">
+                        &nbsp;
+                    </div>
+                    <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 30% 50%">
+                        <div class="demo-only" style="height: 6rem;">
+                            <div role="status" class="slds-spinner slds-spinner_medium">
+                                <span class="slds-assistive-text">Loading</span>
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            
+            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--left">Ship to Account(s)</div>
+            <apex:pageblockSection >
+                
+                <apex:repeat value="{!accountSelectionList}" var="acctwrapper">
+                    <apex:pageBlockSectionItem >
+                       <apex:inputCheckbox value="{!acctwrapper.selected}" disabled="{!isView}"/>
+                        <apex:outputText value="{!acctwrapper.acc.Name} - {!acctwrapper.addressTrimed} (ERP ID - {!acctwrapper.acc.ERP_Id__c})"/>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            </apex:pageblockSection>
+        </apex:pageBlock>
+        <!--<apex:pageBlock Title="Related Request(s)"  rendered="{!withRelatedRequest}">
+            <apex:pageblockSection columns="1" >
+                <apex:pageBlockTable value="{!childAccountRebateList}" var="childShipTos">
+                    <apex:column >  
+                        <apex:facet name="header">Rebate Request Id</apex:facet>
+                        <apex:commandLink value="{!childShipTos.Rebate_Request__r.name}" onclick="window.open('   RebateRequestView?id={!childShipTos.Rebate_Request__r.id}&sfdc.override=1')"/>
+                    </apex:column>
+                    <apex:column value="{!childShipTos.Rebate_Request__r.CAR_Account__r.name}">
+                        <apex:facet name="header">Payer Account</apex:facet>
+                    </apex:column>
+                    <apex:column value="{!childShipTos.Rebate_Request__r.CAR_Status__c}"/>
+                </apex:pageBlockTable>
+                
+            </apex:pageblockSection>
+        </apex:pageBlock>-->
+        <apex:pageBlock Title="Rebate Request Line" id="RebateRequestLineBlock">
+          
+            <!-- New Rebate Request Line Table -->
+            <apex:pageMessages />
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton action="{!showPopup}" value="{!$Label.VF_Add}" rerender="popUpWindow,RebateRequestLineBlock" rendered="{!!isView}" styleClass="slds-button slds-button_neutral  slds-float_right"/>
+            </apex:pageBlockButtons>
+         <!--   <apex:pageblockSection columns="1"> -->
+                <apex:pageBlockTable value="{!rebateRequestLineWrapperList}" var="rebateRequestLinedraft" id="rebateRequestLineTable" rowClasses="odd,even" >
+                    <apex:column >
+                        <apex:commandLink action="{!EditRebateRequestLine}" value="{!$Label.VF_Edit}" rerender="RebateRequestLineBlock" rendered="{!!isView}" immediate="true" >
+                            <apex:param name="currentIndex" value="{!rebateRequestLinedraft.rrlIndex}" assignTo="{!currentIndex}"/>
+                        </apex:commandLink>
+                      </apex:column>
+                        &nbsp;|&nbsp;
+                    <apex:column >
+                        <apex:commandLink action="{!DeleteRebateRequestLine}" value="{!$Label.VF_Delete}" rerender="RebateRequestLineBlock" rendered="{!!isView}" immediate="true"  >
+                            <apex:param name="currentIndex" value="{!rebateRequestLinedraft.rrlIndex}" assignTo="{!currentIndex}"/>
+                        </apex:commandLink>
+                    </apex:column> &nbsp;&nbsp;&nbsp;|&nbsp;
+                    <!--apex:column>
+                         <apex:commandButton action="{!EditRebateRequestLine}" value="{!$Label.VF_Edit}" rerender="RebateRequestLineBlock" rendered="{!!isView}" immediate="true" styleClass="slds-button slds-button--brand btn-lg" >
+                            <apex:param name="currentIndex" value="{!rebateRequestLinedraft.rrlIndex}" assignTo="{!currentIndex}"/>
+                        </apex:commandButton>
+                    </apex:column>
+                    &nbsp;|&nbsp;
+                    <apex:column>
+                        <apex:commandButton action="{!DeleteRebateRequestLine}" value="{!$Label.VF_Delete}" rerender="RebateRequestLineBlock" rendered="{!!isView}" immediate="true" styleClass="slds-button slds-button--brand btn-lg">
+                            <apex:param name="currentIndex" value="{!rebateRequestLinedraft.rrlIndex}" assignTo="{!currentIndex}"/>
+                        </apex:commandButton>
+                    </apex:column -->
+                    
+                    <apex:column value="{!rebateRequestLinedraft.rrlRec.Product__c}"/> 
+                    <apex:column value="{!rebateRequestLinedraft.rrlRec.CAR_Payment_Terms__c}"/>
+                    <apex:column value="{!rebateRequestLinedraft.rrlRec.Price__c}"/>
+                    <apex:column value="{!rebateRequestLinedraft.rrlRec.Discount_Value__c}"/>
+                    <apex:column value="{!rebateRequestLinedraft.rrlRec.Discount_Percentage__c}"/>
+                    <apex:column value="{!rebateRequestLinedraft.rrlRec.Special_price__c}"/>
+                    <apex:column value="{!rebateRequestLinedraft.rrlRec.Apply_permanent_discounts__c}"/>
+                    <apex:column value="{!rebateRequestLinedraft.rrlRec.Apply_logistic_discounts__c}"/>
+                    <apex:column value="{!rebateRequestLinedraft.rrlRec.Comments__c}"/>
+                    <apex:column value="{!rebateRequestLinedraft.rrlRec.Packaging__c}"/>
+                    
+                    
+                    
+                </apex:pageBlockTable>  
+          <!--  </apex:pageblockSection> -->
+            <!-- New Rebate Request Line pop up -->
+            <apex:outputPanel id="popUpWindow" >
+                
+                <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopup}"/>
+                <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopup}" style="overflow:auto;width:1100px;height:480px">
+                    
+                    <div >
+                        <span style="font-size: 17px;font-weight:bold;">New Rebate Request Line</span>
+                     </div>
+                    <div align="center" draggable="false" >
+                        <apex:commandButton value=" {!$Label.VF_Add} " action="{!addRequestLine}" rerender="popUpWindow,RebateRequestLineBlock"  rendered="{!isCreatingNew}" styleClass="slds-button slds-button_neutral" />
+                        <apex:commandButton value=" {!$Label.VF_Save} " action="{!SaveEditedRebateRequestLine}" rerender="popUpWindow,RebateRequestLineBlock"  rendered="{!isEditting}" styleClass="slds-button slds-button_neutral"/>
+                        <apex:commandButton value=" {!$Label.VF_Cancel} " action="{!closePopup}" rerender="popUpWindow,form1"  immediate="true" styleClass="slds-button slds-button_neutral"/>
+                    </div> <br/><br/>
+                    <apex:pageMessages />
+                    <apex:pageblockSection id="RebateRequestLineInputSection">
+                        
+                        <apex:inputfield value="{!newRebateRequestLine.Product__c}"/> 
+                        <apex:inputfield value="{!newRebateRequestLine.Packaging__c}" onchange="greyOutFields()" id="Packaging"/>
+                        <apex:inputfield value="{!newRebateRequestLine.CAR_Payment_Terms__c}"/>
+                        <apex:inputfield value="{!newRebateRequestLine.Price__c}"/>
+                        <apex:inputfield value="{!newRebateRequestLine.Discount_Value__c}" onchange="greyOutFields()" id="discountValue" /> 
+                        <apex:pageblockSectionItem id="discountPercentage1" >   
+                             <apex:outputPanel >   
+                                 <apex:outputlabel value="{!$ObjectType.Rebate_Request_Line__c.fields.Discount_Percentage__c.label}"/>                                           
+                                 <img src="/s.gif" Class="imgclass" title="{!$ObjectType.Rebate_Request_Line__c.fields.Discount_Percentage__c.InlineHelpText}" />   
+                             </apex:outputPanel>   
+                             <apex:inputfield value="{!newRebateRequestLine.Discount_Percentage__c}" onchange="greyOutFields()" id="discountPercentage2" />                 
+                         </apex:pageblockSectionItem>
+                        
+                      <!--  <apex:inputfield value="{!newRebateRequestLine.Discount_Percentage__c}" onchange="greyOutFields()" id="discountPercentage" /> --> 
+                        
+                        <apex:inputfield value="{!newRebateRequestLine.Special_price__c}" onchange="greyOutFields()" id="specialPrice" />
+                     <!--   <apex:inputfield value="{!newRebateRequestLine.Apply_permanent_discounts__c}" onchange="greyOutFields()" id="permanentCheckBox"/>
+                        <apex:inputfield value="{!newRebateRequestLine.Apply_logistic_discounts__c}" onchange="greyOutFields()"  id="logisticsCheckBox"/> -->
+                        
+                        <apex:pageblockSectionItem id="permanentCheckBox1" >   
+                             <apex:outputPanel >   
+                                 <apex:outputlabel value="{!$ObjectType.Rebate_Request_Line__c.fields.Apply_permanent_discounts__c.label}"/>                                           
+                                 <img src="/s.gif" Class="imgclass" title="{!$ObjectType.Rebate_Request_Line__c.fields.Apply_permanent_discounts__c.InlineHelpText}" />   
+                             </apex:outputPanel>   
+                             <apex:inputfield value="{!newRebateRequestLine.Apply_permanent_discounts__c}" onchange="greyOutFields()" id="permanentCheckBox2"/>                 
+                         </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem id="logisticsCheckBox1">   
+                             <apex:outputPanel >   
+                                 <apex:outputlabel value="{!$ObjectType.Rebate_Request_Line__c.fields.Apply_logistic_discounts__c.label}"/>                                           
+                                 <img src="/s.gif" Class="imgclass" title="{!$ObjectType.Rebate_Request_Line__c.fields.Apply_logistic_discounts__c.InlineHelpText}" />   
+                             </apex:outputPanel>   
+                             <apex:inputfield value="{!newRebateRequestLine.Apply_logistic_discounts__c}" onchange="greyOutFields()" id="logisticsCheckBox2"/>                 
+                         </apex:pageblockSectionItem>
+                        
+                        <apex:inputfield value="{!newRebateRequestLine.Comments__c}"/>
+                        <!--<apex:commandLink value="{!$Label.VF_View_Pricelist}" onclick="return null"/>-->
+                     <!--   <apex:outputLink value="{!$Label.B2B_Current_URL}" target="_blank">B2B Current</apex:outputLink>
+                        <apex:outputLink value="{!$Label.B2C_Current_URL}" target="_blank">B2C Current</apex:outputLink>
+                        <apex:outputLink value="{!$Label.B2B_Previous_URL}" target="_blank">B2B Previous</apex:outputLink>
+                        <apex:outputLink value="{!$Label.B2C_Previous_URL}" target="_blank">B2C Previous</apex:outputLink> --> <!-- Commented 4 link as part of user story - 75144 - Sprint 4 - Rebate request process - current issues -->
+                    </apex:pageblockSection>
+                    <br/><br/>
+                    <div align="center" draggable="false" >
+                        <apex:commandButton value=" {!$Label.VF_Add} " action="{!addRequestLine}" rerender="popUpWindow,RebateRequestLineBlock"  rendered="{!isCreatingNew}" styleClass="slds-button slds-button_neutral" />
+                        <apex:commandButton value=" {!$Label.VF_Save} " action="{!SaveEditedRebateRequestLine}" rerender="popUpWindow,RebateRequestLineBlock"  rendered="{!isEditting}" styleClass="slds-button slds-button_neutral"/>
+                        <apex:commandButton value=" {!$Label.VF_Cancel} " action="{!closePopup}" rerender="popUpWindow"  immediate="true" styleClass="slds-button slds-button_neutral"/>
+                    </div>                
+                    </apex:outputPanel>
+                <script>
+                    greyOutFields();
+                </script>
+                
+            </apex:outputPanel> 
+            <!-- Rebate Request Line List Table -->
+        </apex:pageBlock>
+    </apex:form>
+        
+    </div>
+      <!--apex:relatedList list="ProcessSteps" id="approvalprocess"/-->
+    
+        <script>
+            function stringIsEmpty(str){
+                if(str.replace(/\s/g,"") == ""){
+                    return true;
+                }else{
+                    return false;
+                }
+                 
+            }
+            
+        
+            function DeleteAlert() {
+               
+                if (confirm("Are you sure?")) {
+                    deleteRebateRequestRecordJS();
+                    return false;
+                } 
+                return false;
+            }
+            
+            function greyOutFields(){
+                discountValueId = '{!$Component.form1.RebateRequestLineBlock.RebateRequestLineInputSection.discountValue}';
+                //  discountPercentageId = '{!$Component.form1.RebateRequestLineBlock.RebateRequestLineInputSection.discountPercentage}';
+                specialPriceId = '{!$Component.form1.RebateRequestLineBlock.RebateRequestLineInputSection.specialPrice}';
+                packagingId = '{!$Component.form1.RebateRequestLineBlock.RebateRequestLineInputSection.Packaging}';
+                //   permanentCheckBoxId = '{!$Component.form1.RebateRequestLineBlock.RebateRequestLineInputSection.permanentCheckBox}';
+                //  logisticsCheckBoxId = '{!$Component.form1.RebateRequestLineBlock.RebateRequestLineInputSection.logisticsCheckBox}';
+                
+                  
+                discountPercentageId1 = '{!$Component.form1.RebateRequestLineBlock.RebateRequestLineInputSection.discountPercentage1.discountPercentage2}';
+                permanentCheckBoxId1 = '{!$Component.form1.RebateRequestLineBlock.RebateRequestLineInputSection.permanentCheckBox1.permanentCheckBox2}';
+                logisticsCheckBoxId1 = '{!$Component.form1.RebateRequestLineBlock.RebateRequestLineInputSection.logisticsCheckBox1.logisticsCheckBox2}';      
+                
+                document.getElementById(permanentCheckBoxId1).removeAttribute("disabled");
+                document.getElementById(logisticsCheckBoxId1).removeAttribute("disabled");
+                document.getElementById(discountPercentageId1).setAttribute("disabled", true);
+            
+                     
+                //    document.getElementById(permanentCheckBoxId).removeAttribute("disabled");
+                //   document.getElementById(logisticsCheckBoxId).removeAttribute("disabled");
+                
+               
+                document.getElementById(discountValueId).setAttribute("disabled", true);
+                //  document.getElementById(discountPercentageId).setAttribute("disabled", true);
+                document.getElementById(specialPriceId).setAttribute("disabled", true);
+                
+                if(document.getElementById(packagingId).value==''){
+                    document.getElementById(specialPriceId).value='';
+                }
+                
+                //remove disable attribute of field having a value.
+                /*    if((document.getElementById(discountValueId).value=='') && (document.getElementById(discountPercentageId).value=='') && (document.getElementById(specialPriceId).value=='')){
+                    document.getElementById(discountValueId).removeAttribute("disabled");
+                    document.getElementById(discountPercentageId).removeAttribute("disabled");
+                    if(document.getElementById(packagingId).value!=''){
+                        document.getElementById(specialPriceId).removeAttribute("disabled");
+                    }
+                }else{
+                    if(document.getElementById(discountValueId).value!=''){
+                        document.getElementById(discountValueId).removeAttribute("disabled");
+                    }
+                    if(document.getElementById(discountPercentageId).value!=''){
+                        document.getElementById(discountPercentageId).removeAttribute("disabled");
+                        document.getElementById(logisticsCheckBoxId).checked =true;
+                    }
+                    if(document.getElementById(specialPriceId).value!='' && document.getElementById(packagingId).value!=''){
+                        document.getElementById(specialPriceId).removeAttribute("disabled");
+                        document.getElementById(permanentCheckBoxId).checked =false;
+                        document.getElementById(logisticsCheckBoxId).checked =false;
+                        document.getElementById(permanentCheckBoxId).setAttribute("disabled", true);
+                        document.getElementById(logisticsCheckBoxId).setAttribute("disabled", true);
+                    }
+                }  */
+                //Disable checkboxes. 
+                
+                if((document.getElementById(discountValueId).value=='') && (document.getElementById(discountPercentageId1).value=='') && (document.getElementById(specialPriceId).value=='')){
+                    document.getElementById(discountValueId).removeAttribute("disabled");
+                    document.getElementById(discountPercentageId1).removeAttribute("disabled");
+                    if(document.getElementById(packagingId).value!=''){
+                        document.getElementById(specialPriceId).removeAttribute("disabled");
+                    }
+                }else{
+                    if(document.getElementById(discountValueId).value!=''){
+                        document.getElementById(discountValueId).removeAttribute("disabled");
+                    }
+                    if(document.getElementById(discountPercentageId1).value!=''){
+                        document.getElementById(discountPercentageId1).removeAttribute("disabled");
+                        document.getElementById(logisticsCheckBoxId1).checked =true;
+                    }
+                    if(document.getElementById(specialPriceId).value!='' && document.getElementById(packagingId).value!=''){
+                        document.getElementById(specialPriceId).removeAttribute("disabled");
+                        document.getElementById(permanentCheckBoxId1).checked =false;
+                        document.getElementById(logisticsCheckBoxId1).checked =false;
+                        document.getElementById(permanentCheckBoxId1).setAttribute("disabled", true);
+                        document.getElementById(logisticsCheckBoxId1).setAttribute("disabled", true);
+                    }
+                }
+                // end 
+                
+                
+             }
+            
+            function changed(){
+                checkConditionsJS();
+                //document.getElementById('{!$Component.form1.RebateRequestLineBlock.RebateRequestLineInputSection.Apply_logistic_discounts__c_FormField}').disabled={!disableLogisticDiscount};
+            }
+        </script>
+    <!-- </html> -->   
+</apex:page>

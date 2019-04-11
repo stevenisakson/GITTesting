@@ -1,0 +1,29 @@
+<apex:page showHeader="false" sidebar="false">
+    <apex:includeScript value="/lightning/lightning.out.js" />
+
+    <script>
+         var myUserContext = "{!$User.UITheme}";
+    
+    
+        $Lightning.use("c:AccountTeamDeleteApp", function() {
+            $Lightning.createComponent(
+                "c:AccountTeamDelete",
+                {UserContext: myUserContext},
+                "theLead",
+                function(cmp) {
+                    console.log("Component created!");
+                    console.log(cmp);
+                   
+                });
+            });
+     
+    </script>
+   
+   
+   <!-- <apex:outputPanel  layout="block" style="overflow:auto;"> -->
+   <div id="theLead" style="height:1080px; width:100%;background-color:white;">
+       <apex:outputLink style="color:black; text-align: Left; float:right;padding-right: 20px;" target="_self" value="/secur/logout.jsp">LogOut</apex:outputLink>
+   </div>
+  
+   <!--</apex:outputPanel>-->
+</apex:page>

@@ -1,0 +1,15 @@
+<apex:component controller="RebateApprovalTemplate" access="global">
+    <apex:attribute name="RebId" type="Id" description="Id of the rebate" assignTo="{!rebateId}"/>
+    <table border = "2" cellspacing = "5">
+        <tr>
+            <td>Ship-To</td>
+            <td>ERP ID</td>      
+        </tr>
+        <apex:repeat value="{!shiptos}" var="s">
+        <tr>
+            <td>{!s.Account__r.Name}</td>
+            <td>{!s.ERP_ID__c}</td>      
+        </tr>
+        </apex:repeat>        
+    </table>
+</apex:component>

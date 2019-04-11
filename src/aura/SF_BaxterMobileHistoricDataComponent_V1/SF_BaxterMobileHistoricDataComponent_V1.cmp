@@ -1,0 +1,88 @@
+<aura:component controller="SF_AccountDocument_Controller" implements="force:appHostable,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    
+    <aura:attribute name="displaydefaultFlag" type="Boolean" default="True" />
+    <aura:attribute name="displayFlag" type="Boolean"  default="false" />
+    <aura:attribute name="eventFlag" type="Boolean"  default="false" />
+    <aura:attribute name="prospectFlag" type="Boolean"  default="false" />
+    <aura:attribute name="trainingFlag" type="Boolean"  default="false" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div style="margin-left: 10px;color:#3498DB; margin-bottom: 20px;margin-top: 15px;">
+        <span class="slds-text-heading_medium">View Historic Data</span>
+    </div>
+    <div class="form-group" style="margin-bottom : 15px">
+        <ui:inputSelect label="Select Document Type: " class="form-control" aura:id="InputSelectDynamicType" change="{!c.onChangeFunction}"/>
+    </div>
+    
+    <aura:if isTrue="{!v.displaydefaultFlag}">
+        <!-- Default Display historic component for general -->
+        <div class="slds-scrollable" style="height:100%;">
+            <div style="margin-left: 10px;color:#3498DB; margin-bottom: 20px">
+                <span class="slds-text-heading_small">View Historic Display Data</span>
+            </div>
+            <div class="slds-scrollable" style="height: 100rem; width: 45rem;">
+                <div class="slds">
+                    <c:SF_BaxterDisplayHistoricDataComponent_V1/>
+                </div>
+            </div>
+        </div>
+        
+    </aura:if>
+    <aura:attribute name="edit" type="Boolean" default="true"/>
+    <!-- Default Display historic component for general -->
+    <aura:if isTrue="{!v.displayFlag}">
+        <!-- Default Display historic component for general -->
+        <div class="slds-scrollable" style="height:100%;">
+            <div style="margin-left: 10px;color:#3498DB; margin-bottom: 20px">
+                <span class="slds-text-heading_small">View Historic Display Data</span>
+            </div>
+            <div class="slds-scrollable" style="height: 100rem; width: 45rem;">
+                <div class="slds">
+                    <c:SF_BaxterDisplayHistoricDataComponent_V1/>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.eventFlag}">
+        <!-- Default events historic component for general -->
+        <div class="slds-scrollable" style="height:100%;">
+            <div style="margin-left: 10px;color:#3498DB;margin-bottom: 20px">
+                <span class="slds-text-heading_small">View Historic Events Data</span>
+            </div>
+            <div class="slds-scrollable" style="height: 100rem; width: 45rem;">
+                <div class="slds">
+                    <c:SF_BaxterEventsHistoricDataComponent_V1/>
+                </div>
+            </div>
+        </div>
+        
+    </aura:if>
+    <aura:if isTrue="{!v.prospectFlag}">
+        <!-- prospect list and activities component for general -->
+        <div class="slds-scrollable" style="height:100%;">
+            <div style="margin-left: 10px;color:#3498DB;margin-bottom: 20px">
+                <span class="slds-text-heading_small">View Historic Prospect Data</span>
+            </div>
+            <div class="slds-scrollable" style="height: 100rem; width: 45rem;">
+                <div class="slds">
+                    <c:SF_BaxterProspectListHistoricDataComponent_V1/>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.trainingFlag}">
+        <!-- training component for general -->
+        <div class="slds-scrollable" style="height:100%;">
+            <div style="margin-left: 10px;color:#3498DB;margin-bottom: 20px">
+                <span class="slds-text-heading_small">View Historic Training Data</span>
+            </div>
+            <div class="slds-scrollable" style="height: 100rem; width: 45rem;">
+                <div class="slds">
+                    <c:SF_BaxterTrainingHistoricDataComponent_V1/>
+                </div>
+            </div>
+        </div>
+        
+    </aura:if>
+    
+</aura:component>

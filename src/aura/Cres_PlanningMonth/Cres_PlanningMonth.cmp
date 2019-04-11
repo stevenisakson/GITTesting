@@ -1,0 +1,100 @@
+<aura:component controller="Cres_PlanningMonthCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+
+    <aura:attribute name="plannedMonthList" type="List" default="[]" description="holds PlanMonth Data"/>
+ 
+    <aura:attribute name="isLoading" type="Boolean" default="true" description="to show the spinner"/>
+  
+  
+    <aura:attribute name="planmontherror" type="List" default="[]" description="validation errors"/>
+  
+    <aura:attribute name="columns" type="List" default="[{label:'Name',fieldName:'Name',type:'text'},{label:'Month',fieldName:'Month_Planned__c'},{label:'Year',fieldName:'Plan_Year__c',type:'text',cellAttributes: { alignment: 'left' }},{label:'Status',fieldName:'Status__c'},{label:'Territory',fieldName:'Territory_Name__c',type:'text'},
+                                                        {label:'Action',type: 'button', typeAttributes: {title:'Plan',label: 'Plan', name: 'show_details' }} ]"/>
+    
+    <aura:attribute name="showMonthPlan" type="Boolean" default="false" description="show the PlanMonth Errors"/>
+  
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    <aura:registerEvent name="appEvent" type="c:Cres_AppEvent" description="Application Event to be triggered to Load Plan Day Section"/>
+    <aura:handler event="c:Cres_AppEvent" action="{!c.refresh}" description="refresh Plan Month Section when Plan Day is changed"/>
+    
+   
+    
+    <div class="slds-box slds-theme_default">
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_2-of-12">
+                <div class="slds-text-heading--medium"><b>Month Plans</b></div>
+            </div>
+            <div class="slds-col slds-size_10-of-12">
+                <div class="slds-float_right">
+                    <lightning:button label="New Month Plan" onclick="{!c.addNewMonth}"/>
+                </div>
+            </div>
+            
+            <div class="slds-col slds-size_12-of-12">   
+               
+                <aura:if isTrue="{!v.isLoading}">
+                    <lightning:spinner variant="brand"/>
+                </aura:if>
+                <aura:if isTrue="{!v.showMonthPlan}">
+                    
+                    <lightning:recordEditForm 
+                                              objectApiName="Planning_Month__c" 
+                                              
+                                              recordTypeId="{!$Label.c.Cres_PlanMonthRecTypeId}"
+                                              onload="{!c.handleLoad}"
+                                              onsubmit="{!c.onsubmit}"
+                                              onerror="{!c.onError}"
+                                              onsuccess="{!c.onSuccess}">
+                        
+                        <div class="slds-box"> 
+                            <div class="slds-grid slds-wrap">
+                                
+                                <div class="slds-col slds-size_12-of-12">
+                                    <aura:if isTrue="{!v.planmontherror.length>0}">
+                                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" >
+                                            <aura:iteration items="{!v.planmontherror}" var="err">
+                                                <aura:if isTrue="{!err!=''}">    
+                                                    {!err}<br></br>
+                                                </aura:if>
+                                            </aura:iteration>
+                                            <div class="slds-notify__close">
+                                                <lightning:buttonIcon variant="border-inverse" onclick="{!c.clearError}" iconName="utility:close"/>
+                                            </div>
+                                        </div>
+                                    </aura:if>
+                                </div>
+                                <div class="slds-col slds-size_2-of-12">
+                                    <lightning:inputField fieldName="Target__c" />
+                                </div>
+                                <div class="slds-col slds-size_2-of-12 slds-p-left_small">
+                                    <lightning:inputField fieldName="Month_Planned__c" class="slds-m-left-small"/>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_2-of-12 slds-p-left_small">
+                                    <lightning:inputField fieldName="Plan_Year__c" class="slds-m-left-small"/>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_2-of-12 slds-p-top_large slds-p-left_small">
+                                    <lightning:button disabled="{!v.disabled}" variant="brand" class="slds-m-left-small" type="submit" name="save" label="Save" />
+                                </div>
+                            </div>
+                        </div>
+                    </lightning:recordEditForm>
+                </aura:if>
+            </div>
+        </div>
+        <div class="slds-col slds-size_12-of-12 slds-p-top_medium">   
+            <lightning:datatable
+                                 keyField="Id"
+                                 data="{! v.plannedMonthList }"
+                                 columns="{!v.columns }"
+                                 onrowaction="{! c.handleRowAction }"
+                                 hideCheckboxColumn="true"
+                                 maxColumnWidth="30px"
+                                 resizeColumnDisabled="true"/>
+            
+        </div>
+        
+    </div>  
+    
+    
+</aura:component>

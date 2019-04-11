@@ -1,0 +1,37 @@
+<apex:page standardController="Document"  extensions="LabyrinthDocumentPage_ctrl" showHeader="false" >
+  <div class="Header">
+<table>
+
+    <tr>
+    <td style="padding-right: 10px;">
+     <img src="{!URLFOR($Resource.LabyrinthLogo)}" width="300" height="75" id="phHeaderLogoImage"/>
+     </td>  
+    
+    <!-- <td >
+       <apex:outputLabel style="font-size: 12px; color:black;" value="Welcome"></apex:outputLabel><br></br>
+       <apex:outputText value="{!$User.FirstName} {!$User.LastName}" style="font-size: 22px; color:black;"></apex:outputText>
+     </td> -->
+     
+   </tr>
+</table>
+</div>
+
+  <apex:form >
+  <apex:sectionHeader subtitle="{!document.Folder.Name}" title="Documents"/>
+      <apex:pageBlock >
+      <apeX:pageBlockSection >
+          <apex:pageBlockTable value="{!documents1}" var="doc">
+          <apex:column headerValue="Action">
+              <apex:commandLink value="View" onclick="window.open('/servlet/servlet.FileDownload?file={!doc.id}')" reRender="none"/>
+          </apex:column>
+             <apex:column headerValue="Name">
+                 <apex:outputText value="{!doc.name}"></apex:outputText>
+             </apex:column>
+             <apex:column value="{!doc.Description }"/>
+             <apex:column value="{!doc.Type}"/>
+          
+          </apex:pageBlockTable>
+      </apeX:pageBlockSection>
+      </apex:pageBlock>
+  </apex:form>
+</apex:page>

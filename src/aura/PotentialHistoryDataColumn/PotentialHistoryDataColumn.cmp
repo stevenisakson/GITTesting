@@ -1,0 +1,18 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+	 <aura:attribute name="record" type="sObject"/>
+     <aura:attribute name="columnName"	type="String"/>
+     <aura:attribute name="columnValue" type="String"/>		
+     <aura:handler name="init" value="{!this}" action="{!c.doinit}"/>
+            	<td>
+                    <aura:if isTrue="{!v.columnName=='CreatedDate'}">
+                        <ui:outputDateTime value="{!v.columnValue}"  format="YYYY-MM-DD HH:mm:ss" /> 
+                         
+                        <aura:set attribute="else">
+                            <div class="slds-truncate">
+                                  {!v.columnValue}  
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                  
+                </td>
+    </aura:component>

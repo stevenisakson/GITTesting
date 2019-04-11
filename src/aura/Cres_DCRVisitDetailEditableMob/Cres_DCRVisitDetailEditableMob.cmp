@@ -1,0 +1,550 @@
+<aura:component controller="DCRDayMobCtrl"  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" access="global" >
+    <aura:attribute name="selectedTargetRecordId" type="sObject"/> 
+    <aura:attribute name="selectedRoute" type="sObject"/> 
+    <aura:attribute name="selectedRouteCustomer" type="sObject"/>
+    <aura:attribute name="selectedContactName" type="String" default=""/>
+    <aura:attribute name="pageReference" type="Object"/>
+    <aura:attribute name="isReadOnly" type="Boolean"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+    <aura:attribute name="Details" type="Boolean"/>
+    <aura:attribute name="showForm" type="Boolean" default="true"/>
+    
+    
+    <aura:attribute name="custId" type="String"/>
+    <aura:attribute name="dcrId" type="String"/>
+    
+    
+    <aura:attribute name="isSamePage" type="Boolean" default="false"/>
+    <aura:attribute name="mode" type="String" default="Edit"/>
+    <aura:attribute name="dcrerrors" type="list"/>
+    
+    <aura:attribute name="brandReminders" type="list"/>
+    <aura:attribute name="ProductDiscussed" type="list"/>
+    <aura:attribute name="ProductSample" type="list"/>
+    
+    <aura:attribute name="brandReminder1" type="String"/>
+    <aura:attribute name="ProductDiscussed1" type="String"/>
+    <aura:attribute name="ProductSample1" type="String"/>
+    
+    <aura:attribute name="brandReminder2" type="String"/>
+    <aura:attribute name="ProductDiscussed2" type="String"/>
+    <aura:attribute name="ProductSample2" type="String"/>
+    
+    <aura:attribute name="brandReminder3" type="String"/>
+    <aura:attribute name="ProductDiscussed3" type="String"/>
+    <aura:attribute name="ProductSample3" type="String"/>
+    
+    <aura:attribute name="brandReminder4" type="String"/>
+    <aura:attribute name="ProductDiscussed4" type="String"/>
+    <aura:attribute name="ProductSample4" type="String"/>
+    
+    <aura:attribute name="brandReminder5" type="String"/>
+    <aura:attribute name="ProductDiscussed5" type="String"/>
+    <aura:attribute name="ProductSample5" type="String"/>
+    
+    <aura:attribute name="accompaniedbyList" type="list"/>
+    <aura:attribute name="accompaniedby" type="String"/>
+    <aura:attribute name="lob" type="String"/>
+    
+    <lightning:navigation aura:id="navService"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <!--<aura:handler name="change" value="{!v.pageReference}" action="{!c.onRender}"/>-->
+    
+    
+    
+    <div class="slds-page-header">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <lightning:icon iconName="standard:note"/>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1>
+                                    <span class="slds-page-header__title slds-truncate" title="Activity Performed">
+                                        Visit Detail
+                                    </span>
+                                </h1>
+                            </div>
+                        </div>
+                        <p class="slds-page-header__name-meta">{!v.selectedRouteCustomer.Name} • {!v.selectedRoute.Name}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <aura:if isTrue="{!v.isLoading}">
+        <lightning:spinner variant="brand"/>
+    </aura:if>
+    <article class="slds-card slds-p-left_small slds-p-right_small slds-p-bottom_small">
+        <aura:if isTrue="{!v.showForm}">
+            <lightning:recordEditForm 
+                                      objectApiName="DCR_Day__c" 
+                                      aura:id="dcrCustform"
+                                      recordId="{!v.custId}"
+                                      onload="{!c.onload}"
+                                      onsubmit="{!c.saveBtnClick}"
+                                      onsuccess="{!c.onSuccess}"
+                                      onerror="{!c.onError}"
+                                      recordTypeId="{!$Label.c.Cres_DCRCustRecTypeId}"
+                                      >
+                
+                <!-- One -->
+                
+                <div class="slds-grid slds-wrap slds-m-bottom_small ">
+                    <aura:if isTrue="{!v.dcrerrors.length>0}">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-p-top_small slds-p-bottom_small">
+                            
+                            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" >
+                                <aura:iteration items="{!v.dcrerrors}" var="err">
+                                    <aura:if isTrue="{!err!=''}">    
+                                        {!err}<br></br>
+                                    </aura:if>
+                                </aura:iteration>
+                            </div>
+                            
+                        </div>
+                    </aura:if>
+                    
+                    <div class="{!'slds-col slds-size_1-of-1 slds-medium-size_1-of-1 '+if(v.mode=='View','slds-border_bottom','')}">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <lightning:outputField fieldName="Contact_Text__c" /> 
+                            <aura:set attribute="else">
+                                <c:DCRRouteLookUp selectedParentRecordId="{!v.selectedTargetRecordId}" objectAPIName="Route__c" selectedRecord="{!v.selectedRoute}" label="Route"/>
+                            </aura:set>  
+                        </aura:if>
+                    </div>
+                    <div class="{!'slds-col slds-size_1-of-1 slds-medium-size_1-of-1 '+if(v.mode=='View','slds-border_bottom','')}">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <lightning:outputField fieldName="Account__c" /> 
+                            <aura:set attribute="else">
+                                <c:DCRRouteLookUp objectAPIName="RouteCustomers" selectedParentRecord="{!v.selectedRoute}" selectedRecord="{!v.selectedRouteCustomer}" label="Account"/>
+                                <!--  <lightning:inputField fieldName="Route__c" />--> 
+                            </aura:set> 
+                        </aura:if>
+                    </div>
+                    <div class="{!'slds-col slds-size_1-of-1 slds-medium-size_1-of-1 '+if(v.mode=='View','slds-border_bottom','')}">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <lightning:outputField fieldName="Contact_Text__c" /> 
+                            <aura:set attribute="else">
+                                <!--<lightning:inputField fieldName="Contact__c" /> -->
+                                <c:Cres_ContactCombobox aura:id="contactField" selectedItemName="{!v.selectedContactName}" objectName="Contact" parentRecord="{!v.selectedRouteCustomer}"/>
+                            </aura:set>  
+                        </aura:if>
+                    </div>
+                    <div class="{!'slds-col slds-size_1-of-1 slds-medium-size_1-of-1 '+if(v.mode=='View','slds-border_bottom','')}">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <lightning:outputField fieldName="Accompanied_By__c" /> 
+                            <aura:set attribute="else">
+                                <lightning:select value="{!v.accompaniedby}" label="Accompanied By">
+                                    <option value="">None</option>
+                                    <aura:iteration items="{!v.accompaniedbyList}" var="item">
+                                        <option value="{!item.value}">{!item.label}</option>
+                                    </aura:iteration>
+                                    
+                                </lightning:select>
+                            </aura:set>  
+                        </aura:if>
+                    </div>
+                    <div class="{!'slds-col slds-size_1-of-1 slds-medium-size_1-of-1 '+if(v.mode=='View','slds-border_bottom','')}">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <lightning:outputField fieldName="POB__c" /> 
+                            <aura:set attribute="else">
+                                <lightning:inputField fieldName="POB__c" /> 
+                            </aura:set>  
+                        </aura:if>
+                    </div>
+                    
+                   <!-- <div class="{!'slds-col slds-size_1-of-1 slds-medium-size_1-of-1 '+if(v.mode=='View','slds-border_bottom','')}">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <lightning:outputField fieldName="LOB__c" /> 
+                            <aura:set attribute="else">
+                                <lightning:inputField fieldName="LOB__c" aura:id="lobField"/> 
+                            </aura:set>  
+                        </aura:if>
+                    </div>-->
+                    
+                    
+                    <div class="{!'slds-col slds-size_1-of-1 slds-medium-size_1-of-1 '+if(v.mode=='View','slds-border_bottom','')}">
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <lightning:outputField fieldName="Comments__c" /> 
+                            <aura:set attribute="else">
+                                <lightning:inputField fieldName="Comments__c" /> 
+                            </aura:set>  
+                        </aura:if>
+                        
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                        <lightning:accordion aura:id="accordion" activeSectionName="A">
+                            <lightning:accordionSection name="A" label="Sample Details 1">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Brand_Reminder1__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:select value="{!v.brandReminder1}" label="Brand Reminder 1">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.brandReminders}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Brand_Reminder1_Quantity__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:inputField fieldName="Brand_Reminder1_Quantity__c" /> 
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product1__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:select value="{!v.ProductDiscussed1}" label="Product Discussed 1">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.ProductDiscussed}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product_Details1__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:select value="{!v.ProductSample1}" label="Product Sample 1">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.ProductSample}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product_Quantity1__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:inputField fieldName="Product_Quantity1__c" /> 
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                            </lightning:accordionSection>
+                            <lightning:accordionSection name="B" label="Sample Details 2">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Brand_Reminder2__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:select value="{!v.brandReminder2}" label="Brand Reminder 1">
+                                                
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.brandReminders}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Brand_Reminder2_Quantity__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:inputField fieldName="Brand_Reminder2_Quantity__c" /> 
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product2__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:select value="{!v.ProductDiscussed2}" label="Product Discussed 2">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.ProductDiscussed}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product_Details2__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:select value="{!v.ProductSample2}" label="Product Sample 2">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.ProductSample}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>			
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product_Quantity2__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:inputField fieldName="Product_Quantity2__c" /> 
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                            </lightning:accordionSection>
+                            
+                            <lightning:accordionSection name="C" label="Sample Details 3">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Brand_Reminder3__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:select value="{!v.brandReminder3}" label="Brand Reminder 3">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.brandReminders}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Brand_Reminder3_Quantity__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:inputField fieldName="Brand_Reminder3_Quantity__c" /> 
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product3__c" /> 
+                                        <aura:set attribute="else">
+                                            
+                                            <lightning:select value="{!v.ProductDiscussed3}" label="Product Discussed 3">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.ProductDiscussed}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product_Details3__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:select value="{!v.ProductSample2}" label="Product Sample 2">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.ProductSample}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>	 
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product_Quantity3__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:inputField fieldName="Product_Quantity3__c" /> 
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                            </lightning:accordionSection>
+                            
+                            <lightning:accordionSection name="D" label="Sample Details 4">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Brand_Reminder4__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:select value="{!v.brandReminder4}" label="Brand Reminder 4">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.brandReminders}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Brand_Reminder4_Quantity__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:inputField fieldName="Brand_Reminder4_Quantity__c" /> 
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product4__c" /> 
+                                        <aura:set attribute="else">
+                                            
+                                            <lightning:select value="{!v.ProductDiscussed4}" label="Product Discussed 4">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.ProductDiscussed}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select> 
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product_Details4__c" /> 
+                                        <aura:set attribute="else">
+                                            
+                                            <lightning:select value="{!v.ProductSample4}" label="Product Sample 4">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.ProductSample}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>		
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product_Quantity4__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:inputField fieldName="Product_Quantity4__c" /> 
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                            </lightning:accordionSection>
+                            
+                            <lightning:accordionSection name="E" label="Sample Details 5">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Brand_Reminder5__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:select value="{!v.brandReminder5}" label="Brand Reminder 5">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.brandReminders}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Brand_Reminder5_Quantity__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:inputField fieldName="Brand_Reminder5_Quantity__c" /> 
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product5__c" /> 
+                                        <aura:set attribute="else">
+                                            
+                                            <lightning:select value="{!v.ProductDiscussed5}" label="Product Discussed 5">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.ProductDiscussed}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product_Details5__c" /> 
+                                        <aura:set attribute="else">
+                                            
+                                            
+                                            <lightning:select value="{!v.ProductSample5}" label="Product Sample 5">
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.ProductSample}" var="item">
+                                                    <option value="{!item.value}">{!item.label}</option>
+                                                </aura:iteration>
+                                                
+                                            </lightning:select>											
+                                            
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                                    <aura:if isTrue="{!v.mode=='View'}">
+                                        <lightning:outputField fieldName="Product_Quantity5__c" /> 
+                                        <aura:set attribute="else">
+                                            <lightning:inputField fieldName="Product_Quantity5__c" /> 
+                                        </aura:set>  
+                                    </aura:if>
+                                    
+                                </div>
+                            </lightning:accordionSection>
+                        </lightning:accordion>
+                    </div>
+                    <aura:if isTrue="{!v.dcrerrors.length>0}">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-p-top_small slds-p-bottom_small">
+                            
+                            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" >
+                                Page has Error. Please scrollup to View.
+                            </div>
+                            
+                        </div>
+                    </aura:if>
+                    <div  class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-align_absolute-center slds-m-top_small">
+                            <aura:if isTrue="{!v.mode=='Edit'}">
+                                
+                                
+                                <lightning:button class="fullwidthBtn" type="submit" variant="brand" name="Save" title="Save">Save</lightning:button>
+                                <lightning:button class="fullwidthBtn" variant="brand" onclick="{!c.cancelBtnClick}">Cancel</lightning:button>
+                            </aura:if>
+                            <aura:if isTrue="{!v.mode=='View'}">
+                                <lightning:button class="fullwidthBtn" variant="brand" onclick="{!c.cancelBtnClick}">Back</lightning:button>
+                            </aura:if>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                </div>
+            </lightning:recordEditForm>
+        </aura:if>
+    </article>
+</aura:component>

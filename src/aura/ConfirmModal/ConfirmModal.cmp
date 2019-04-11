@@ -1,0 +1,32 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+  
+    
+    <aura:registerEvent name="confirmcheck" type="c:ConfirmModalevent"/>
+    
+    <!--###### MODAL BOX Start From Here ######--> 
+    <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+        <div class="slds-modal__container">
+            
+            <div class="slds-modal__header">
+                <button  class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                    X
+                    <span class="slds-assistive-text">close</span>  
+                </button>
+                   <h2 id="header99" class="slds-text-heading--medium">{!$Label.c.POT_CONFIRMATION_TITLE}</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around--medium">
+                <div>
+                    <p><b>{!$Label.c.POT_CHANGECONFIR_MSG} </b></p>	
+                </div>
+            </div>
+            <div class="slds-modal__footer">
+                <button class="slds-button slds-button--neutral" onclick="{!c.openModel}" > {!$Label.c.POT_YES}</button >
+                <button class="slds-button slds-button--brand" onclick="{!c.closeModel}" >  {!$Label.c.POT_NO} </button >
+            </div>
+        </div>         
+    </div>   
+    <div class="slds-backdrop slds-backdrop--open"></div>
+    
+    
+</aura:component>

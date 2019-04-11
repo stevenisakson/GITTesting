@@ -1,0 +1,15 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="item" type="sObject"/>
+    <aura:registerEvent name="itemSelected" type="c:rowEvent"/>
+    <li role="presentation" class="slds-listbox__item">
+        <div id="option1" onclick="{!c.select}" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-p-left_none" role="option">
+            <!-- <span class="slds-media__figure">
+               <lightning:icon iconName="standard:account" size="x-small"/>
+            </span>-->
+            <!--class ='slds-truncate'-->
+            <span class="slds-media__body">
+                <span class="slds-p-left_xx-small" title="{!v.item.Name}">{!v.item.Name}</span>
+            </span>
+        </div>
+    </li>
+</aura:component>

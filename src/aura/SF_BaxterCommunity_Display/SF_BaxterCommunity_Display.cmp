@@ -1,0 +1,25 @@
+<aura:component controller="Cargill_Lt_AttachmentUpload" implements="force:appHostable,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> <!-- calling doInit method in Component Controller -->
+    <aura:attribute name="accountattId" type="String" />
+    <aura:attribute name="accountattachment" type="Account_Attachments__c" default="{'sobjectType': 'Account_Attachments__c','Account__c': '','Start_Month_Date__c': '',
+                                                                                    'Type__c': '','Last_Upload_Date__c': '','Training_Date__c': '','Topic__c': '','of_Attendees__c': '','Attendees__c': '', 'Monthly_Uploaded_Date__c': ''}"/>
+    
+    <div class="container-fluid">
+        
+        <div class="form-group" style="color:#3498DB;padding-bottom: 15px;">
+            <span class="slds-text-heading_small">*Document to Upload : {!$Label.c.Cargill_Type_Display}</span>
+        </div>
+        
+        <div class="form-group">
+            <ui:inputSelect label="Month: " class="form-control" aura:id="InputSelectDynamicMonth"/>
+        </div>
+        <div class="form-group">
+            <ui:inputSelect label="Year: " class="dynamic" aura:id="InputSelectDynamicYear"/>
+        </div>
+        <br/>
+    </div>
+    <div class="col-md-4 text-center">
+        <ui:button class="slds-button slds-button_brand" press="{!c.create}">Create</ui:button>
+    </div>
+</aura:component>

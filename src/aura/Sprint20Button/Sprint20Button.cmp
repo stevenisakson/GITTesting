@@ -1,0 +1,5 @@
+<aura:component >
+    <!-- Base variant: Makes a button look like a link -->
+    <lightning:button variant="base" label="Button" title="Base action" onclick="{! c.handleClick }"/>
+	
+</aura:component>

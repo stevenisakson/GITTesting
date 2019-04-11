@@ -1,0 +1,164 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	
+   <!--CHild component of SimplePotentialCalcTable
+   this component is mainly for calculating Certain fields on the fly(real time)
+   component responsible for dynamically fetching the formula and convert it into expressions
+   and return the result in UI
+   -->
+    <aura:attribute name="product_functions" type='List'/>    
+    <aura:attribute name="prod_types" type='List'/>   
+       
+    <aura:attribute name="row" type='sObject'/>
+    <aura:attribute name="index" type="Integer"/>
+    <aura:attribute name="recordList" type='List'/>
+    <aura:attribute name="autoPopValues" type='List'/>
+    <aura:attribute name='formulaMap' type='sObject'/>
+    <aura:attribute name="fieldAccess" type='sObject' default='{}' description="to hide/show fields"/>
+    <aura:attribute name="calcType" type='String'/>
+    
+    <aura:attribute name="species" type='String'/>
+    
+    <aura:registerEvent name="rowEvent" type="c:rowEvent"/>
+  
+    
+    <aura:registerEvent name="recalculation" type="c:rowEvent"/>
+    <aura:registerEvent name="deleterow" type="c:rowEvent"/>
+    <aura:attribute name="mode" type='String' default='Edit'/>
+        
+    <aura:method name="resetTotals" action="{!c.resetTotals}"/>
+    <aura:attribute name="render" type='Boolean' default='false'/>
+   
+        <!--To show blue separation between Cargill records and its competitor-->
+        <aura:if isTrue="{!and(!v.row.isCompetitor,v.index!=0)}">
+            <tr>
+                <td colspan="13" style='border-color:white;background-color:rgb(0, 112, 210);padding:2px 2px 2px 2px;'></td>  
+            </tr>
+        </aura:if>
+    <tr>
+        
+        <td data-label="Product Function" style="padding:2px 2px 2px 0px">
+                <aura:if isTrue="{!!v.row.isCompetitor}">
+                    <div class="slds-truncate">
+                        <lightning:select class="{!if(v.row.errorFields.prod_fun_error==true,'mediuminputwidth errorSelect','mediuminputwidth')}" label='ss' value="{!v.row.product_function}" onchange="{!c.productfunctionOrTypeChanged}">
+                          
+                            <aura:iteration items="{!v.product_functions}" var="item">
+                                <option value="{!item.value}">{!item.label}</option>
+                                
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                </aura:if>
+            </td>
+            <td data-label="Type" style="padding:2px 2px 2px 0px">
+                <aura:if isTrue="{!!v.row.isCompetitor}">
+                    <div class="slds-truncate" >
+                        <lightning:select class="{!if(v.row.errorFields.pftype_error==true,'mediuminputwidth errorSelect','mediuminputwidth')}" label='ss' value='{!v.row.pftype}' onchange="{!c.productfunctionOrTypeChanged}">
+                         
+                            <aura:iteration items="{!v.prod_types}" var="item">
+                                
+                                <option value="{!item.value}">{!item.label}</option>
+                                
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                </aura:if>
+            </td>
+            <td data-label="Value/CFE" style="padding:2px 2px 2px 0px">
+                <aura:if isTrue="{!!v.row.isCompetitor}">
+                    <div class="slds-truncate" >
+                        <ui:InputNumber format="0.00" class="{!if(v.row.errorFields.value_cfe_error==true,'smallinputwidth errorInput','smallinputwidth')}" value='{!v.row.value_cfe}'   change="{!c.annualcfeOrValueChanged}" disabled="{!if(v.row.Is_Value_MT_CFE_lock==true,True,False)}"/>
+                    </div>
+                </aura:if>
+            </td>
+            <td data-label="CFE Incl %" style="padding:2px 2px 2px 0px">
+                <aura:if isTrue="{!!v.row.isCompetitor}">
+                    <div class="slds-truncate" >
+                        <ui:InputNumber format="0.00" class="{!if(v.row.errorFields.cfe_incl_error==true,'smallinputwidth errorInput','smallinputwidth')}" value='{!v.row.cfe_incl}'   change="{!c.annualcfeOrValueChanged}" disabled="{!if(v.row.Is_CFE_Incl_lock==true,True,False)}"/>
+                    </div>
+                </aura:if>
+            </td>
+            <td data-label="Annual CFE" style="padding:2px 2px 2px 0px">
+                <aura:if isTrue="{!!v.row.isCompetitor}">
+                    <div class="slds-truncate" >
+                        <ui:InputNumber format="0" class="{!if(v.row.errorFields.annual_cfe_error==true,'smallinputwidth errorInput','smallinputwidth')}" value='{!v.row.annual_cfe}' change="{!c.annualcfeOrValueChanged}"  />
+                    </div>
+                </aura:if>
+            </td>
+       
+        <aura:if isTrue="{!v.fieldAccess.SPE_CFE_Annual_Volume_Access__c}">
+            <td data-label="Annual Volume" style="padding:2px 2px 2px 0px">
+                <aura:if isTrue="{!!v.row.isCompetitor}">
+                    <div class="slds-truncate" >
+                        <ui:InputNumber format="0" value='{!v.row.annual_volume}'  class="smallinputwidth" disabled="true"/>
+                    </div>
+                </aura:if>
+            </td>
+        </aura:if>
+            <aura:if isTrue="{!v.fieldAccess.SPE_CFE_Total_Access__c}">
+                <td data-label="Total" style="padding:2px 2px 2px 0px">
+                    <aura:if isTrue="{!!v.row.isCompetitor}"> 
+                        <div class="slds-truncate">
+                            <ui:InputNumber value='{!v.row.total}' format="0"  change="{!c.totalChanged}"  class="{!if(v.row.errorFields.total_error==true,'smallinputwidth errorInput',if(v.row.totalOverridden,'smallinputwidth overridden','smallinputwidth'))}" disabled="false"/>
+                        </div>
+                    </aura:if>
+                </td>
+            </aura:if>
+            <td data-label="isCompetitor" style="padding:2px 2px 2px 0px">
+                <div>
+                    <aura:if isTrue="{!v.row.isCompetitor}"> 
+                        <c:Combobox  selectedItemName="{!v.row.competitor}" styleclass="{!if(v.row.errorFields.competitor_error==true,'errorText','')}" objectName="Account"/>
+                        <!-- <c:combobox selectedValue="{!v.row.competitor}"/>-->
+                        <!--<ui:inputText value='{!v.row.competitor}' class="{!if(v.row.errorFields.competitor_error==true,'mediuminputwidth errorText','mediuminputwidth')}"/>-->
+                        <aura:set attribute="else">
+                            <!--<ui:inputText value='{!v.row.competitor}' disabled='true' class="mediuminputwidth"/>-->
+                            <ui:inputText value='{!v.row.competitor}' disabled='true' class=""/>
+                        </aura:set>
+                    </aura:if>
+                </div>
+            </td>
+            <td data-label="% of share" style="padding:2px 2px 2px 0px">
+                <div class="slds-truncate">
+                    
+                    <ui:InputNumber format="0" value='{!v.row.percent_of_share}'   class="{!if(v.row.errorFields.percent_of_share_error==true,'smallinputwidth errorInput','smallinputwidth')}"  change="{!c.percent_of_shareChanged}"/>
+                </div>
+            </td>
+            <aura:if isTrue="{!v.fieldAccess.SPE_CFE_Annual_CFE2__c}">
+                <td data-label="Annual CFE 2" style="padding:2px 2px 2px 0px">
+                    <div class="slds-truncate">
+                        <input value='{!v.row.annual_cfe_con}' title='{!v.row.annual_cfe_con}' class='slds-input smallinputwidth formulaField' disabled='true'/>
+                    </div>
+                </td>
+            </aura:if>
+            <aura:if isTrue="{!v.fieldAccess.SPE_CFE_Contribution_Access__c}">
+                <td data-label="Contribution" style="padding:2px 2px 2px 0px">
+                    <div class="slds-truncate">
+                        <input disabled='true' title='{!v.row.contribution}' value='{!v.row.contribution}'  class='slds-input smallinputwidth formulaField'/>
+                        <!--<ui:inputNumber disabled='true' value='{!v.row.contribution}'  class='mediuminputwidth'/>-->
+                    </div>
+                </td>
+            </aura:if>
+            <td data-label="Salesperson" style="padding:2px 2px 2px 0px">
+                <div>
+                    <aura:if isTrue="{!v.row.isCompetitor}"> 
+                        <c:Combobox parentRecordName="{!v.row.competitor}" selectedItemName="{!v.row.sales_person}" objectName="Contact"/>
+                        <!--<ui:InputText value='{!v.row.sales_person}' />-->
+                        <aura:set attribute='else'>
+                            <input disabled='true' class='slds-input formulaField' value='{!v.row.sales_person}' title="{!v.row.sales_person}"/> 
+                        </aura:set>
+                    </aura:if>
+                </div>
+            </td>
+            <td>
+                <aura:if isTrue="{!!v.row.isCompetitor}">
+                    <lightning:buttonicon title="{!$Label.c.POT_ADD_COMPETITOR}" onclick="{!c.fireAddCompetitor}" iconName="utility:add"  size="x-small" alternativeText="{!$Label.c.POT_ADD_COMPETITOR}"/>
+                    <aura:set attribute="else">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </aura:set>
+                </aura:if> 
+               &nbsp;<lightning:buttonicon title="{!$Label.c.POT_Delete}" iconName="utility:delete" onclick="{!c.removePotential}" size="x-small" alternativeText="{!$Label.c.POT_Delete}"/>
+                
+            </td>
+        </tr>
+        {!v.body}
+    
+</aura:component>

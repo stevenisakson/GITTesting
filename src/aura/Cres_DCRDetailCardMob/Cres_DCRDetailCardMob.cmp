@@ -1,0 +1,272 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="item" type="sObject"/> 
+    
+    <aura:attribute name="dcrId" type="String"/> 
+    <aura:attribute name="targetId" type="String"/> 
+    <aura:attribute name="sampleDetails1" type="Boolean" default="false"/> 
+    <aura:attribute name="sampleDetails2" type="Boolean" default="false"/> 
+    <aura:attribute name="sampleDetails3" type="Boolean" default="false"/> 
+    <aura:attribute name="sampleDetails4" type="Boolean" default="false"/> 
+    <aura:attribute name="sampleDetails5" type="Boolean" default="false"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    <aura:attribute name="isDCRLocked" type="Boolean" default="false"/>  
+    <lightning:navigation aura:id="navService"/>
+    <lightning:card  title="{!v.item.Account__r.Name}">
+            <aura:set attribute="actions">
+                <lightning:button label="Edit" onclick="{!c.dcrEdit}" disabled="{!v.isDCRLocked}"/>
+            </aura:set>
+            <article class="slds-tile">
+                <dl class="slds-list_horizontal slds-wrap slds-p-left_medium">
+                    <dt class="slds-item_label slds-text-color_weak slds-truncate ">
+                        Route   
+                    </dt>
+                    <dd class="slds-item_detail slds-truncate">
+                        {!v.item.Route__r.Name}
+                    </dd>
+                    
+                    <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                        Contact  
+                    </dt>
+                    <dd class="slds-item_detail slds-truncate">
+                        <p class="slds-truncate" title="Salesforce"> {!v.item.Contact_Text__c}</p>
+                    </dd>
+                    
+                    <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                        Accompanied by
+                    </dt>
+                    <dd class="slds-item_detail slds-truncate">
+                        {!v.item.Accompanied_By__c}
+                    </dd>
+                    
+                    <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                        POB
+                    </dt>
+                    <dd class="slds-item_detail slds-truncate">
+                        {!v.item.POB__c}
+                    </dd>
+                    
+                    <dt class="slds-item_label slds-text-color_weak">
+                        Comments
+                    </dt>
+                    <dd class="slds-item_detail">
+                        {!v.item.Comments__c}
+                    </dd>
+                </dl>
+                <div class="{!'slds-section '+if(v.sampleDetails1,'slds-is-open','')}">
+                    <h3 class="slds-section__title">
+                        <lightning:button iconName="{!if(v.sampleDetails1,'utility:chevrondown','utility:chevronright')}" onclick="{!c.toggleSampleDetails1}"  class="slds-button slds-section__title-action whiteBtn">Sample Details 1</lightning:button>
+                      
+                    </h3>
+                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                        <dl class="slds-list_horizontal slds-wrap slds-p-left_medium">
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Brand Reminder 1
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Brand_Reminder1__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Brand Reminder 1<br/> Quantity
+                            </dt>
+                            <dd class="slds-item_detail slds-truncate">
+                                {!v.item.Brand_Reminder1_Quantity__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Discussed 1
+                            </dt>
+                            <dd class="slds-item_detail slds-truncate">
+                                {!v.item.Product1__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Sample 1
+                            </dt>
+                            <dd class="slds-item_detail slds-truncate">
+                                {!v.item.Product_Details1__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Quantity 1
+                            </dt>
+                            <dd class="slds-item_detail slds-truncate">
+                                {!v.item.Product_Quantity1__c}	
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                
+                <!-- Product Sample 2-->
+                 <div class="{!'slds-section '+if(v.sampleDetails2,'slds-is-open','')}">
+                    <h3 class="slds-section__title">
+                        <lightning:button iconName="{!if(v.sampleDetails2,'utility:chevrondown','utility:chevronright')}" onclick="{!c.toggleSampleDetails2}" class="slds-button slds-section__title-action whiteBtn">Sample Details 2</lightning:button>
+                      
+                    </h3>
+                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                        <dl class="slds-list_horizontal slds-wrap slds-p-left_medium">
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Brand Reminder 2
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Brand_Reminder2__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Brand Reminder 2 Quantity
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Brand_Reminder2_Quantity__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Discussed 2
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Product2__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Sample 2
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Product_Details2__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Quantity 2
+                            </dt>
+                            <dd class="slds-item_detail slds-truncate">
+                                {!v.item.Product_Quantity2__c}	
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+				
+                <!--Product Sample 3-->
+                 <div class="{!'slds-section '+if(v.sampleDetails3,'slds-is-open','')}">
+                    <h3 class="slds-section__title">
+                        <lightning:button iconName="{!if(v.sampleDetails3,'utility:chevrondown','utility:chevronright')}" onclick="{!c.toggleSampleDetails3}" class="slds-button slds-section__title-action whiteBtn">Sample Details 3</lightning:button>
+                      
+                    </h3>
+                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                        <dl class="slds-list_horizontal slds-wrap slds-p-left_medium">
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Brand Reminder 3
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Brand_Reminder3__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Brand Reminder 3 Quantity
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Brand_Reminder3_Quantity__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Discussed 3
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Product3__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Sample 3
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Product_Details3__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Quantity 3
+                            </dt>
+                            <dd class="slds-item_detail slds-truncate">
+                                {!v.item.Product_Quantity3__c}	
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+				
+                <!--Section 4-->
+                
+                 <div class="{!'slds-section '+if(v.sampleDetails4,'slds-is-open','')}">
+                    <h3 class="slds-section__title">
+                        <lightning:button iconName="{!if(v.sampleDetails4,'utility:chevrondown','utility:chevronright')}" onclick="{!c.toggleSampleDetails4}" class="slds-button slds-section__title-action whiteBtn">Sample Details 4</lightning:button>
+                      
+                    </h3>
+                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                        <dl class="slds-list_horizontal slds-wrap slds-p-left_medium">
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Brand Reminder 4
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Brand_Reminder4__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Brand Reminder 4 Quantity
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Brand_Reminder4_Quantity__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Discussed 4
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Product4__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Sample 4
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Product_Details4__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Quantity 4
+                            </dt>
+                            <dd class="slds-item_detail slds-truncate">
+                                {!v.item.Product_Quantity4__c}	
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+				
+                
+                <!--Section 4-->
+                	 <div class="{!'slds-section '+if(v.sampleDetails5,'slds-is-open','')}">
+                    <h3 class="slds-section__title">
+                        <lightning:button iconName="{!if(v.sampleDetails5,'utility:chevrondown','utility:chevronright')}" onclick="{!c.toggleSampleDetails5}" class="slds-button slds-section__title-action whiteBtn">Sample Details 5</lightning:button>
+                      
+                    </h3>
+                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                        <dl class="slds-list_horizontal slds-wrap slds-p-left_medium">
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Brand Reminder 5
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Brand_Reminder5__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Brand Reminder 5 Quantity
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Brand_Reminder5_Quantity__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Discussed 5
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Product5__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Sample 5
+                            </dt>
+                            <dd class="slds-item_detail">
+                                {!v.item.Product_Details5__c}
+                            </dd>
+                            <dt class="slds-item_label slds-text-color_weak">
+                                Product Quantity 5
+                            </dt>
+                            <dd class="slds-item_detail slds-truncate">
+                                {!v.item.Product_Quantity5__c}	
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+				
+                
+                
+                
+            </article>
+            
+        </lightning:card>
+</aura:component>

@@ -1,0 +1,6 @@
+<aura:component controller= "Cargill_Lt_AttachmentUpload" implements="force:lightningQuickAction,force:appHostable,forceCommunity:availableForAllPageTypes">
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="homeUrl" type="string"/>
+    <div center="align">In Progress...</div>
+    <!--force:lightningQuickActionWithoutHeader-->
+</aura:component>

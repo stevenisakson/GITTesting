@@ -1,0 +1,5 @@
+<aura:event type="COMPONENT" >
+
+ <aura:attribute name="isOpen" type="Boolean"/>
+ <aura:attribute name="rowID" type="String"/>
+</aura:event>

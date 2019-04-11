@@ -1,0 +1,31 @@
+<apex:component controller="RebateApprovalTemplate" access="global">
+    <apex:attribute name="RebId" type="Id" description="Id of the rebate" assignTo="{!rebateId}"/>
+    <table border = "2" cellspacing = "5">
+        <tr>
+            <td>Product</td>
+            <td>Only For Packaging</td>
+            <td>Only For Payment Terms</td>
+            <td>List Price</td>
+            <td>Discount %</td>
+            <td>Discount Value</td>  
+            <td>Special Price</td> 
+            <td>Apply permanent discounts</td> 
+            <td>Apply logistic discounts</td> 
+            <td>Comments</td>                  
+        </tr>
+        <apex:repeat value="{!lines}" var="o">
+        <tr>
+            <td>{!o.Product__c}</td>
+            <td>{!o.Packaging__c}</td>
+            <td>{!o.CAR_Payment_Terms__c}</td>
+            <td>{!o.Price__c}</td>
+            <td>{!o.Discount_Percentage__c}</td>
+            <td>{!o.Discount_Value__c}</td>     
+            <td>{!o.Special_price__c}</td>
+            <td>{!o.Apply_permanent_discounts__c}</td> 
+            <td>{!o.Apply_logistic_discounts__c}</td> 
+            <td>{!o.Comments__c}</td>           
+        </tr>
+        </apex:repeat>        
+    </table>
+</apex:component>

@@ -1,0 +1,54 @@
+<apex:page sidebar="false" showHeader="false">
+
+<!--<apex:iframe src="https://app.powerbi.com/view?r=eyJrIjoiY2QxNzRmMzItMjU5Yi00ZDYzLWJlZDgtNGQ2NzNmNDg5ZmYwIiwidCI6IjU3MzY4YzIxLWI4Y2YtNDJjZi1iZDBiLTQzZWNkNGJjNjJhZSIsImMiOjN9"  scrolling="true" frameborder="0" width="900px" height="600px" id="account_app_usage" />  -->  
+
+    <style>
+        .non-floater {overflow:hidden;}
+        iframe { width:100%; padding:0; border:0; hegiht:100%; }
+    </style>
+    
+    <script>
+           $(document).bind("contextmenu",function(e) {
+             e.preventDefault();
+        });
+
+    </script>
+    
+    <script>
+        function OpenPage(sourcePage){
+            if(sourcePage == 'BI'){
+                var win=window.open('https://login.microsoftonline.com/common/oauth2/authorize?client_id=871c010f-5e61-4fb1-83ac-98610a7e9110&response_mode=form_post&response_type=code+id_token&scope=openid+profile&state=OpenIdConnect.AuthenticationProperties%3dvWeGhoiHrbEG9MtE1j76PJNx4vKj5t0MQgzd0I9BHAlSGhC4EucYwsc8VAPDo68bpEc7-JtIpbgVu5cB5Tljjd_B1hoQ5nFIh4fRWmic1wvor6i5KQ3YNAi-EJJ_Z9jYdvJtHbZ1Cai6cUj805fHnZhpzpYAi0oCGseKjksnbiJI3eYGNwqoxuy_-7P8Z7TUDe47mVToR5p6FsZIM7eSQ8IjAOw&nonce=636128849452492725.NzVhOWQ4OGEtMWM0Zi00M2U0LThkYmEtY2M4Y2VkMjQ4OTBjZjI0NDhlNzMtZTdmMC00NmEzLWE1NDEtNWUwNTUxZTYzOTRl&site_id=500453&redirect_uri=https%3a%2f%2fapp.powerbi.com%2fgroups%2fme%2fdashboards%2fc0b22938-29c0-48bd-858f-e81984f9cef1&post_logout_redirect_uri=https%3a%2f%2fapp.powerbi.com%2fgroups%2fme%2fdashboards%2fc0b22938-29c0-48bd-858f-e81984f9cef1&resource=https%3a%2f%2fanalysis.windows.net%2fpowerbi%2fapi&nux=1&msafed=0', '_blank');
+                win.focus();
+            }
+           }
+    </script>
+    
+    <apex:form >
+           <!-- <apex:outputLink style="color:Black; text-align: right; float:right"  value="/apex/AccountlandingPage">Home</apex:outputLink> -->
+        
+                        <apex:outputPanel style="float:centre">
+                            <div align="center" draggable="false" >
+                            <apex:commandButton value="BI" title="Power BI" styleClass="myClass" onclick="OpenPage('BI'); return false; " image="{!URLFOR($Resource.BI)}" style="height:50px;width:100px" />
+                            </div>
+                         </apex:outputPanel>
+                            
+        
+        <apex:pageBlock title=" " mode="edit">
+        
+                         
+                         
+                         
+            <apex:pageBlockSection title="Power BI Report" columns="1">
+               <div class="non-floater">
+               <!-- <apex:iframe src="https://app.powerbi.com/view?r=eyJrIjoiY2QxNzRmMzItMjU5Yi00ZDYzLWJlZDgtNGQ2NzNmNDg5ZmYwIiwidCI6IjU3MzY4YzIxLWI4Y2YtNDJjZi1iZDBiLTQzZWNkNGJjNjJhZSIsImMiOjN9" id="EmbeddedBI" scrolling="true" frameborder="0"> </apex:iframe>-->
+               <iframe width="800" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiOTBlNzA3MzktYzA3Mi00MDliLTgwYTEtYzQ1MTJmMDlhMzRkIiwidCI6IjU3MzY4YzIxLWI4Y2YtNDJjZi1iZDBiLTQzZWNkNGJjNjJhZSIsImMiOjN9" frameborder="0" allowFullScreen="true"></iframe>
+                
+                </div> 
+            
+            </apex:pageBlockSection>
+            
+             
+         </apex:pageBlock>
+    </apex:form>
+    
+</apex:page>

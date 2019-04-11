@@ -1,0 +1,315 @@
+<aura:component controller="Cres_PlanningMonthCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <!--
+     @Author Sam Boban
+     Used Create/Edit a Plan Day record
+    -->
+    <aura:attribute name="planDay" type="SObject" description="sObject used by Record Edit Form"/>
+    <aura:attribute name="mode" type="String" default="View" description="mode of the Form Edit/ReadOnly"/>
+    <aura:attribute name="userType" type="String" default=""/>
+    <aura:attribute name="index" type="Integer" description='index position of the child'/>
+    <aura:attribute name="plandaylist" type="List" />
+    <aura:attribute name="planMonthId" type="String" description="plan month Id of plan days"/>
+    <aura:attribute name="territoryId" type="String" description="territory Id for which Route should be displayed"/>
+    <aura:attribute name="isReadOnly" type="Boolean" description="false"/>
+    <aura:attribute name="plandayerror" type="list" description="errors"/>
+    <aura:attribute name="selectedRoute" type="SObject" default="{}"/>
+    <aura:registerEvent name="appEventToPlanMonth" type="c:Cres_AppEvent" description="to be fired when a new plan day is added/deleted to PlanMonth Section"/>
+    
+    <aura:attribute name="showCustomers" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:registerevent name="Plandayrecords" type="c:Cres_plandayrecordsevent" description="to be fired when a new plan day is added/deleted to Plan Day section"/>
+    <aura:handler name="deleteModelEvent" event="c:DeleteConfirmModalEvent" action="{!c.deleteRec}" description="to show Delete popup"/> 
+    <div class="slds-theme_default">
+        {!v.body}
+        <div class="slds-grid slds-wrap" >
+            
+            <div class="slds-col slds-size_12-of-12" style="padding:2px 1px 2px 1px;">
+                <aura:if isTrue="{!v.plandayerror.length>0}">
+                    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" >
+                        <aura:iteration items="{!v.plandayerror}" var="err">
+                            <aura:if isTrue="{!err!=''}">    
+                                {!err}<br></br>
+                            </aura:if>
+                        </aura:iteration>
+                        <div class="slds-notify__close">
+                            <lightning:buttonIcon variant="border-inverse" onclick="{!c.clearError}" iconName="utility:close"/>
+                        </div>
+                    </div>
+                </aura:if>
+            </div>
+        </div>
+        <aura:if isTrue="{!v.index==0}">
+            <!--HEADER SECTION-->
+            <div class="slds-grid slds-wrap slds-p-top_xxx-small slds-p-bottom_xxx-small slds-border_bottom" style="background-color:#fafaf9;">
+                
+                <div class="slds-col largeinputwidth hideLabel slds-p-left_xx-small" style="width:190px;">
+                    <aura:if isTrue="{!v.index==0}">
+                        
+                        <b> Route</b>
+                        <div class="slds-m-top_x-small"></div> 
+                    </aura:if>
+                    
+                    
+                </div>
+                <div class="slds-col largeinputwidth  hideLabel slds-p-left_xx-small">
+                    <aura:if isTrue="{!v.index==0}">
+                        
+                        <b> Date</b>
+                        <div class="slds-m-top_x-small"></div> 
+                    </aura:if>
+                    
+                    
+                    
+                </div>
+                <div class="slds-col largeinputwidth  slds-p-left_xx-small  hideLabel">
+                    <aura:if isTrue="{!v.index==0}">
+                        
+                        <b> Activity End Date</b>
+                        <div class="slds-m-top_x-small"></div> 
+                    </aura:if>
+                    
+                    
+                </div>
+                <div class="slds-col  slds-p-left_xx-small largeinputwidth  hideLabel">
+                    <aura:if isTrue="{!v.index==0}">
+                        
+                        <b> First Half</b>
+                        <div class="slds-m-top_x-small"></div> 
+                    </aura:if>
+                    
+                    
+                </div>
+                <div class="slds-col   slds-p-left_xx-small largeinputwidth  hideLabel">
+                    <aura:if isTrue="{!v.index==0}">
+                        
+                        <b> Second Half</b>
+                        <div class="slds-m-top_x-small"></div> 
+                    </aura:if>
+                    
+                    
+                </div>
+                <aura:if isTrue="{!v.userType!='VSA'}">  
+                    <div class="slds-col verysmallinputwidth slds-p-left_xx-small hideLabel">
+                        <aura:if isTrue="{!v.index==0}">
+                            
+                            <b>VSA</b>
+                            <div class="slds-m-top_x-small"></div> 
+                        </aura:if>
+                        
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.userType!='ASM'}">       
+                    <div class="slds-col slds-p-left_xx-small verysmallinputwidth  hideLabel">
+                        <aura:if isTrue="{!v.index==0}">
+                            
+                            <b>ASM</b>
+                            <div class="slds-m-top_x-small"></div> 
+                        </aura:if>
+                        
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.userType!='RSM'}">  
+                    <div class="slds-col  slds-p-left_xx-small verysmallinputwidth hideLabel">
+                        <aura:if isTrue="{!v.index==0}">
+                            <div>
+                                <b>RSM</b>
+                                <div class="slds-m-top_x-small"></div> 
+                            </div>
+                        </aura:if>
+                    </div>        
+                </aura:if>
+                <div class="slds-col slds-p-left_xx-small mediuminputwidth hideLabel">
+                    <aura:if isTrue="{!v.index==0}">
+                        <div>
+                            <b>Other JFW</b>
+                            <div class="slds-m-top_x-small"></div> 
+                        </div>
+                    </aura:if>
+                    
+                    
+                </div>
+                <div class="slds-col largeinputwidth slds-p-left_xx-small hideLabel">
+                    <aura:if isTrue="{!v.index==0}">
+                        <div>
+                            <b>Comments</b>
+                            <div class="slds-m-top_x-small"></div> 
+                        </div>
+                    </aura:if>
+                    
+                    
+                </div>
+                <div class="slds-col  slds-p-left_xx-small" style="width:110px">
+                
+                     
+                         <lightning:buttonIcon disabled="{!v.isReadOnly}" onclick="{!c.addRow}" title="Add New Plan Day" iconName="utility:add"></lightning:buttonIcon>
+                        <div class="slds-m-top_x-small"></div> 
+
+                                  
+                    
+                </div>
+                <!--<div class="slds-col slds-size_12-of-12" style="background-color:#706e6b;height:2px;">
+                
+            </div>-->
+                
+            </div> 
+        </aura:if>
+        
+        <!--Body Section-->
+        <lightning:recordEditForm 
+                                  objectApiName="Planning_Month__c" 
+                                  aura:id="planDayForm"
+                                  onload="{!c.onload}"
+                                  recordId="{!v.planDay.Id}"
+                                  recordTypeId="{!$Label.c.Cres_Plan_DayRecTypeId}"
+                                  onsubmit="{!c.onSubmit}"
+                                  onerror="{!c.onError}"
+                                  
+                                  onsuccess="{!c.onSuccess}">
+            <div class="slds-grid slds-border_bottom slds-p-top_xxx-small slds-p-bottom_xxx-small">
+                
+                <div class="slds-col largeinputwidth hideLabel slds-p-left_xx-small" style="width:190px;">
+                    
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Route__c" /> 
+                        <aura:set attribute="else">
+                            <aura:if isTrue="{!v.selectedRoute}">
+                                <c:DCRRouteLookUp selectedParentRecordId="{!v.territoryId}" objectAPIName="Route__c" selectedRecord="{!v.selectedRoute}"/>
+                            </aura:if>
+                             
+                            <!--<lightning:inputField fieldName="Route__c" /> -->
+                        </aura:set>  
+                    </aura:if>
+                    
+                </div>
+                <div class="{!if(v.mode=='Edit','slds-col largeinputwidth  hideLabel slds-p-left_xx-small','slds-col largeinputwidth hideLabel')}">
+                    
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Plan_Date__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="Plan_Date__c"/> 
+                        </aura:set>  
+                    </aura:if>
+                    
+                    
+                </div>
+                <div class="slds-col largeinputwidth  slds-p-left_xx-small  hideLabel">
+                    
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Activity_End_Date__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="Activity_End_Date__c" /> 
+                        </aura:set>  
+                    </aura:if>
+                    
+                </div>
+                <div class="slds-col slds-p-left_xx-small largeinputwidth  hideLabel">
+                    
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="First_Half__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="First_Half__c"/> 
+                        </aura:set>  
+                    </aura:if>
+                    
+                </div>
+                <div class="slds-col  slds-p-left_xx-small largeinputwidth  hideLabel">
+                    
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Second_Half__c"/> 
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="Second_Half__c" /> 
+                        </aura:set>  
+                    </aura:if>
+                    
+                </div>
+                <aura:if isTrue="{!v.userType!='VSA'}"> 
+                    <div class="slds-col  slds-p-left_xx-small verysmallinputwidth hideLabel">
+                        
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <lightning:outputField fieldName="VSA_JFW__c" /> 
+                            <aura:set attribute="else">
+                                <lightning:inputField fieldName="VSA_JFW__c" /> 
+                            </aura:set>  
+                        </aura:if>
+                        
+                        
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.userType!='ASM'}"> 
+                    <div class="slds-col slds-p-left_xx-small verysmallinputwidth hideLabel">
+                        
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <lightning:outputField fieldName="ASM_JFW__c"/> 
+                            <aura:set attribute="else">
+                                <lightning:inputField fieldName="ASM_JFW__c" /> 
+                            </aura:set>  
+                        </aura:if>
+                        
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.userType!='RSM'}"> 
+                    <div class="slds-col  slds-p-left_xx-small verysmallinputwidth hideLabel">
+                        
+                        <aura:if isTrue="{!v.mode=='View'}">
+                            <lightning:outputField fieldName="RSM_JFW__c" /> 
+                            <aura:set attribute="else">
+                                <lightning:inputField fieldName="RSM_JFW__c" /> 
+                            </aura:set>  
+                        </aura:if>
+                        
+                        
+                    </div>
+                </aura:if>
+                
+                <div class="slds-col slds-p-left_xx-small mediuminputwidth hideLabel">
+                    
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Other_JFW__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="Other_JFW__c" /> 
+                        </aura:set>  
+                    </aura:if>
+                    
+                </div>
+                <div class="slds-col slds-p-left_xx-small largeinputwidth   hideLabel">
+                    
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Comments__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="Comments__c" /> 
+                        </aura:set>
+                        
+                    </aura:if>
+                    
+                </div>
+                <div class="slds-col largeinputwidth slds-p-left_xx-small" style="width:110px;">
+                    
+                    <aura:if isTrue="{!v.mode=='Edit'}">
+                        <lightning:buttonIcon iconName="utility:save" disabled="{!v.isReadOnly}" title="Save"  type="submit" name="Save" />
+                        <!--Should not show Close Button in the first row if there are no other rows added-->
+                        <aura:if isTrue="{!if(v.plandaylist.length==1 &amp;&amp; v.index==0 &amp;&amp; v.planDay.Id==null,false,true)}">
+                            <lightning:buttonIcon iconName="utility:close"   disabled="{!v.isReadOnly}" title="Cancel" name="Cancel" onclick="{!c.cancel}"  />
+                        </aura:if>
+                        <aura:set attribute="else">
+                           
+                            <lightning:buttonIcon  iconName="utility:edit" title="Edit" disabled="{!v.isReadOnly}"  name="Edit"  onclick="{!c.edit}"/>
+
+                            <lightning:buttonIcon  iconName="utility:delete"  title="Delete" disabled="{!v.isReadOnly}" name="Delete"  onclick="{!c.showDeletePopUp}"/>
+                            <a onclick="{!c.toggleCustomers}" class="slds-p-left_xx-small"><lightning:Icon  iconName="custom:custom15"   name="Edit" title="Route Customers" /></a>
+                        </aura:set>
+                    </aura:if>
+                    
+                </div>
+                
+                <lightning:inputField aura:id="relatedPlanningMonth" fieldName="Related_Planning_Month__c" class="slds-hide" />
+                <lightning:inputField aura:id="routeFieldId" fieldName="Route__c" class="slds-hide" /> 
+            </div> 
+            
+            
+        </lightning:recordEditForm> 
+        <aura:if isTrue="{!v.showCustomers}">
+            <c:Cres_PlannedCustomerPanel recordId="{!v.planDay.Route__c}" aura:id="customers"/>
+        </aura:if>
+    </div>
+    
+</aura:component>

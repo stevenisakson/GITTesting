@@ -1,0 +1,83 @@
+<apex:page standardController="Account" extensions="SF_AccountDocument_DashboardController">
+    <apex:pageBlock >
+        <apex:outputPanel rendered="{!($Profile.Name == 'Sales Professional – US Retail' || $Profile.Name == 'Marketing Coordinator' || $Profile.Name == 'Marketing Data Steward' || $Profile.Name == 'System Administrator')}">
+            <apex:pageBlockSection columns="3">
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >
+                        <div style="margin-top: 10px;color:#3498DB; font-family: Rockwell;font-size: medium;">
+                            <span class="slds-text-heading_small">Display Metrics</span>
+                        </div>
+                        <div>
+                            <apex:image url="{!$Resource.Cargill_CommunityGreenCircle}" alt="Display" width="50" height="50" rendered="{!monthFlag}"> </apex:image>
+                            <apex:image url="{!$Resource.Cargill_CommunityRedCircle}" alt="Display" width="50" height="50" rendered="{!!monthFlag}"> </apex:image>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >
+                        <div style="margin-top: 10px;color:#3498DB; font-family: Rockwell;font-size: medium;">
+                            <span class="slds-text-heading_small">Training Metrics</span>
+                        </div>
+                        <div>
+                            <apex:image url="{!$Resource.Cargill_CommunityGreenCircle}" alt="Training" width="50" height="50" rendered="{!trainFlag}"> </apex:image>
+                            <apex:image url="{!$Resource.Cargill_CommunityRedCircle}" alt="Training" width="50" height="50" rendered="{!!trainFlag}"> </apex:image>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >
+                        <div style="margin-top: 10px;color:#3498DB; font-family: Rockwell;font-size: medium;">
+                            <span class="slds-text-heading_small">Events Metrics</span>
+                        </div>
+                        <div>
+                            <apex:image url="{!$Resource.Cargill_CommunityGreenCircle}" alt="Events" width="50" height="50" rendered="{!eventFlag}"> </apex:image>
+                            <apex:image url="{!$Resource.Cargill_CommunityRedCircle}" alt="Events" width="50" height="50" rendered="{!!eventFlag}"> </apex:image>
+                        </div>
+                    </apex:outputPanel>
+                    
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >
+                        <div style="margin-top: 10px;color:#3498DB; font-family: Rockwell;font-size: medium;">
+                            <span class="slds-text-heading_small">Prospect Metrics</span>
+                        </div>
+                        <div>
+                            <apex:image url="{!$Resource.Cargill_CommunityGreenCircle}" alt="Prospect Metrics" width="50" height="50" rendered="{!prospectFlag}"> </apex:image>
+                            <apex:image url="{!$Resource.Cargill_CommunityRedCircle}" alt="Prospect Metrics" width="50" height="50" rendered="{!!prospectFlag}"> </apex:image>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >
+                        <div style="margin-top: 10px;color:#3498DB; font-family: Rockwell;font-size: medium;">
+                            <span class="slds-text-heading_small">Growth Trend</span>
+                        </div>
+                        <div> 
+                            <apex:image url="{!$Resource.Cargill_CommunityGreenCircle}" alt="Growth Trend" width="50" height="50" rendered="{!growthFlag}"> </apex:image>
+                            <apex:image url="{!$Resource.Cargill_CommunityRedCircle}" alt="Growth Trend" width="50" height="50" rendered="{!!growthFlag}"> </apex:image>
+                        </div>
+                    </apex:outputPanel>
+                    
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    
+                    <apex:outputPanel >
+                        <div style="margin-top: 10px;color:#3498DB; font-family: Rockwell;font-size: medium;">
+                            <span class="slds-text-heading_small">Product Offering</span>
+                        </div>
+                        <div>
+                            <apex:image url="{!$Resource.Cargill_CommunityGreenCircle}" alt="Product Offering" width="50" height="50" rendered="{!productOfferinggrowthFlag}"> </apex:image>
+                            <apex:image url="{!$Resource.Cargill_CommunityRedCircle}" alt="Product Offering" width="50" height="50" rendered="{!!productOfferinggrowthFlag}"> </apex:image>
+                        </div>
+                    </apex:outputPanel>
+                    
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+    </apex:pageBlock>
+</apex:page>

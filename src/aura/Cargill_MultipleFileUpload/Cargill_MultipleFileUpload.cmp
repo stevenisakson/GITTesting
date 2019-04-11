@@ -1,0 +1,4 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<lightning:fileUpload label="Upload Multiple files" multiple="true" 
+     recordId="{!v.recordId}" aura:id="multipleUpload" onuploadfinished="{!c.handleUploadFinished}"/>
+</aura:component>

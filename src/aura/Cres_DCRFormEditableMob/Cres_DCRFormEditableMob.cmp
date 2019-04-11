@@ -1,0 +1,196 @@
+<aura:component controller="DCRDayMobCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" access="global" >
+    <aura:attribute name="dcrId" type="String"/> 
+    <aura:attribute name="mode" type="String" default="Edit"/> 
+    <aura:attribute name="dcrDate" type="String"/> 
+    <aura:attribute name="dcrDisplayDate" type="String"/>
+    <aura:attribute name="dcrCustList" type="List"/> 
+    
+    <aura:attribute name="dcrWrapper" type="sObject"/> 
+    
+    <aura:attribute name="firstHalfPicklist" type="List"/> 
+    <aura:attribute name="secondHalfPicklist" type="List"/> 
+    <aura:attribute name="statusHalfPicklist" type="List"/> 
+    
+    <aura:attribute name="dcrerror" type="List"/> 
+    
+    <aura:attribute name="firstHalf" type="String"/> 
+    <aura:attribute name="secondHalf" type="String"/> 
+    <aura:attribute name="enabledAddCustomer" type="Boolean" default="false"/>    
+    <aura:attribute name="isDCRLocked" type="Boolean" default="false"/> 
+   
+    <aura:attribute name="enableUnlockbtn" type="Boolean" default="false"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>   
+    
+    <aura:attribute name="hasDCRUnlockAccess" type="Boolean" default="false"/>  
+    
+    
+    <lightning:navigation aura:id="navService"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:attribute name="selectedTargetRecordId" type="String" default=""/>
+    
+    <div class="slds-page-header">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <lightning:icon iconName="standard:note"/>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1>
+                                    <span class="slds-page-header__title slds-truncate" title="Activity Performed">
+                                        Activity Performed
+                                    </span>
+                                </h1>
+                            </div>
+                        </div>
+                         <p class="slds-page-header__name-meta">{!v.dcrDisplayDate}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <aura:if isTrue="{!v.isLoading}">
+        <lightning:spinner variant="brand"/>
+    </aura:if>
+    <article class="slds-card slds-p-left_small slds-p-right_small slds-p-bottom_small">
+        <lightning:recordEditForm 
+                                  objectApiName="DCR_Day__c" 
+                                  aura:id="dcrForm"
+                                  recordId="{!v.dcrId}"
+                                  onload="{!c.onload}"
+                                  onsubmit="{!c.onSubmit}"	
+                                  onsuccess="{!c.onSuccess}"
+                                  onerror="{!c.onError}"
+                                  recordTypeId="{!$Label.c.Cres_DCRDayRecTypeId}"
+                                  >
+            
+            
+            <div class="slds-grid slds-wrap slds-m-bottom_small ">
+                
+                <aura:if isTrue="{!v.dcrerror.length>0}">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-p-top_small slds-p-bottom_small">
+                        
+                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" >
+                            <aura:iteration items="{!v.dcrerror}" var="err">
+                                <aura:if isTrue="{!err!=''}">    
+                                    {!err}<br></br>
+                                </aura:if>
+                            </aura:iteration>
+                        </div>
+                        
+                    </div>
+                </aura:if>
+               
+                
+                
+                <div class="{!'slds-col slds-size_1-of-1 slds-medium-size_1-of-1 '+if(v.mode=='View','slds-border_bottom','')}">
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="First_Half__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:select label="First Half" value="{!v.firstHalf}" aura:id="fhalf">
+                                <option value="None">None</option>
+                                <aura:iteration items="{!v.firstHalfPicklist}" var="item">
+                                    <option value="{!item.value}">{!item.label}</option>
+                                </aura:iteration>
+                                
+                            </lightning:select>
+                            
+                        </aura:set>  
+                    </aura:if>
+                </div>
+                
+                <div class="{!'slds-col slds-size_1-of-1 slds-medium-size_1-of-1 '+if(v.mode=='View','slds-border_bottom','')}">
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Second_Half__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:select label="Second Half" value="{!v.secondHalf}" aura:id="shalf">
+                                <option value="None">None</option>
+                                <aura:iteration items="{!v.secondHalfPicklist}" var="item">
+                                    <option value="{!item.value}">{!item.label}</option>
+                                </aura:iteration>
+                                
+                            </lightning:select>
+                        </aura:set>  
+                    </aura:if>
+                </div>
+                
+                <!-- <div class="{!'slds-col slds-size_1-of-1 slds-medium-size_1-of-1 '+if(v.mode=='View','slds-border_bottom','')}">
+                    <aura:if isTrue="{!v.mode=='View'}">
+                         <lightning:outputField fieldName="Status__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:outputField fieldName="Status__c" /> 
+                        </aura:set>  
+                    </aura:if>
+                </div>-->
+                <div class="{!'slds-col slds-size_1-of-1 slds-medium-size_1-of-1 '+if(v.mode=='View','slds-border_bottom','')}">
+                    <aura:if isTrue="{!v.mode=='View'}">
+                        <lightning:outputField fieldName="Comments__c" /> 
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="Comments__c" /> 
+                        </aura:set>  
+                    </aura:if>
+                    
+                </div>
+                <aura:if isTrue="{!v.dcrId!=null}">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-border_bottom">
+                        
+                        <lightning:outputField fieldName="Status__c" /> 
+                        
+                        
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-border_bottom">
+                        
+                        <lightning:outputField fieldName="Line_Of_Business__c" /> 
+                        
+                        
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                        
+                        <lightning:outputField fieldName="User_Type__c" /> 
+                        
+                        
+                    </div>
+                </aura:if>
+                
+                <div class="slds-col slds-size_6-of-12 slds-medium-size_1-of-1 ">
+                    <lightning:button disabled="{!v.isDCRLocked}" type="submit" iconName="utility:save" class="fullwidthBtn slds-p-top_xx-small slds-p-bottom_xx-small slds-m-top_xx-small" variant="brand" >Save</lightning:button>
+                </div>
+                <div class="slds-col slds-size_6-of-12 slds-medium-size_1-of-1 slds-p-left_xxx-small">
+                    <lightning:button disabled="{!or(v.isDCRLocked,v.dcrId==null)}" iconName="utility:check" class="fullwidthBtn slds-p-top_xx-small slds-p-bottom_xx-small slds-m-top_xx-small" variant="brand" onclick="{!c.completeBtnClick}">Complete</lightning:button>
+                </div>
+                
+                <div class="slds-col slds-size_12-of-12 slds-medium-size_1-of-1">
+                    <aura:if isTrue="{!v.dcrWrapper.hasCustomerActivity}">
+                        <lightning:button disabled="{!v.isDCRLocked}" iconName="utility:add"  class="fullwidthBtn slds-p-top_xx-small slds-p-bottom_xx-small slds-m-top_xx-small" variant="brand" onclick="{!c.customerBtnClicked}">Add Customer</lightning:button>
+                    </aura:if>
+                </div>
+                <div class="slds-col slds-size_12-of-12 slds-medium-size_1-of-2">
+                    <aura:if isTrue="{!v.enableUnlockbtn}">
+                        <lightning:button iconName="utility:unlock" class="fullwidthBtn slds-p-top_xx-small slds-p-bottom_xx-small slds-m-top_xx-small" variant="brand"  onclick="{!c.unlockDCRBtn}">Unlock </lightning:button>
+                        
+                    </aura:if>
+                    
+                </div>
+                <div class="slds-col slds-size_12-of-12 slds-medium-size_1-of-1">
+                    
+                    <lightning:button  class="fullwidthBtn slds-p-top_xx-small slds-p-bottom_xx-small slds-m-top_xx-small" variant="brand" onclick="{!c.backToSearch}">Back</lightning:button>
+                    
+                </div>
+                
+                
+                
+            </div>
+        </lightning:recordEditForm>
+    </article>
+    
+    <aura:iteration items="{!v.dcrWrapper.dcrCustRec}" var="item">
+        <c:Cres_DCRDetailCardMob item="{!item}" dcrId="{!v.dcrId}" targetId="{!v.selectedTargetRecordId}" isDCRLocked="{!v.isDCRLocked}"/>
+        
+    </aura:iteration>
+    
+    
+</aura:component>

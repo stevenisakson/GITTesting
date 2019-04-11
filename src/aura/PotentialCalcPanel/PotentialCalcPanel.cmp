@@ -1,0 +1,238 @@
+<aura:component controller="PotentialCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <!--Desciption:
+    Child component of the landing page.
+    Shows up when Mode is Edit or New
+    Main Component for Creating/Editing/Deleting potential
+    javascript Validations are done in the component
+    -->
+    <aura:attribute name="mode" type='String' description="Mode of the appl.Bound expression from parent."/>
+   
+    <aura:attribute name="product_functions" type='List' description="stores list of product function"/>    
+    <aura:attribute name="prod_types" type='List' description="stores list of product types"/>   
+
+    <aura:attribute name="renderTable" type='Boolean' default='false' description="to show the calculation table according the calc. Type"/>
+  
+    <aura:attribute name="isDuplicatePotential" type='Boolean' default='false' description="Indicate if the user has selected an existing calc type and species"/>
+    
+    <aura:attribute name="oldspecies" type='String' default='' description="stores previous species which user selected"/>
+    <aura:attribute name="oldCalctype" type='String' default='' description="stores previous calculation type which user selected"/>
+    
+    <aura:attribute name="isLoading" type='Boolean' default='false'/>
+    
+    <aura:attribute name="fieldAccess" type='sObject' default='{}'/>
+    <aura:attribute name="calcTypeList" type='List' default="[]" description="stores all the calculation types"/> 
+    <aura:attribute name="errorList" type='List' default="[]" description="stores all the Javascript validations"/> 
+    <aura:attribute name="speciesList" type='List' default="[]" description="picklist values of species"/> 
+    <aura:attribute name="autoPopValues" type='List' description="value mt predefined values"/>
+    <aura:attribute name="PotentialEstWrapper" type='sObject' default="{'species':'None','calcType':'None','potwrapper':[]}" description="the backbone of all component.Used for saveing and showing data"/>
+    
+    <aura:attribute name='calcType' type='String' description="selected calc type by the user"/>
+    <aura:attribute name='species' type='String' description="selected  species by the user"/>
+    
+   
+    <aura:attribute name='errorflag' type='Boolean' default='false' description="indicates if the page has any validation errors"/>    
+    <aura:attribute name='mpot_id' type='String' description="id of master potential"/>
+    <aura:attribute name='recordId' type='String' description="id of account"/>
+    <aura:attribute name='userName' type='String' description="logged in user name"/>
+    
+    <aura:attribute name='formulaMap' type='sObject' description="stores list of formula needed for calculations"/>
+    
+
+    
+    <aura:handler event="c:ConfirmModalevent" name="confirmcheck" action="{!c.popupconfirm}" description="handles confirmation given by the user when he
+                                                                                                          changes calc type or species during New Mode"/>
+    
+    
+    <aura:method name="loadPotentialData" action="{!c.loadPotentialData}" access='global' description="called by parent and this component to load the potential records of a 
+                                                                                                       master potential record">
+         <aura:attribute name="mpot_id" type="String" />
+       
+    </aura:method>
+    <aura:method name="loadAutoPopValues" action="{!c.loadAutoPopValues}" access='global' description="calls all predefined values">
+      
+    </aura:method>
+    
+    <aura:method name="loadCalcTypeSpecies" action="{!c.loadCalcTypeSpecies}" access='global' description="loads calctype and species picklist values">
+           <aura:attribute name='calcCategory' type='String'/>
+    </aura:method>
+    <aura:method name="loadFieldAccess" action="{!c.loadFieldAccess}" access='global' description="loads field access">
+    </aura:method>
+    <aura:handler name="deleteModelEvent" event="c:DeleteConfirmModalEvent" action="{!c.deletePotential}"/> 
+   
+    <aura:method name="initializeParams" action="{!c.initializeParams}" access='global' description="setting the paramters during edit mode">
+       <aura:attribute name='calcType' type='String'/>
+       <aura:attribute name='species' type='String'/>
+    </aura:method>
+    <aura:handler name="deleteModelEvent" event="c:DeleteConfirmModalEvent" action="{!c.deletePotential}"/> 
+    
+  
+    
+    {!v.body}<!--For dynamically creating certain components such as pop up-->
+    <div class="slds-box">
+        <div class="slds-page-header">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media slds-no-space slds-grow">
+                        
+                        <div class="slds-media__body">
+                            
+                            <b><aura:if isTrue="{!v.mode=='Edit'}">
+                                <h2 style='color:rgba(0, 112, 210, 1.0);' class="slds-page-header__title slds-truncate slds-align-middle">{!$Label.c.POT_EDIT_POTENTIAL_ESTIMATE}</h2>
+                                <aura:set attribute="else">
+                                    <h2 style='color:rgba(0, 112, 210, 1.0);' class="slds-page-header__title slds-truncate slds-align-middle">{!$Label.c.POT_NEW_POTENTIAL_ESTIMATE}</h2>
+                                </aura:set>
+                                </aura:if></b>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-grid slds-align-top">
+                    
+                    <div class="slds-button-group" role="group">
+                        <lightning:button iconName="utility:back" onclick="{!c.showLandingPage}"  class='slds-button_brand' variant="bare"  label='{!$Label.c.POT_Back_to_Potential_List}' />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="slds-grid slds-wrap slds-col--padded">
+            <aura:if isTrue="{!v.isDuplicatePotential}">
+                <!--To show error of duplicate selection of species and calcType-->
+                <div class="slds-size_12-of-12">
+                    <div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture" role="alert">
+                      
+                            {!format($Label.c.POT_DUPLICATE_ERROR,v.PotentialEstWrapper.transCalcType,v.PotentialEstWrapper.transSpecies)}
+                            
+                        
+                      <!--  {!$Label.c.POT_Calculation_Type+' '+v.calcType+$Label.c.POT_FOR_SPECIES+' '+v.species+' already exists. Please edit the same'}-->
+                    </div>
+                </div>
+            </aura:if>
+             <aura:if isTrue="{!v.isLoading}">
+                 <lightning:spinner variant="brand" size="large"/>
+            </aura:if>
+            <div class="slds-size_12-of-12">
+                <div class="slds-form slds-form_compound">
+                    <div class="slds-form-element__group">
+                        <div class="slds-form-element__row">
+                            <div class="slds-form-element slds-size_3-of-12">
+                                <label class="slds-text-title bold_label" for="input-id-01">{!$Label.c.POT_Calculation_Type}</label>
+                                <aura:if isTrue="{!v.mode=='New'}">
+                                   
+                                    <lightning:select label="Type" aura:id="selectEstType" value="{!v.PotentialEstWrapper.calcType}" onchange="{!c.calcTypeORspeciesChanged}" disabled="{!v.mode=='Edit'}">
+                                        <option value="None">None</option>
+                                        <aura:iteration items="{!v.calcTypeList}" var="item">
+                                            <option value="{!item.value}">{!item.label}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                    <aura:set attribute='else'>
+                                       <ui:inputText value='{!v.PotentialEstWrapper.transCalcType}' disabled='true'/>
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                            <div class="slds-form-element slds-size_3-of-12">
+                                <label class="slds-text-title bold_label" for="input-id-01">{!$Label.c.POT_Species}</label>
+                                <aura:if isTrue="{!v.mode=='New'}">
+                                    <lightning:select name="select" aura:id="selectSpecies"  label="Species" onchange="{!c.calcTypeORspeciesChanged}" disabled="{!v.mode=='Edit'}" value="{!v.PotentialEstWrapper.species}" >
+                                        <option value="None">None</option>
+                                        <aura:iteration items="{!v.speciesList}" var="item">
+                                            <option value="{!item.value}">{!item.label}</option>
+                                        </aura:iteration>
+                                        
+                                    </lightning:select>
+                                    <aura:set attribute='else'>
+                                        <ui:inputText value='{!v.PotentialEstWrapper.transSpecies}' disabled='true' />
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                            <div class="slds-form-element slds-size_1.5-of-12">
+                                
+                                <aura:if isTrue="{!v.mode=='Edit'}">
+                                    <aura:if isTrue="{!v.PotentialEstWrapper.calcType==$Label.c.SimplePotentialEstimate || v.PotentialEstWrapper.calcType==$Label.c.Cycle_Consumption || v.PotentialEstWrapper.calcType==$Label.c.Daily_Animal_Consumption}">
+                                        
+                                        
+                                        <label class="slds-text-title bold_label" for="input-id-01">{!$Label.c.POT_SHARE_OF_VOLUME}</label><br/>
+                                        <ui:inputText disabled='true' class='slds-input mediuminputwidth' value='{!v.PotentialEstWrapper.share_of_volume}'/>
+                                        <aura:set attribute="else">
+                                           <label class="slds-text-title bold_label" for="input-id-01">{!$Label.c.POT_Share_of_CFE}</label><br/>
+                                        <ui:inputText disabled='true' class='slds-input mediuminputwidth' value='{!v.PotentialEstWrapper.share_of_cfe}'/>   
+                                        </aura:set>
+                                    </aura:if>
+                                  
+                                </aura:if>
+                            </div>
+                            <div class="slds-form-element slds-size_1.5-of-12">
+                                
+                                <aura:if isTrue="{!v.mode=='Edit'}">
+                                    <label class="slds-text-title bold_label" for="input-id-01">{!$Label.c.POT_SHARE_OF_WALLET}</label><br/>
+                                    <ui:inputText disabled='true' class='slds-input mediuminputwidth' value='{!v.PotentialEstWrapper.share_of_wallet}'/>
+                                </aura:if>
+                            </div>
+                            
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <br/>
+    <!--Render the corresponding table when user selects calc type and species-->
+    <aura:if isTrue="{!v.renderTable}">
+        <div class="slds-box" style='padding:2px 4px 3px 2px;'>
+            <div class="slds-grid slds-wrap">
+                 <div class="slds-size_12-of-12">
+                    <div class="slds-grid slds-grid_align-end">
+                        <div> <lightning:button iconName="utility:add" class='slds-button_neutral' variant="bare"  label='{!$Label.c.POT_Add_Product_Function}' onclick='{!c.addProdFun}' aura:id='back_btn'/></div>
+                    </div>
+                </div>
+                <div class="slds-size_12-of-12">
+                   <!--Shows Error messages after javascript validations-->
+                    <aura:if isTrue="{!v.errorflag}"><br/>
+                     
+                        <div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture" role="alert">
+                            
+                            <aura:iteration items="{!v.errorList}" var="item">
+                                {!item}<br/>
+                            </aura:iteration>
+                           
+                      
+                        </div>
+                    </aura:if>
+                </div>
+                  
+               
+                <div class="slds-size_12-of-12" style='margin-top:5px;'>
+                    <!--Loads Calculation Tables based on the Calculation Type-->
+                    <aura:if isTrue="{!and(or(v.mode=='Edit',v.mode=='New'),v.calcType==$Label.c.SimplePotentialEstimate)}">
+                        <c:SimplePotentialCalcTable formulaMap="{!v.formulaMap}" species="{!v.species}" autoPopValues="{!v.autoPopValues}" aura:id="spTable" prod_types='{!v.prod_types}' product_functions="{!v.product_functions}" recordList="{!v.PotentialEstWrapper.potwrapper}" fieldAccess="{!v.fieldAccess}"/>
+                    </aura:if>
+                    <aura:if isTrue="{!and(or(v.mode=='Edit',v.mode=='New'),v.calcType==$Label.c.Cycle_Consumption)}">
+                        <c:CycleConsumptionCalcTable formulaMap="{!v.formulaMap}" species="{!v.species}" autoPopValues="{!v.autoPopValues}" aura:id="spTable" prod_types='{!v.prod_types}' product_functions="{!v.product_functions}" recordList="{!v.PotentialEstWrapper.potwrapper}" fieldAccess="{!v.fieldAccess}"/>
+                    </aura:if>
+                     <aura:if isTrue="{!and(or(v.mode=='Edit',v.mode=='New'),v.calcType==$Label.c.Daily_Animal_Consumption)}">
+                        <c:DailyAnimalConsumptionTable formulaMap="{!v.formulaMap}" species="{!v.species}" autoPopValues="{!v.autoPopValues}" aura:id="spTable" prod_types='{!v.prod_types}' product_functions="{!v.product_functions}" recordList="{!v.PotentialEstWrapper.potwrapper}" fieldAccess="{!v.fieldAccess}"/>
+                    </aura:if>
+                    <aura:if isTrue="{!and(or(v.mode=='Edit',v.mode=='New'),v.calcType==$Label.c.SimplePotentialEstimate_CFE)}">
+                        <c:SimplePotentialCFETable formulaMap="{!v.formulaMap}" species="{!v.species}" autoPopValues="{!v.autoPopValues}" aura:id="spTable" prod_types='{!v.prod_types}' product_functions="{!v.product_functions}" recordList="{!v.PotentialEstWrapper.potwrapper}" fieldAccess="{!v.fieldAccess}"/>
+                    </aura:if>
+                    <aura:if isTrue="{!and(or(v.mode=='Edit',v.mode=='New'),v.calcType==$Label.c.CycleConsumption_CFE)}">
+                        <c:CycleConsumptionCFETable formulaMap="{!v.formulaMap}" species="{!v.species}" autoPopValues="{!v.autoPopValues}" aura:id="spTable" prod_types='{!v.prod_types}' product_functions="{!v.product_functions}" recordList="{!v.PotentialEstWrapper.potwrapper}" fieldAccess="{!v.fieldAccess}"/>
+                    </aura:if>
+                    <aura:if isTrue="{!and(or(v.mode=='Edit',v.mode=='New'),v.calcType==$Label.c.DailyAnimalConsumption_CFE)}">
+                        <c:DailyAnimalConsumptionCFETable formulaMap="{!v.formulaMap}" species="{!v.species}" autoPopValues="{!v.autoPopValues}" aura:id="spTable" prod_types='{!v.prod_types}' product_functions="{!v.product_functions}" recordList="{!v.PotentialEstWrapper.potwrapper}" fieldAccess="{!v.fieldAccess}"/>
+                    </aura:if>
+                    <aura:if isTrue="{!v.PotentialEstWrapper.potwrapper.length>0}">
+                        <div class="slds-size_12-of-12">
+                            <div class="slds-grid slds-grid_align-end">
+                                <div> <lightning:button class='slds-button_brand' onclick="{!c.save}" variant="bare"  label='{!$Label.c.POT_Save}' /></div>
+                            </div>
+                        </div>
+                    </aura:if>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+</aura:component>

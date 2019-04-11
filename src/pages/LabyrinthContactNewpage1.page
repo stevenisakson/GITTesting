@@ -1,0 +1,181 @@
+<apex:page standardController="Contact" extensions="LabyrinthContactNewpage1_ctrl" showHeader="false" >
+  
+  <head>
+                <style type="text/css">
+                       @page {
+                                
+                                     div.header {
+                                      padding: 10px;
+                                      position: running(header);
+                           }
+                       div.footer {
+                                display: block;
+                             padding: 5px;
+                               position: running(footer);
+                               padding: 1em;
+                              top: 40px;
+                      }
+                                  
+                    </style>
+</head>
+         <!--  <div class="header">
+              <div><apex:image url="{!$Resource.LabyrinthPortalHeader}" width="100%" height="100%"/></div>
+           </div> -->
+          
+           
+   <style>
+    
+    .pageDescription, .pageType {
+     color: White !important;
+     }
+    </style>
+    
+        <style>
+        .contentStyle { font-size:12px; }
+        .buttonStyle {  background-color:green; text-align:center; padding-top:4px; }
+        .activeTab {background-color: #B7A752; color:white; background-image:none}
+        .inactiveTab { background-color: #F3F3EC; color:black; background-image:none}
+        .NoRecord { font-size:11px;}
+        
+        
+                .lnk {
+                        color: black!important;
+                        text-decoration :none;
+                       
+                     }
+        </style>
+        <style>
+          .Header {
+           background: url(left.gif) no-repeat;
+           padding-top: 5px;
+           padding-bottom: 5px;
+        }
+    </style>
+         
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script>
+    $( document ).ready(function() {
+      var insidetext = $("#lookup005f100000GFNppcon1").html(); //Get the innertext
+      $("#lookup005f100000GFNppcon1").parent().text(insidetext); //Replace href with text.
+    });
+    </script>
+   
+    
+  
+  <!-- <apex:sectionHeader subtitle="{!con.name}" title="Contact Edit"/> -->
+  <apex:form >
+  
+ <div class="Header">
+<table>
+    <tr>
+    <td style="padding-right: 10px;">
+     <img src="{!URLFOR($Resource.LabyrinthLogo)}"  width="300" height="75" id="phHeaderLogoImage"/>
+     </td>  
+    
+     <td >
+       <apex:outputLabel style="font-size: 12px; color:Black;" value="Contact Edit"></apex:outputLabel><br></br>
+       <apex:outputText value="{!if(con.Id==null,'New Contact',con.Name)}" style="font-size: 22px; color:Black;"></apex:outputText>
+     </td>
+     
+   </tr>
+  </table>
+           
+</div>
+ <apex:outputLink style="color:Black; text-align: Left; float:right; padding-right: 10px;"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+ <a href="javascript: history.go(-1)" style="color:Black; text-align: right; float:right;padding-right: 10px;">Back</a>
+  
+   
+ <!-- <div style="background-color:#008B8B;">
+            <apex:sectionHeader subtitle="{!if(con.Id==null,'New Contact',con.Name)}" title="Contact Edit">
+            <!--<apex:outputLink style="color:white; text-align: Left; padding-left: 1180px; " target="_blank" value="/home/home.jsp">Home</apex:outputLink>&nbsp;<b style="Color:White;">|</b> -->
+           <!-- <apex:outputLink style="color:Black; text-align: Left; float:right"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+            </apex:sectionHeader> 
+        </div> -->
+  
+   <apex:pageBlock mode="maindetail">
+    <apex:PageMessages />
+      <apex:pageBlockSection title="Contact Information" columns="2">
+           
+           <apex:OutputField value="{!con.ownerid}"/>
+           <apex:inputField value="{!con.ReportsToid}"/>
+           <apex:inputField value="{!con.firstname}"/>
+           <apex:inputField value="{!con.phone}"/>
+           <apex:inputField value="{!con.lastname}"/>
+           <apex:inputField value="{!con.MobilePhone}"/>
+           <apex:inputField value="{!con.accountid}" required="true"/>
+           <apex:inputField value="{!con.email}"/>
+           <apex:inputField value="{!con.Title}"/>
+           <apex:inputField value="{!con.Secondary_Email__c}"/>
+           <apex:inputField value="{!con.Business_Unit__c}"/>
+           <apex:inputField value="{!con.Preferred_Method__c}"/>
+           <apex:inputField value="{!con.Primary_Language__c}"/>
+           <apex:inputField value="{!con.Marketing_Classification__c}"/>
+           <apex:inputField value="{!con.Secondary_Language__c}"/>
+          
+           
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Address Information" columns="2">
+        
+        <!--    <apex:pageBlockSectionItem >
+            Mailing Country
+            <apex:inputField value="{!con.MailingCountrycode}"/>
+            </apex:pageBlockSectionItem> 
+            
+            <apex:pageBlockSectionItem >
+            OtherCountry
+            <apex:inputField value="{!con.OtherCountrycode}"/>
+            </apex:pageBlockSectionItem>  
+            
+          <apex:inputField value="{!con.OtherCountrycode}"/>  -->
+         
+           <apex:inputField value="{!con.MailingStreet}"/>
+           <apex:inputField value="{!con.OtherStreet}"/>
+           <apex:inputField value="{!con.MailingCity}"/>
+           <apex:inputField value="{!con.OtherCity}"/>
+           
+        <!--    <apex:pageBlockSectionItem >
+            Mailing State/Province
+            <apex:inputField value="{!con.MailingStateCode}"/>
+            </apex:pageBlockSectionItem>  
+            
+            <apex:pageBlockSectionItem >
+            Other State/Province
+            <apex:inputField value="{!con.OtherStateCode}"/>
+            </apex:pageBlockSectionItem>  -->
+           
+           <apex:inputField value="{!con.MailingState}"/>
+            <apex:inputField value="{!con.OtherState}"/> 
+           <apex:inputField value="{!con.MailingPostalCode}"/>
+           <apex:inputField value="{!con.OtherPostalCode}"/>  
+           <apex:inputField value="{!con.MailingCountry}"/>
+           <apex:inputField value="{!con.OtherCountry}"/> 
+          
+           
+       </apex:pageBlockSection>
+       
+       <apex:pageBlockSection title="Additional Information">
+           <apex:inputField value="{!con.AssistantName}"/>
+           <apex:inputField value="{!con.Birthdate}"/>
+           <apex:inputField value="{!con.AssistantPhone}"/>
+           <apex:inputField value="{!con.Department}"/>
+           <apex:inputField value="{!con.Website__c}"/>
+         
+       </apex:pageBlockSection>
+       
+        <apex:pageBlockSection title="Description Information">
+           <apex:inputField value="{!con.Description}" style="width: 360px; height: 40px"/>
+        </apex:pageBlockSection>
+        
+        
+        <apex:pageBlockButtons >
+            
+             <apex:commandButton value=" Save " action="{!save}"  styleClass="lnk" style="border-style:solid orange;font-size: .9em;" />
+             <apex:commandButton value="Cancel" action="{!Cancel}" styleClass="lnk" style="border-style:solid orange;font-size: .9em;"  />  
+                        
+        </apex:pageBlockButtons>
+        
+        
+       </apex:pageBlock>
+  </apex:form> 
+</apex:page>

@@ -1,0 +1,128 @@
+<aura:component controller="PotentialCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+     <!--
+        Dedicated Table component for DailyAnimalConsumption
+        
+    -->
+    
+    <aura:attribute name="recordList" type='List' description="list of potential records shown in the table"/>    
+    
+    <!--Following fields are for totalling the values in the table and showing as last row-->
+    <aura:attribute name="totalannualvolume" type='Decimal'/>
+    <aura:attribute name="total" type='Decimal'/>
+    <aura:attribute name="totalcontribution" type='Decimal'/>
+    <aura:attribute name="totalvolume" type='Decimal'/>
+    <aura:attribute name="fieldAccess" type='sObject' default='{}'/>
+    
+    <aura:attribute name="autoPopValues" type='List' description="for populating value mt when user s
+                                                                  selects product function and type"/>
+    <aura:attribute name='species' type='String' description="species value from parent component"/>
+    <aura:attribute name='formulaMap' type='sObject' description="Map of formula needed for calculation for this calc type"/> 
+    
+    <aura:attribute name='prod_types' type='List' description="type value from parent"/>
+    <aura:attribute name="product_functions" type='List' description="product functions value from parent"/>	
+    <aura:handler name="rowEvent" event="c:rowEvent" description="called by Child component to add a new competitor row"
+                  action="{!c.addCompetitor}"/>
+   
+    
+    <aura:handler name="recalculation" event="c:rowEvent" description="totalling the values when cell values changes"
+                  action="{!c.findtotal}"/>
+    <ltng:require scripts="{!$Resource.Math}"
+                  />
+    
+    <aura:method name="recalculate" action="{!c.findtotal}" description="called by parent component to total the values
+                                                                         when potential is edited">
+    
+    </aura:method>
+   
+    <aura:attribute name="calcType" type='String' default='Daily Animal Consumption' description="Name of the Calculation Type"/>
+    
+    <table class="slds-table slds-table_bordered">
+        <thead>
+            <tr class="slds-text-title_caps">
+                <th scope="col">
+                    <div class="slds-truncate" title="{!$Label.c.POT_PRODUCT_FUNCTION_FIELD}"><aura:unescapedHtml value="{!$Label.c.POT_PRODUCT_FUNCTION}"/><abbr class="slds-required" title="required">*</abbr></div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="{!$Label.c.POT_TYPE}"><aura:unescapedHtml value="{!$Label.c.POT_TYPE}"/><abbr class="slds-required" title="required">*</abbr></div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="{!$Label.c.POT_VALUE_MT}"><aura:unescapedHtml value="{!$Label.c.POT_VALUE_MT_NL}"/></div>
+                </th>
+               <th scope="col">
+                   <div title="{!$Label.c.POT_ANIMAL_YR}" ><aura:unescapedHtml value="{!$Label.c.POT_ANIMALS_YR_NL}"/><abbr class="slds-required" title="required">*</abbr></div>
+                </th>
+               <th scope="col">
+                   <div class='verysmallinputwidth' title='{!$Label.c.POT_KG_HD_DAY}'><aura:unescapedHtml value="{!$Label.c.POT_KG_HD_DAY_NL}"/><abbr class="slds-required" title="required">*</abbr></div>
+                </th>
+               <th scope="col">
+                   <div class='verysmallinputwidth' title='{!$Label.c.POT_DAYS_FED_YR}'><aura:unescapedHtml value="{!$Label.c.POT_DAYS_FED_YR_NL_NL}"/><abbr class="slds-required" title="required">*</abbr></div>
+                </th>
+                
+                <aura:if isTrue="{!v.fieldAccess.DAC_Annual_Volume_MT_Access__c}">
+                    <th scope="col">
+                        <div class="slds-truncate" title='{!$Label.c.POT_ANNUAL_VOLUME_MT}' ><aura:unescapedHtml value="{!$Label.c.POT_ANNUAL_VOLUME_MT_NL_NL}"/></div>
+                    </th>
+                </aura:if>
+                <aura:if isTrue="{!v.fieldAccess.DAC_total_Access__c}">
+                    <th scope="col">
+                        <div class="wrapper" title="{!$Label.c.POT_TOTAL}"><aura:unescapedHtml value="{!$Label.c.POT_TOTAL}"/></div>
+                    </th>
+                </aura:if>
+                <th scope="col">
+                    <div class="slds-truncate" title="{!$Label.c.POT_COMPETITOR}"><aura:unescapedHtml value="{!$Label.c.POT_COMPETITOR}"/><abbr class="slds-required" title="required">*</abbr></div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="{!$Label.c.POT_OF_SHARE_FIELD}"><aura:unescapedHtml value="{!$Label.c.POT_OF_SHARE}"/><abbr class="slds-required" title="required">*</abbr></div>
+                </th>
+                <aura:if isTrue="{!v.fieldAccess.DAC_Volume_Access__c}">
+                    <th scope="col">
+                        <div class="slds-truncate" title="{!$Label.c.POT_VOLUME}"><aura:unescapedHtml value="{!$Label.c.POT_VOLUME_NL}"/></div>
+                    </th>
+                </aura:if>
+                <aura:if isTrue="{!v.fieldAccess.DAC_Contribution_Access__c}">
+                    <th scope="col">
+                        <div class="slds-truncate" title="{!$Label.c.POT_CONTRIBUTION}"><aura:unescapedHtml value="{!$Label.c.POT_CONTRIBUTION_NL}"/></div>
+                    </th>
+                </aura:if>
+                <th scope="col">
+                    <div class="slds-truncate" title="{!$Label.c.POT_SALESPERSON}"><aura:unescapedHtml value="{!$Label.c.POT_SALES_PERSON}"/></div>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <aura:iteration items="{!v.recordList}" var="i" indexVar="indx">
+                <c:DailyAnimalConsumptionTableRow row="{!i}" formulaMap="{#v.formulaMap}" species="{!v.species}" calcType="{!v.calcType}" autoPopValues="{!v.autoPopValues}" prod_types="{!v.prod_types}" index="{!indx}" recordList="{!v.recordList}" product_functions="{!v.product_functions}" fieldAccess="{!v.fieldAccess}"/>
+            </aura:iteration>
+            <!--Seperate Section for Total Values.It is a Table row-->
+            <aura:if isTrue="{!v.recordList.length>0}">
+                <tr  class="staticrow">
+                    
+                    <td style='padding:0.25rem 0.25rem 0.25rem 0.25rem;' colspan="2"><div class="slds-truncate">{!$Label.c.POT_TOTAL}</div></td>
+                    <td colspan="4"></td>
+                    <aura:if isTrue="{!v.fieldAccess.DAC_Annual_Volume_MT_Access__c}">
+                        <td style='padding:0.25rem 0.25rem 0.25rem 0.25rem;'>
+                            <div class="slds-truncate "><input value="{!v.totalannualvolume}" title="{!v.totalannualvolume}" class='slds-input verysmallinputwidth formulaField' disabled='true'/></div></td>
+                    </aura:if>
+                    <aura:if isTrue="{!v.fieldAccess.DAC_total_Access__c}">
+                        <td style='padding:0.25rem 0.25rem 0.25rem 0.25rem;'><div class="slds-truncate"><input value="{!v.total}" title="{!v.total}" class='slds-input verysmallinputwidth formulaField' disabled='true'/></div></td>
+                    </aura:if>
+                    <td colspan="2"></td>
+                    <aura:if isTrue="{!v.fieldAccess.DAC_Volume_Access__c}">
+                        <td style='padding:0.25rem 0.25rem 0.25rem 0.25rem;'><div class="slds-truncate"><input value="{!v.totalvolume}" title="{!v.totalvolume}" class='slds-input verysmallinputwidth formulaField' disabled='true'/></div></td>
+                    </aura:if>
+                    <aura:if isTrue="{!v.fieldAccess.DAC_Contribution_Access__c}">
+                        <td style='padding:0.25rem 0.25rem 0.25rem 0.25rem;'><div class="slds-truncate"><input value="{!v.totalcontribution}" title="{!v.totalcontribution}"  class='slds-input verysmallinputwidth formulaField' disabled='true'/></div></td>
+                    </aura:if>
+                    <td colspan="2"></td>
+                </tr>
+                <aura:set attribute="else">
+                    <tr><td colspan="14"><p align='center'>{!$Label.c.POT_No_Product_Function}</p></td></tr>
+                </aura:set>
+            </aura:if>
+            
+        </tbody>
+    </table>
+</aura:component>

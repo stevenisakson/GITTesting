@@ -1,0 +1,385 @@
+<apex:page controller="AccountlandingPage_Ctrl" showHeader="false" sidebar="false">
+<!--<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" />
+<apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.8/js/jquery.tablesorter.min.js" />
+<apex:stylesheet value="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.8/css/theme.blue.css" /> -->
+
+        <head>
+            <style type="text/css">
+                   @page {
+                            
+                                 div.header {
+                                  padding: 10px;
+                                  position: running(header);
+                       }
+                   div.footer {
+                            display: block;
+                         padding: 5px;
+                           position: running(footer);
+                           padding: 1em;
+                          top: 40px;
+                  }
+                              
+                </style>
+          </head>
+          
+        <script>
+          
+        $j = jQuery.noConflict();    
+        $j(document).ready(function () {
+        $j("[id$=accTable]").tablesorter();
+        });  
+           
+                 function changeColor(elementId, newColor) {
+                    var element = document.getElementById(elementId);
+                    element.style.background = newColor;
+                    
+          }
+          
+          </script>
+          
+           
+            
+            <!--Remove the pageblock border line #058BD6/#46bafb -->
+        <style>
+              .bPageBlock {
+            border-top: 0px;
+            }
+            
+              .headerRow{
+               width: 150px !Important;
+               }
+              
+            
+             .pbSubheader {
+
+                background-color: #008B8B;
+
+                }
+            
+            .pageDescription, .pageType {
+             color:white !important;
+            }
+            .coloumnWidth{
+            width:150px !Important;
+            
+            }
+            
+            
+        </style> 
+             
+            
+           
+    <!--change the pageblock section bg colour -->
+    <script>
+        function OpenPage(sourcePage){
+            if(sourcePage == 'BI'){
+                var win=window.open('https://app.powerbi.com/?noSignUpCheck=1', '_blank');
+                
+                win.focus();
+            }
+            if(sourcePage == 'DDW'){
+                var win=window.open('https://www.dairydatawarehouse.com/', '_blank');
+                win.focus();
+            }
+            if(sourcePage == 'SP'){
+              <!-- var win=window.open('https://cargilltest.sharepoint.com/sites/salesforce_sandbox/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2Fsalesforce_sandbox%2FShared%20Documents%2FLabyrinth', '_blank'); -->
+             
+              var win=window.open('https://cargillonline.sharepoint.com/sites/dairyenteligen/SitePages/Home.aspx', '_blank');
+              
+               win.focus();
+            }
+        }
+    </script>
+    
+    <style type="text/css">
+        .myClass{
+        color:white !important;
+        background:#46bafb !important;
+       <!--width:100px; height:30px -->
+       
+            }
+    </style>
+    
+    <style>
+         body{
+             font-family: Arial,Helvetica,sans-serif !important;
+             color: #222 !important;
+        }
+
+    </style>
+    <style>
+          body .pbBody table.list th {
+               background-color : #008B8B !important;
+               
+          }
+    </style>
+    <style>
+          .Header {
+           background: url(left.gif) no-repeat;
+           padding-top: 5px;
+           padding-bottom: 5px;
+        }
+    </style>
+
+    <apex:outputpanel >
+        <apex:actionStatus id="actStatusId">
+            <apex:facet name="start">
+                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.75; z-index: 1000; background-color: black;">
+                    &nbsp;
+                </div>
+                <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 20% 40%">
+                    
+                    <img src="{!$Resource.LoadingImage_Lyb}" alt="Loading..."/>
+                    
+                </div>
+            </apex:facet>
+        </apex:actionStatus>
+    </apex:outputpanel>
+
+    
+<apex:form id="fm">
+
+<apex:actionFunction name="refreshPageSize" action="{!refreshPageSize}" status="fetchStatus" reRender="pbId,fm"/>
+
+<div class="Header">
+<table>
+
+    <tr>
+    <td style="padding-right: 10px;">
+     <img src="{!URLFOR($Resource.LabyrinthLogo)}" width="300" height="75" id="phHeaderLogoImage"/>
+     </td>  
+    
+     <td >
+       <apex:outputLabel style="font-size: 12px; color:black;" value="Welcome"></apex:outputLabel><br></br>
+       <apex:outputText value="{!$User.FirstName} {!$User.LastName}" style="font-size: 22px; color:black;"></apex:outputText>
+     </td>
+     
+   </tr>
+</table>
+</div>
+
+<apex:outputLink style="color:black; text-align: Left; float:right;padding-right: 20px;" target="_self" value="/secur/logout.jsp">LogOut</apex:outputLink>
+<apex:outputPanel rendered="{!$Profile.Name =='System Administrator'}" layout="none">
+    <apex:outputLink style="color:black; text-align: Left; float:right;padding-right: 20px;" target="_self" value="/home/home.jsp?tsid=02uj0000000kL51">Back to Salesforce</apex:outputLink>
+</apex:outputPanel>
+
+<!--
+<div style="background-color:#008B8B;">
+<img src="{!URLFOR($Resource.LabyrinthLogo)}" alt="Salesforce.com" width="175" height="65" id="phHeaderLogoImage"/>
+<apex:sectionHeader subtitle="{!$User.FirstName} {!$User.LastName}" title="Welcome">
+</apex:sectionHeader> 
+<apex:outputLink style="color:black; text-align: Left; float:right" target="_self" value="/secur/logout.jsp">LogOut</apex:outputLink>
+</div>
+ -->
+ 
+                    <apex:outputPanel style="float:centre">
+                            <div align="center" draggable="false" >
+                                                     
+                                                         
+                             <apex:commandButton value="BI" title="Power BI" onclick="OpenPage('BI'); return false; " image="{!URLFOR($Resource.BI)}" style="height:50px;width:100px" />
+                             <apex:commandButton value="DDW" title="DDW"  onclick="OpenPage('DDW'); return false;"  image="{!URLFOR($Resource.DDW)}" style="height:50px;width:100px"/>
+                             <apex:commandButton value="SP" title="Share Point"   onclick="OpenPage('SP'); return false;"  image="{!URLFOR($Resource.SP)}" style="height:50px;width:100px"/>
+                             
+                            </div>
+                         </apex:outputPanel>
+       
+       <apex:pageBlock id="pbId">
+       
+       <!-- filter--  -->
+         
+              <apex:outputLabel style="font-size: 10px;"> View: </apex:outputLabel>
+                <apex:selectList size="1" value="{!viewname}" style="font-size: 10px;"  >
+                  <apex:selectOptions value="{!viewlist }" />
+                  <apex:actionSupport event="onchange" action="{!refreshPageSize}" rerender="pbId,fm" status="actStatusId"/>
+                </apex:selectList> 
+                  &nbsp;&nbsp;&nbsp;&nbsp;
+                 
+                  <apex:inputText value="{!search}"/>
+                
+                <apex:commandButton value="Search" action="{!find}" reRender="id,error,details,fm,PBS" status="actStatusId"/>
+                
+                <div align="right" style=" font-size: 15px;">
+                 <apex:commandLink onClick="window.open('/apex/AccountTeamDeleteVF');" id="theLink">Account Team Delete</apex:commandLink>
+                </div>
+               <!--  <apex:actionStatus id="actStatusId" >
+                <apex:facet name="start" >
+                  <img src="/img/loading.gif" />                    
+                </apex:facet>
+            </apex:actionStatus> -->
+            
+            <br/>
+         
+           <!-- filter--  -->
+          
+           
+       <apex:pageBlockSection id="PBS" columns="2">
+       <apex:outputText ></apex:outputText>
+       <apex:outputText value="My Tasks" style="font-weight:bold"></apex:outputText>
+           <apex:outputPanel id="myPanel">
+           <apex:pageMessages id="theMessages" />
+            <apex:pageBlockTable value="{!accounts}"  var="acc" align="Center" width="100%" columns="8" columnsWidth="100px" id="accTable" style="font-family: Helvetica" title="Accounts" headerClass="myClass"  > 
+            
+          <!--  <apex:column headerValue="Actions" >
+                
+                   <apex:outputLink title="" value="/{!acc.id}/e?retURL=/apex/{!$CurrentPage.Name}" style="font-weight:bold">Edit</apex:outputLink>&nbsp;|&nbsp;
+                   <apex:commandLink action="{!deleteaccount}" onclick="if(!confirm('Are you sure?')) return false;" style="font-weight:bold">Del
+                        <apex:param value="{!acc.Id}" name="idToDel" assignTo="{!deleteaccountid}"/>
+                    </apex:commandLink>
+    
+            
+             </apex:column>  -->
+            
+                <apex:column headervalue="Account Name" style="font-family: Helvetica">
+                   <apex:outputLink value="/apex/LabyrinthAccountDetailPage?id={!acc.id}">
+                      <apex:outputtext value="{!acc.Name}" style="font-family: Helvetica"/> 
+                   </apex:outputLink>
+                </apex:column>
+                
+                <apex:column headervalue="Account Number" width="40px" style="font-family: Helvetica">
+                   <apex:outputLink value="/apex/LabyrinthAccountDetailPage?id={!acc.id}">
+                      <apex:outputtext value="{!acc.AccountNumber}" style="font-family: Helvetica"/>
+                   </apex:outputLink>
+                </apex:column>
+                
+                <apex:column headervalue="Account Owner" style="font-family: Helvetica" width="150px">
+                   <apex:outputLink value="/apex/LabyrinthAccountDetailPage?id={!acc.id}">
+                      <apex:outputtext value="{!acc.owner.name}" style="font-family: Helvetica"/>
+                   </apex:outputLink>
+                </apex:column>
+                
+                <apex:column value="{!acc.Business_Uni__c}" width="150px" style="font-family: Helvetica"/>
+                
+             <!--   <apex:column headervalue="Account Team" width="150px">
+                   <apex:outputtext value="{!acc.AccountTeamMembers.size}"/>
+                   
+                </apex:column> -->
+                
+                 <apex:column headervalue="Account Team" >
+                   <apex:variable value="{!1}" var="rowNum"/>
+                   <apex:repeat value="{!acc.AccountTeamMembers}" var="atm">
+                       <apex:outputText value="{!FLOOR(rowNum)}" style="font-family: Helvetica" />.<apex:outputText value="{!atm.User.name}" style="font-family: Helvetica"/> <br></br>
+                        <apex:variable var="rowNum" value="{!rowNum + 1}"/>
+                   </apex:repeat>
+                   
+                </apex:column>
+               
+                <!--<apex:column value="{!acc.Physical_Community_Municipality__c}" width="150px"/>
+                <apex:column value="{!acc.Physical_County_Community__c}" width="150px"/>
+                <apex:column value="{!acc.Physical_Postal_City__c}" width="150px"/>
+                <apex:column value="{!acc.Social_Media_Address__c}" width="150px"/> -->
+                
+             </apex:pageBlockTable>
+             
+             <apex:panelGrid columns="8"> 
+                 
+           <!--     <apex:selectList value="{!size}" multiselect="false" size="1" onchange="refreshPageSize();" style="font-size: 8px;">
+                    <apex:selectOptions value="{!paginationSizeOptions}"/>
+                </apex:selectList> -->
+                 
+                <apex:commandButton id="firstId" status="fetchStatus" reRender="pbId,fm" value="First" action="{!setCon.first}" disabled="{!!setCon.hasPrevious}" title="First Page" style="font-size: 8px; border-color:#FFD700; border-width:2px;" onclick="changeColor('{!$Component.firstId}', '#FFD700');"/> 
+  
+                <apex:commandButton id="preId" status="fetchStatus" reRender="pbId,fm" value="Previous" action="{!setCon.previous}" disabled="{!!setCon.hasPrevious}" title="Previous Page" style="font-size: 8px; border-color:#FFD700; border-width:2px;" onclick="changeColor('{!$Component.preId}', '#FFD700');"/> 
+  
+                <apex:commandButton id="nextId" status="fetchStatus" reRender="pbId,fm" value="Next" action="{!setCon.next}" disabled="{!!setCon.hasNext}" title="Next Page" style="font-size: 8px; border-color:#FFD700; border-width:2px;" onclick="changeColor('{!$Component.nextId}', '#FFD700');" /> 
+  
+                <apex:commandButton id="lastId" status="fetchStatus" reRender="pbId,fm" value="Last" action="{!setCon.last}" disabled="{!!setCon.hasNext}" title="Last Page" style="font-size: 8px; border-color:#FFD700; border-width:2px;" onclick="changeColor('{!$Component.lastId}', '#FFD700');"/> 
+  
+                <apex:outputText style="font-size: 7px;">{!(setCon.pageNumber * size)+1-size}-{!IF((setCon.pageNumber * size)>noOfRecords, noOfRecords,
+                     (setCon.pageNumber * size))} of {!noOfRecords}
+                </apex:outputText> 
+                       
+                <apex:outputPanel >                      
+                    <apex:actionStatus id="fetchStatus" >
+                        <apex:facet name="start" >
+                          <img src="/img/loading.gif" />                    
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:outputPanel> 
+  
+            </apex:panelGrid> 
+            
+           </apex:outputPanel>
+           <apex:outputPanel rendered="{!taskList.size > 0}" >
+             <apex:pageBlockTable value="{!taskList}" var="ta" title="My Tasks" style="font-family: Helvetica" headerClass="myClass">
+             <apex:column headerValue="Complete">
+            <!--  <apex:outputText value="X" style="color:#015ba7" title="Mark Send Letter Complete"></apex:outputText> -->
+             <apex:commandButton value="X" title="Mark Send Letter Complete" style="color:#015ba7" action="/apex/LabyrinthTaskNewPage?id={!ta.id}&status=Completed"/>
+              </apex:column>
+             <apex:column value="{!ta.ActivityDate}" style="{!IF(AND(NOT(ISNULL(ta.ActivityDate)), ta.ActivityDate<TODAY()),'color:red','color:green')}"/> 
+                 <!--{!IF(ta.ActivityDate<TODAY() || ta.ActivityDate == 'NULL','color:red','color:green')} <font color="{!IF(AND(NOT(ISNULL(selectedAttainment)), selectedAttainment > 100), 'green', 'red')}">{!selectedAttainment}%</font> -->
+             <apex:column value="{!ta.Status}"/>
+            <!-- <apex:column value="{!ta.Subject}"/> -->
+            <apex:column headerValue="Subject">
+             <apex:outputLink title="" value="/apex/LabyrinthTaskDetailPage?id={!ta.id}" >
+                  {!ta.subject}
+             </apex:outputLink>
+            </apex:column>
+             <apex:column headerValue="Name">
+              <apex:outputLink title="" value="/apex/LabyrinthContactDetailPage?id={!ta.WhoId}" >
+                  {!ta.Who.name}
+             </apex:outputLink>
+             </apex:column>
+            <!-- <apex:column value="{!ta.who.name}"/>-->
+            <!-- <apex:column value="{!ta.what.name}"/> -->
+            <apex:column headerValue="Related To">
+              <apex:outputLink title="" value="/apex/LabyrinthAccountDetailPage?id={!ta.whatid}" >
+                  {!ta.what.name}
+             </apex:outputLink>
+             </apex:column>
+             </apex:pageBlockTable>
+             </apex:outputPanel>
+             <apex:outputPanel rendered="{!taskList.size <= 0}">
+                 You have no open tasks scheduled for this period
+             </apex:outputPanel>
+             
+         </apex:pageBlockSection>
+        </apex:pageBlock>
+        <div>
+           
+           <table>
+            <tr>
+            <td style="padding-left: 20px;font-size: 12px; color:Green;">
+             Reference Documents :
+             </td>
+             <td>
+                 
+                   <apex:outputLabel >
+                     <apex:commandLink onClick="window.open('/apex/LabyrinthDocumentPage?id=015f1000002I4rd');"  value="English" target="_blank">
+                     </apex:commandLink>
+                     </apex:outputLabel>
+                 
+             </td>
+             
+             <td>
+                   <apex:outputLabel > 
+                     <apex:commandLink onClick="window.open('/apex/LabyrinthDocumentPage?id=015f1000002I4rg');"  value="Spanish" target="_blank">
+                     </apex:commandLink>
+                     </apex:outputLabel>
+                 
+             </td>
+             
+             </tr>
+           </table>
+           
+        </div>
+       
+    <!--    <apex:pageBlock mode="maindetail" >
+        <apex:pageBlockSection title="My Tasks">
+             <apex:pageBlockTable value="{!taskList}" var="ta">
+            <apex:column headerValue="Complete">
+              <apex:outputText value="X" style="color:#015ba7" title="Mark Send Letter Complete"></apex:outputText>
+            </apex:column>
+            
+             <apex:column value="{!ta.ActivityDate}" style="{!IF(ta.ActivityDate<TODAY(),'color:red','color:green')}"/>
+             <apex:column value="{!ta.Status}"/>
+             <apex:column value="{!ta.Subject}"/>
+             <apex:column value="{!ta.who.name}"/>
+             <apex:column value="{!ta.what.name}"/>
+             </apex:pageBlockTable>
+         </apex:pageBlockSection>
+        
+        </apex:pageBlock> -->
+         
+           
+        </apex:form>
+</apex:page>

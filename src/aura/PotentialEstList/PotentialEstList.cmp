@@ -1,0 +1,76 @@
+<aura:component controller="PotentialCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <!--Landing page component for potential Tab if the selected dropdown is Volume
+    
+-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
+    <aura:attribute name="mode" type='String' default='None' description="Modes of the application(New,Edit,None)"/>
+    <aura:attribute name="recordId" type="String" description="stores the account id from record page"/>
+    <aura:method name="loadMasterPotential" action="{!c.loadMasterPotential}">
+         <aura:attribute name="calcCategory" type="String"/>
+    </aura:method>
+    <aura:attribute name="calcCategory" type="String" default='Volume'/>
+    <!--<aura:handler name="init" action="{!c.doInit}" value="{!this}"/>-->
+   
+    <aura:handler name="potential_edit" event="c:rowEvent" action="{!c.showInEditMode}" description="Handles the potential Edit click by user"/>
+    <aura:attribute name="estList" type="List" description="list of master potential Records"/>
+    <aura:attribute name="isLoading" type='Boolean' default='false' description="To indicate if the app is loading data from server.Used for showing spinner"/>
+    <aura:attribute name="isAccountLocked" type='Boolean' default='false' description="Tells if Account is locked or not"/>
+  
+
+    <aura:handler name="deleteModelEvent" event="c:DeleteConfirmModalEvent" action="{!c.deletePotential}" description="handles delete confirmation from popup"/> 
+    
+    <aura:if isTrue="{!v.mode=='None'}">
+        <aura:if  isTrue="{!v.isAccountLocked}">
+            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+              {!$Label.c.POT_Account_Locked_Error}
+            </div>
+        </aura:if>
+        <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+            <thead>
+                <tr class="slds-text-title_caps">
+                    <th scope="col">
+                        <div class="slds-truncate" title="Potential Calculation">{!$Label.c.POT_POTENTIAL_ESTIMATES}</div>
+                    </th>
+                    
+                    <th>
+                        <div class="slds-truncate" title="Annual Volume MT"> <aura:unescapedHtml value="{!$Label.c.POT_ANNUAL_VOLUME_MT_NL}"/></div>      
+                    </th>
+                    <th>
+                        <div class="slds-truncate" title="Share of Volume">{!$Label.c.POT_SHARE_OF_VOLUME}</div>      
+                    </th>
+                    
+                   <th>
+                        <div class="slds-truncate" title="Total Potential">{!$Label.c.POT_TOTAL_POTENTIAL}</div>      
+                    </th>
+                    <th>
+                     	<div class="slds-truncate" title="Share of Wallet"> {!$Label.c.POT_SHARE_OF_WALLET}</div>      
+                    </th>
+                    <th>
+                        <div class="slds-float--right">
+                            <aura:if isTrue="{!!v.isAccountLocked}">
+                                <button class="slds-button slds-button_brand " onclick="{!c.showNewPage}">{!$Label.c.POT_New}</button>                       
+                            </aura:if>
+                        </div>
+                        
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.estList}" var="item" indexVar="i">
+                    <c:PotentialEstListItem est_item="{!item}" index="{!i}"  isAccountLocked="{#v.isAccountLocked}"/>
+                </aura:iteration>
+                <aura:if isTrue="{!v.estList.length==0}">
+                    <tr><td colspan="6"><p align='center'>{!$Label.c.POT_No_Product_Function}</p></td></tr>
+                </aura:if>
+            </tbody>
+            
+        </table>
+    </aura:if>
+    <aura:if isTrue="{!v.isLoading}">
+        <lightning:spinner variant="brand" size="large"/>
+    </aura:if>
+    <aura:if isTrue="{!or(v.mode=='New',v.mode=='Edit')}">
+        <c:PotentialCalcPanel aura:id="calcpanel" mode="{!v.mode}" recordId="{!v.recordId}"/>
+    </aura:if>
+  
+</aura:component>

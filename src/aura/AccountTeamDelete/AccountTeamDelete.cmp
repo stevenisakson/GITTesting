@@ -1,0 +1,65 @@
+<aura:component controller="customLookUpController" implements="lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <!--declare attributes--> 
+    <aura:attribute name="selectedRecord" type="sObject" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:attribute name="listOfSearchRecords" type="List" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="SearchKeyWord" type="string"/>
+    <aura:attribute name="IconName" type="string" default=""/>
+    <aura:attribute name="label" type="string" default=""/>
+    <aura:attribute name="Message" type="String" default=""/>
+    <aura:attribute name="showTable" type="Boolean" default="false"/>
+    <aura:attribute name="selectedUserName" type="string" default=""/>
+    <aura:attribute name="hideAccountTableAndPill" type="Boolean" default="true"/>
+    <aura:attribute name="showSearchText" type="Boolean" default="true"/>
+    <aura:attribute name="UserContext" type="string" default=""/>
+    <!--declare events hendlers-->  
+    <aura:handler name="oSelectedRecordEvent" event="c:selectedsObjectRecordEvent" action="{!c.handleComponentEvent}"/>
+    <aura:handler event="c:hideAccountTable" action="{!c.handleHideAccountTableEvent}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+ 
+<div class="allMainContainer"> 
+<h3 class="header">Account Team Delete</h3>
+<br/>
+  <div class="informativetext">Enter account team member name to be removed:</div>
+    <!-- https://www.lightningdesignsystem.com/components/lookups/ --> 
+   <lightning:layout horizontalAlign="start">
+         <lightning:layoutItem class="useralignment"> User:</lightning:layoutItem>
+   <lightning:layoutItem> 
+    <div onmouseleave="{!c.onblur}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+        <label class="slds-form-element__label" for="lookup-348">{!v.label}</label>
+        <!--This part is for display search bar for lookup-->  
+        <div class="slds-form-element__control">
+            
+            <div class="slds-input-has-icon slds-input-has-icon--right">
+              <aura:if isTrue="{!v.hideAccountTableAndPill}">
+                <!-- This markup is for when an record is selected -->
+               <div aura:id="lookup-pill" class="slds-pill-container slds-hide reduceSize">
+                     <lightning:pill class="pillSize" label="{!v.selectedRecord.Name}" name="{!v.selectedRecord.Name}" onremove="{! c.clear }">
+                     </lightning:pill>
+                </div>
+             </aura:if>
+             <div aura:id="lookupField" class="slds-show enteredtextField">
+               <ui:inputText click="{!c.onfocus}" aura:id="searchtext" updateOn="keyup" keyup="{!c.keyPressController}" class="slds-lookup__search-input slds-input leftPaddingClass" value="{!v.SearchKeyWord}" placeholder="search.."/>
+              </div>
+            
+            </div>
+        </div>
+        <!--This part is for Display typehead lookup result List-->  
+        <ul class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds reduceResult" role="listbox">
+            <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+            <center class="errorMessage"> {!v.Message}</center>
+            <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+                <c:customLookupResult oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+            </aura:iteration>
+        </ul>
+    </div>
+  </lightning:layoutItem>
+ </lightning:layout>
+  <br/><br/><br/><br/><br/>
+<aura:if isTrue="{!v.hideAccountTableAndPill}">
+     <!--Lightning DataTable starts-->  
+    <c:AccountTableRelatedToUser aura:id="childCmp" selectedUserName="{!v.selectedRecord.Name}" selectedUserId="{!v.selectedRecord.Id}" enviromentContext="{!v.UserContext}" />
+    <!--Lightning DataTable ends--> 
+ </aura:if> 
+ </div>
+</aura:component>

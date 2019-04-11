@@ -1,0 +1,278 @@
+<aura:component controller="Cargill_Lt_AttachmentUpload" implements="force:appHostable,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    
+    <ltng:require styles="/resource/bootstrap/css/bootstrap.min.css" 
+                  scripts="/resource/bootstrap/js/jquery.js,/resource/bootstrap/js/bootstrap.min.js"/>
+    <!-- Define Attribute-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="accLst" type="Account[]"/> <!-- create Array type Account variable-->
+    <aura:attribute name="conLst" type="Contact[]"/> <!-- create Array type Contact variable-->
+    
+    <aura:attribute name="accountattId" type="String" />
+    <aura:attribute name="displayFlag" type="Boolean"  default="false" />
+    <aura:attribute name="eventFlag" type="Boolean"  default="false" />
+    <aura:attribute name="prospectFlag" type="Boolean"  default="false" />
+    <aura:attribute name="trainingFlag" type="Boolean"  default="false" />
+    <aura:attribute name="growthFlag" type="Boolean"  default="false" />
+    
+    <aura:attribute name="monthlypresent" type="boolean" default="True"/> 
+    <aura:attribute name="quarterlypresent" type="boolean" default="True"/>
+    <aura:attribute name="prospectpresent" type="boolean" default="True"/>
+    <aura:attribute name="traningpresent" type="boolean" default="False"/>
+    <aura:attribute name="growthpresent" type="boolean" default="True"/>
+    <aura:attribute name="productofferingpresent" type="boolean" default="True"/>
+    <aura:attribute name="accountattachment" type="Account_Attachments__c" default="{'sobjectType': 'Account_Attachments__c','Account__c': '','Start_Month_Date__c': '',
+                                                                                    'Type__c': '','Last_Upload_Date__c': '','Training_Date__c': '','Topic__c': '','of_Attendees__c': '','Attendees__c': '', 'Monthly_Uploaded_Date__c': ''}"/>
+    
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure slds-scrollable">
+                    <span class="slds-icon_container slds-icon-standard-account" title="description of icon when needed">
+                        <lightning:icon iconName="standard:account" size="large" alternativeText="List account"/>
+                    </span>
+                    <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" title="Account" style=" margin-left: 10px;">
+                        <span class="slds-text-heading_small">My Account</span>
+                    </a>
+                    
+                    <span class="slds-icon_container slds-icon-standard-contact" title="description of icon when needed" style="margin-left: 110px;">
+                        <lightning:icon iconName="standard:contact" size="large" alternativeText="List Contact"/>
+                    </span> 
+                    <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" title="Contact" style=" margin-left: 10px;">
+                        <span class="slds-text-heading_small">My Contact</span>
+                    </a>
+                </div>
+            </header>
+        </div>
+        <div class="slds-scrollable" style="width: 39rem;">
+            <table>
+                <tr>
+                    <td>
+                        <table class="slds-table slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+                            <aura:iteration items="{!v.accLst}" var="acc"> <!-- iteration account record.-->
+                                <tr>
+                                    <th >
+                                        <div class="slds-truncate" title="Name">Name</div>
+                                        <div class="slds-truncate" title="Name"><a href="javascript:void(0);">{!acc.Name}</a></div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="slds-truncate" title="Customer Number">Customer Number</div>
+                                        <div class="slds-truncate" title="Customer Number">{!acc.Dealer_External_ID__c}</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="slds-truncate" title="Phone">Phone</div>
+                                        <div class="slds-truncate" title="Phone">{!acc.Phone}</div>
+                                    </td>
+                                </tr>                     
+                            </aura:iteration>
+                        </table>
+                    </td>
+                    <td>
+                        <table class="slds-table slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+                            <aura:iteration items="{!v.conLst}" var="con"> <!-- iteration account record.-->
+                                <tr>
+                                    <th >
+                                        <div class="slds-truncate" title="Name" style="margin-left: 10px;">Name</div>
+                                        <div class="slds-truncate" title="Name" style="margin-left: 10px;"><a href="javascript:void(0);">{!con.Name}</a></div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="slds-truncate" title="Email" style="margin-left: 10px;">Email</div>
+                                        <div class="slds-truncate" title="Email" style="margin-left: 10px;">{!con.Email}</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="slds-truncate" title="Phone" style="margin-left: 10px;">Phone</div>
+                                        <div class="slds-truncate" title="Phone" style="margin-left: 10px;">{!con.Phone}</div>
+                                    </td>
+                                </tr>                     
+                            </aura:iteration>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </article>
+    <!--<div style="margin-left: 10px;color:#3498DB; margin-bottom: 15px;margin-top: 15px;">
+        <span class="slds-text-heading_medium">Dealer Activities</span>
+    </div>
+    <div class="form-group">
+        <ui:inputSelect label="Select Document Type: " class="form-control" aura:id="InputSelectDynamicType" change="{!c.onChangeFunction}"/>
+    </div>-->
+    <br/>
+    <table>
+        <tr>
+            <td></td>
+            <td colspan="3">
+                <div align="Center"> 
+                    <ui:button class="slds-button slds-button_brand" aura:id="btnNeutral" press="{!c.doInit}" label="Refresh">
+                        
+                    </ui:button>
+                    <!--<lightning:spinner aura:id="mySpinner" alternativeText="Processing.." title="Processing.." variant="brand" size="large" class="slds-hide"/>-->
+                </div>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>
+                <div style="margin-left: 10px;margin-top: 10px;color:#3498DB">
+                    <span class="slds-text-heading_small">Display</span>
+                </div>
+                <aura:if  isTrue="{!(v.monthlypresent)}" >
+                    <div style="padding:15px;">
+                        <ui:button class="slds-button_neutral" aura:id="btnNeutral" press="{!c.displayCheck}">
+                            <img src="{!$Resource.Cargill_MobileCommunityGreen}" alt="Display" width="35" height="35"></img> 
+                        </ui:button>
+                    </div>
+                    <aura:set attribute="else">
+                        <div style="padding:15px;">
+                            <ui:button class="slds-button_neutral" aura:id="btnNeutral" press="{!c.displayCheck}">
+                                <img src="{!$Resource.Cargill_MobileCommunityRed}" alt="Display" width="34" height="35"></img>
+                            </ui:button>
+                        </div>
+                    </aura:set>
+                </aura:if>
+            </td>
+            <td>&nbsp;&nbsp;</td>
+            <td>
+                <div style="margin-left: 10px;margin-top: 10px;color:#3498DB">
+                    <span class="slds-text-heading_small">Training</span>
+                </div>
+                <aura:if  isTrue="{!(v.traningpresent)}" >
+                    <div style="padding:15px;">
+                        <ui:button class="slds-button_neutral" aura:id="btnNeutral" press="{!c.trainingCheck}">
+                            <img src="{!$Resource.Cargill_MobileCommunityGreen}" alt="Training" width="35" height="35"> </img> 
+                        </ui:button>
+                    </div>
+                    <aura:set attribute="else">
+                        <div style="padding:15px;">
+                            <ui:button class="slds-button_neutral" aura:id="btnNeutral" press="{!c.trainingCheck}">
+                                <img src="{!$Resource.Cargill_MobileCommunityRed}" alt="Training" width="35" height="35"> </img>
+                            </ui:button>
+                        </div>
+                    </aura:set>
+                </aura:if>
+            </td>
+            <td>&nbsp;&nbsp;</td>
+            <td>
+                <div style="margin-left: 10px;margin-top: 10px;color:#3498DB">
+                    <span class="slds-text-heading_small">Events</span>
+                </div>
+                <aura:if  isTrue="{!(v.quarterlypresent)}" >
+                    <div style="padding:15px;">
+                        <ui:button class="slds-button_neutral" aura:id="btnNeutral" press="{!c.eventCheck}">
+                            <img src="{!$Resource.Cargill_MobileCommunityGreen}" alt="Events" width="35" height="35"> </img> 
+                        </ui:button>
+                    </div>
+                    <aura:set attribute="else">
+                        <div style="padding:15px;">
+                            <ui:button class="slds-button_neutral" aura:id="btnNeutral" press="{!c.eventCheck}">
+                                <img src="{!$Resource.Cargill_MobileCommunityRed}" alt="Events" width="35" height="35"> </img>
+                            </ui:button>
+                        </div>
+                    </aura:set>
+                </aura:if>
+            </td>
+        </tr>
+        <tr>
+            
+        </tr>
+        
+        <tr>
+            <td>
+                
+                <div style="margin-left: 10px;margin-top: 10px;color:#3498DB">
+                    <span class="slds-text-heading_small">Prospect</span>
+                </div>
+                <aura:if  isTrue="{!(v.prospectpresent)}" >
+                    <div style="padding:15px;">
+                        <ui:button class="slds-button_neutral" aura:id="btnNeutral" press="{!c.prospectCheck}">
+                            <img src="{!$Resource.Cargill_MobileCommunityGreen}" alt="Prospect" width="35" height="35"> </img> 
+                        </ui:button>
+                    </div>
+                    <aura:set attribute="else">
+                        <div style="padding:15px;">
+                            <ui:button class="slds-button_neutral" aura:id="btnNeutral" press="{!c.prospectCheck}">
+                                <img src="{!$Resource.Cargill_MobileCommunityRed}" alt="Prospect" width="35" height="35"> </img>
+                            </ui:button>
+                        </div>
+                    </aura:set>
+                </aura:if>
+            </td>
+            <td>&nbsp;&nbsp;</td>
+            <td>
+                <div style="margin-left: 10px;margin-top: 10px;color:#3498DB">
+                    <span class="slds-text-heading_small">Growth Trend</span>
+                </div>
+                <aura:if  isTrue="{!(v.growthpresent)}" >
+                    <div style="padding:15px;">
+                        <ui:button class="slds-button_neutral" aura:id="btnNeutral" press="{!c.growthCheck}">
+                            <img src="{!$Resource.Cargill_MobileCommunityGreen}" alt="Growth" width="35" height="35"> </img> 
+                        </ui:button>
+                    </div>
+                    <aura:set attribute="else">
+                        <div style="padding:15px;">
+                            <ui:button class="slds-button_neutral" aura:id="btnNeutral" press="{!c.growthCheck}">
+                                <img src="{!$Resource.Cargill_MobileCommunityRed}" alt="Growth" width="35" height="35"> </img>
+                            </ui:button>
+                        </div>
+                    </aura:set>
+                </aura:if>
+            </td>
+            <td>&nbsp;&nbsp;</td>
+            <td>
+                <div style="margin-left: 10px;margin-top: 10px;color:#3498DB">
+                    <span class="slds-text-heading_small">Product Offering</span>
+                </div>
+                <aura:if  isTrue="{!(v.productofferingpresent)}" >
+                    <div style="padding:15px;">
+                        <ui:button class="slds-button_neutral" aura:id="btnNeutral">
+                            <img src="{!$Resource.Cargill_MobileCommunityGreen}" alt="Growth" width="35" height="35"> </img> 
+                        </ui:button>
+                    </div>
+                    <aura:set attribute="else">
+                        <div style="padding:15px;">
+                            <ui:button class="slds-button_neutral" aura:id="btnNeutral">
+                                <img src="{!$Resource.Cargill_MobileCommunityRed}" alt="Growth" width="35" height="35"> </img>
+                            </ui:button>
+                        </div>
+                    </aura:set>
+                </aura:if>
+            </td>            
+        </tr>
+        
+        
+    </table>
+    
+    
+    <input aura:id="input" class="hidden"/>
+    <aura:if isTrue="{!v.displayFlag}">
+        <!-- Display component for mobile -->
+        <c:SF_BaxterCommunity_Display/>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.eventFlag}">
+        <!-- Events component for mobile -->
+        <c:SF_BaxterCommunity_Events/>
+    </aura:if>
+    <aura:if isTrue="{!v.prospectFlag}">
+        <!-- prospect list and activities component for mobile -->
+        <c:SF_BaxterCommunity_ProspectList/>
+    </aura:if>
+    <aura:if isTrue="{!v.trainingFlag}">
+        <!-- training component for mobile -->
+        <c:SF_BaxterCommunity_Training/>
+    </aura:if>
+    <aura:if isTrue="{!v.growthFlag}">
+        <!-- growth trends component for mobile -->
+        <c:SF_BaxterCommunity_GrowthTrends/>
+        <!--<c:SF_BaxterGrowthTable/>-->
+    </aura:if>
+    
+    <br/>
+</aura:component>

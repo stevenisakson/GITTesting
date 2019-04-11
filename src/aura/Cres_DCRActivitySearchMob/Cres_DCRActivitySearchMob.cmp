@@ -1,0 +1,82 @@
+<aura:component controller="DCRDayMobCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" access="global" >
+    
+    <aura:attribute name="selectedTargetRecord" type="sObject" default="{}"/> 
+    <aura:attribute name="selectedRouteCustomer" type="sObject" default="{}"/>
+    <aura:attribute name="selectedRoute" type="sObject" default="{}"/>
+    <aura:attribute name="selectedTargetRecordId" type="String" default=""/>
+    <aura:attribute name="pageReference" type="Object"/>
+    <aura:attribute name="dcrId" type="String"/>
+    <aura:attribute name="loggedinUserId" type="String"/>
+    <aura:attribute name="dcrCustId" type="String"/>
+    <aura:attribute name="isDcrComplete" type="Boolean" default="false"/>
+    <aura:attribute name="isDcrLocked" type="Boolean" default="false"/>
+    <aura:attribute name="isDataSteward" type="Boolean" default="false"/>
+    <aura:attribute name="hasDCRUnlockAccess" type="Boolean" default="false"/>
+    <aura:attribute name="searchDate" type="String"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+    <aura:attribute name="dcrerrors" type="List" default="[]"/>
+    <aura:attribute name="disableCreatebtn" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!--<aura:handler name="change" value="{!v.selectedTargetRecord}" action="{!c.targetChanged}"/>-->
+    <lightning:navigation aura:id="navService"/>
+
+   
+    
+    <aura:handler name="change" action="{!c.targetSelected}" value="{!v.selectedTargetRecord}"/>
+    
+    <aura:if isTrue="{!v.isLoading}">
+        <lightning:spinner variant="brand"/>
+    </aura:if>
+    <article class="slds-card slds-p-left_small slds-p-right_small slds-p-top_small slds-p-bottom_small">
+        
+        <div class="slds-grid slds-wrap">
+            <aura:if isTrue="{!v.dcrerrors.length>0}">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-p-top_small slds-p-bottom_small">
+                    
+                    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" >
+                        <aura:iteration items="{!v.dcrerrors}" var="err">
+                            <aura:if isTrue="{!err!=''}">    
+                                {!err}<br></br>
+                            </aura:if>
+                        </aura:iteration>
+                    </div>
+                    
+                </div>
+            </aura:if>
+           
+            
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                <label class="slds-form-element__label" for="lookup-348">Date</label>
+                <ui:inputDate value="{!v.searchDate}" displayDatePicker="true"/>
+                
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                <!--<lightning:inputField  fieldName="Target__c"/>-->
+                <c:CresTargetLookUp aura:id="targetLookup" objectAPIName="Target__c" IconName="" selectedRecord="{!v.selectedTargetRecord}" label="Territory" />
+            </div>
+           <!-- <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+                <c:DCRRouteLookUp aura:id="routeLookup" selectedParentRecordId="{!v.selectedTargetRecordId}" objectAPIName="Route__c" selectedRecord="{!v.selectedRoute}" label="Route" />
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1">
+               
+                <c:DCRRouteLookUp aura:id="routeCustLookup" IconName="standard:account" objectAPIName="RouteCustomers" selectedParentRecord="{!v.selectedRoute}" selectedRecord="{!v.selectedRouteCustomer}" label="Account" />
+            </div>
+            -->
+            
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-align_absolute-center slds-m-top_small">
+                <lightning:button class="fullwidthBtn slds-p-top_xx-small slds-p-bottom_xx-small" variant="brand" onclick="{!c.searchDCRbtnClick}">Search DCR</lightning:button>
+            </div>
+             <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-1 slds-align_absolute-center slds-m-top_small">
+                <lightning:button class="fullwidthBtn slds-p-top_xx-small slds-p-bottom_xx-small" variant="brand" onclick="{!c.createBtnClick}" disabled="{!v.disableCreatebtn}">Create DCR</lightning:button>
+            </div>
+             <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-1 slds-align_absolute-center slds-m-top_small slds-p-left_xxx-small">
+                <lightning:button class="fullwidthBtn slds-p-top_xx-small slds-p-bottom_xx-small" variant="brand" onclick="{!c.clearBtnClick}">Cancel</lightning:button>
+            </div>
+            
+        </div>
+        
+    </article>
+    
+    
+</aura:component>

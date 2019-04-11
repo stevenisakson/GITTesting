@@ -1,0 +1,32 @@
+<aura:component controller="Cargill_Lt_AttachmentUpload" implements="force:appHostable,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="accountattId" type="String" />
+    <aura:attribute name="accountattachment" type="Account_Attachments__c" default="{'sobjectType': 'Account_Attachments__c','Account__c': '','Start_Month_Date__c': '',
+                                                                                    'Type__c': '','Last_Upload_Date__c': '','Training_Date__c': '','Topic__c': '','of_Attendees__c': '','Attendees__c': '', 'Monthly_Uploaded_Date__c': ''}"/>
+    
+    <div class="container-fluid">
+        <div class="form-group" style="color:#3498DB;padding-bottom: 15px;">
+            <span class="slds-text-heading_small">*Document to Upload : {!$Label.c.Cargill_Type_Training}</span>
+        </div>
+        <div class="form-group">
+            <ui:inputDate aura:id="trainingDate" label="Training Date" class="form-control" value="{!v.accountattachment.Training_Date__c}" displayDatePicker="true"/>
+        </div>
+        <div class="form-group">
+            <label>Topic Name</label><br/>
+            <ui:inputText aura:id="topicname" class="form-control" value="{!v.accountattachment.Topic__c}" />
+        </div>
+        <div class="form-group">
+            <label>Number of Attendees</label><br/>
+            <ui:inputText aura:id="countAttendee" class="form-control" value="{!v.accountattachment.of_Attendees__c}" />
+        </div>
+        <div class="form-group">
+            <label>Attendees Name</label><br/>
+            <ui:inputTextArea aura:id="Attendeename" class="form-control" value="{!v.accountattachment.Attendees__c}" />
+        </div>
+        <br/>
+    </div>
+    <div class="col-md-4 text-center">
+        <ui:button class="slds-button slds-button_brand" press="{!c.createTrainingData}">Create</ui:button>
+    </div>
+</aura:component>

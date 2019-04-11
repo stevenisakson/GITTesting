@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Sample Component Event">
+    <aura:attribute name="hideTableAndPill" type="Boolean" default="false"/>
+     <aura:attribute name="showSearchText" type="Boolean" default="true"/>
+</aura:event>

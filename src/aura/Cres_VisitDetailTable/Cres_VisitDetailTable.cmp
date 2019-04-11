@@ -1,0 +1,67 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+   
+    <aura:attribute name="selectedTargetRecordId" type="String"/>
+    <aura:attribute name="selectedContactName" type="String"/>
+    <aura:attribute name="isReadOnly" type="Boolean" default="false"/>
+    <aura:attribute name="dcrcustlist" type="list"/>
+    <aura:attribute name="existingDCRId" type="String" />
+    <aura:attribute name="searchResultDCRCustomers" type="List" />
+     <aura:attribute name="Dcrdayid" type="String"/>
+    <div class="slds-grid slds-wrap smallLabel slds-m-top_x-small slds-border_top slds-border_bottom slds-p-top_x-small slds-p-bottom_x-small" style="background-color:#fafaf9;">
+        
+        <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small">
+            
+            <b>Route</b>
+            
+        </div>
+        <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small">
+            
+            <b>Account</b>
+            
+        </div>
+        <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small">
+            
+            <b>Contact</b>
+            
+        </div>
+        <div class="slds-col slds-size_1-of-12 largeinputextrawidth slds-p-left_small">
+            
+            <b>Accompanied By</b>
+            
+        </div>
+        
+        <div class="slds-col slds-size_1-of-12 slds-p-left_small smallinputwidth">
+            
+            <b>POB</b>
+            
+        </div>
+        <div class="slds-col slds-size_1-of-12 slds-p-left_small xxlargeinputextrawidth">
+            
+            <b>Line of Business</b>
+            
+        </div>
+        
+        <div class="slds-col slds-size_1-of-12 slds-p-left_small largeinputextrawidth">
+            
+            <b>Comment</b>
+            
+        </div>
+        <div class="slds-col slds-size_1-of-12 slds-align_absolute-right ">
+            <!--  <lightning:button  label="Add Customer"  onclick="{!c.Adddcrcust}"/>-->
+            
+        </div>
+        
+    </div>
+  
+    <aura:iteration items="{!v.dcrcustlist}" var="customer" indexVar="i"> 
+        <c:Cres_DcrCustomerComponentV2 selectedTargetRecordId="{!v.selectedTargetRecordId}" isReadOnly="{!v.isReadOnly}" dcrcustomer="{!customer}" index="{!i}" dcrcustlist="{!v.dcrcustlist}" Dcrdayid="{!v.existingDCRId}" />
+        <!--<c:DailyCallReportingCustomer  searchResultDCRCustomer="{!customer}" routeName="{!v.routeName}"/>-->
+    </aura:iteration>
+    <aura:if isTrue="{!v.dcrcustlist.length==0}">
+        <div class="slds-grid slds-wrap slds-m-bottom_small ">
+            <div class="slds-col slds-size_12-of-12 slds-align--absolute-center">
+                {!$Label.c.Cres_DCRNo_Visit_Details}
+            </div>
+        </div>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,14 @@
+.THIS {
+}
+.THIS .fullwidthBtn{
+    width:100%;
+    
+}
+.THIS .slds-list_horizontal .slds-item_label{
+    width:50%;
+    margin-top:5px;
+}
+.THIS .slds-list_horizontal .slds-item_detail{
+    width:50%;
+     margin-top:5px;
+}

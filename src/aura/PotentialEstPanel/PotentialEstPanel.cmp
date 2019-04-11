@@ -1,0 +1,45 @@
+<aura:component controller="PotentialCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <!--
+    This is the Parent component of all the components in the Potential App
+    -->
+    <aura:attribute name="recordId" type="String" description="stores the account id from record page"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    <aura:attribute name="calcCategory" type="String"/>
+    <aura:attribute name="calcCategoryList" type="List"/>
+    <aura:handler name="change" action="{!c.modeChange}" value="{!v.mode}" description="to handle the change of mode"/>
+    <aura:attribute name="mode" type="String" default='None'/>
+    <aura:attribute name="isLoading" type="Boolean" default='false'/>
+    <aura:if isTrue="{!v.isLoading}">
+        <lightning:spinner variant="brand"/>
+    </aura:if>
+    <div class="slds-grid slds-wrap">
+     
+        <aura:if isTrue="{!and(v.mode=='None',v.calcCategoryList.length>0)}">
+            <div class="slds-size_2-of-12">
+                <lightning:select  aura:id="categorySelect"  label="{!$Label.c.POT_View}" onchange="{!c.viewChange}">
+                    <aura:iteration items="{!v.calcCategoryList}" var="item">
+                        <option text="{!item.label}" value="{!item.value}" selected="{!item.selected}"/>
+                    </aura:iteration>           
+                </lightning:select>
+            </div>
+        </aura:if>  
+        <div class="slds-size_12-of-12">
+            <aura:if isTrue="{!v.calcCategoryList.length==0}">
+                <div class="slds-align_absolute-center slds-text-color_error">
+                   {!$Label.c.POT_NO_POTENTIAL_ACCESS}
+                </div>
+            </aura:if>
+        </div>
+        <div class="slds-size_12-of-12 slds-p-top_x-small">
+            <aura:if isTrue="{!v.calcCategory=='Volume'}">
+              
+                <c:PotentialEstList aura:id="Volume" recordId="{!v.recordId}" mode="{!v.mode}"/>
+            </aura:if>
+            <aura:if isTrue="{!v.calcCategory=='CFE'}">
+            
+                <c:PotentialEstListCFE aura:id="CFE" recordId="{!v.recordId}" mode="{!v.mode}"/>
+            </aura:if>
+        </div>
+    </div>
+   
+</aura:component>

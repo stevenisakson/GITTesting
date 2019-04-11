@@ -1,0 +1,144 @@
+<apex:page standardController="Task" extensions="LabyrinthTaskDetailPage" showHeader="false">
+     <head>
+                <style type="text/css">
+                       @page {
+                                
+                                     div.header {
+                                      padding: 10px;
+                                      position: running(header);
+                           }
+                       div.footer {
+                                display: block;
+                             padding: 5px;
+                               position: running(footer);
+                               padding: 1em;
+                              top: 40px;
+                      }
+                                  
+                    </style>
+                    
+                    <style type="text/css">
+                        .myClass{
+                        color:white !important;
+                        background:#46bafb !important;
+                        }
+                    </style>
+                    
+                    <style>
+    
+                        .pageDescription, .pageType {
+                         color: white !important;
+                         }
+                    </style>  
+                    <style>
+                      .Header {
+                       background: url(left.gif) no-repeat;
+                       padding-top: 5px;
+                       padding-bottom: 5px;
+                    }
+                   </style>
+                                    
+                     
+   
+</head>
+         <!--  <div class="header">
+              <div><apex:image url="{!$Resource.LabyrinthPortalHeader}" width="100%" height="100%"/></div>
+           </div> -->
+  <apex:form id="fm" styleClass="myFormStyle">
+  
+<div class="Header">
+<table>
+    <tr>
+    <td style="padding-right: 10px;">
+     <img src="{!URLFOR($Resource.LabyrinthLogo)}"  width="300" height="75" id="phHeaderLogoImage"/>
+     </td>  
+    
+     <td >
+       <apex:outputLabel style="font-size: 12px; color:Black;" value="Task"></apex:outputLabel><br></br>
+       <apex:outputText value="{!task.subject}" style="font-size: 22px; color:Black;"></apex:outputText>
+     </td>
+     
+   </tr>
+  </table>
+           
+</div>
+ <apex:outputLink style="color:Black; text-align: Left; float:right;padding-right: 20px;"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+ <a href="javascript: history.go(-1)" style="color:Black; text-align: right; float:right;padding-right: 10px;">Back</a>
+  
+   
+ <!-- <apex:sectionHeader title="{!task.subject}" subtitle="Task Details"/> -->
+  <!--<div style="background-color:#008B8B;">
+            <apex:sectionHeader title="Task" subtitle="{!task.subject}" >
+            <!--<apex:outputLink style="color:white; text-align: Left; padding-left: 1180px; " target="_blank" value="/home/home.jsp">Home</apex:outputLink>&nbsp;<b style="Color:White;">|</b> -->
+          <!--  <apex:outputLink style="color:Black; text-align: Left; float:right"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+            </apex:sectionHeader> 
+        </div>
+        -->
+  <apex:pageBlock mode="maindetail">
+          
+                      <apex:outputPanel style="float:centre">
+                            <div align="center" draggable="false" >
+                               <apex:commandButton value="Edit" action="{!Edittask}"/>
+                            </div>
+                         </apex:outputPanel>   
+      
+     <!-- <apex:pageBlockButtons >
+      <apex:commandButton value="Edit" action="{!Edittask}"/>
+      </apex:pageBlockButtons> -->
+      
+      <apex:pageBlockSection title="Task information" >
+         <!-- <apex:OutputField value="{!task.ownerid}"/> -->
+           <apex:pageBlockSectionItem >
+           Assigned To
+             <apex:outputText value="{!task.owner.name}"></apex:outputText>
+            </apex:pageBlockSectionItem>
+          <!--<apex:OutputField value="{!task.whatid}"/> -->
+          <apex:pageBlockSectionItem >
+            <apex:outputLabel >Related To</apex:outputLabel>
+            <apex:outputLink value="/apex/LabyrinthAccountDetailPage?id={!task.whatid}">{!task.what.name}</apex:outputLink>
+        </apex:pageBlockSectionItem>
+          <apex:OutputField value="{!task.Subject}"/>
+        <!--  <apex:OutputField value="{!task.Whoid}"/> -->
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Name</apex:outputLabel>
+            <apex:outputLink value="/apex/LabyrinthContactDetailPage?id={!task.whoid}">{!task.who.name}</apex:outputLink>
+        </apex:pageBlockSectionItem>
+          <apex:OutputField value="{!task.ActivityDate}"/>
+          <apex:OutputField value="{!task.RecurrenceInterval}"/>
+          <apex:OutputField value="{!task.Due_Date_Flag__c}"/>
+          <apex:OutputField value="{!task.Business_Unit__c}"/>
+          <apex:OutputField value="{!task.Description}"/>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Additional Information">
+          <apex:OutputField value="{!task.Segment__c}"/>
+          <apex:OutputField value="{!task.Status}"/>
+          <apex:OutputField value="{!task.Product_Line__c}"/>
+          <apex:OutputField value="{!task.Priority}"/>
+          <apex:OutputField value="{!task.Group__c}"/>
+       <!--  <apex:OutputField value="{!task.What.Phone}"/> -->
+          <apex:OutputField value="{!task.Class__c}"/>
+          
+        <!--  <apex:OutputField value="{!task.what.Email}"/> -->
+          <apex:OutputField value="{!task.Product_Function__c}"/>
+         </apex:pageBlockSection> 
+             
+         <apex:pageBlockSection title="System Information">
+         
+        <apex:pageBlockSectionItem >
+           Created By
+             <apex:outputText value="{!task.CreatedBy.name} {!task.CreatedBy.CreatedDate}"></apex:outputText>
+            </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+            Last Modified By
+             <apex:outputText value="{!task.LastModifiedBy.name} {!task.LastModifiedDate}"></apex:outputText>
+            </apex:pageBlockSectionItem>
+            
+          <!--  <apex:outputField value="{!task.CreatedById}"/>
+            <apex:outputField value="{!task.LastModifiedById}"/> -->
+         </apex:pageBlockSection> 
+      
+     
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

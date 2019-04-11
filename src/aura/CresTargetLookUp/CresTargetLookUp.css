@@ -1,0 +1,12 @@
+.THIS .leftPaddingClass {
+    
+}
+.THIS .slds-pill__remove {
+    display: block;
+}
+.THIS .pillSize {
+    width:100%;
+}
+.THIS .slds-pill-container{
+    min-height:100%;
+}

@@ -1,0 +1,3 @@
+<aura:event type="COMPONENT" description="used for Save in res_newplandayComponnet">
+    <!--aura:attribute name="newplandayevent" type="Boolean"/-->
+</aura:event>

@@ -1,0 +1,11 @@
+.THIS {
+}
+.THIS .hideLabel .slds-form-element__label{
+   display:none;
+}
+.THIS .pseudoerequire label:first-of-type::after{
+    content: "*";
+    padding-left:5px;
+    color:#FF0000;
+    font-size:1rem;
+}

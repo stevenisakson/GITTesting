@@ -1,0 +1,63 @@
+<aura:component controller="Cres_PlanningMonthCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <!--
+      Author@Sam Boban
+      Used to display customers in a Selected Route.
+      Used in Route Planning Page
+    -->
+    <aura:attribute name="recordId" type="Id" default=""/>
+    <aura:attribute name="plannedCustomerList" type="List"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+ 
+  
+    <aura:method name="reload" action="{!c.doInit}">
+      
+    </aura:method>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+      <aura:if isTrue="{!v.isLoading}">
+        <lightning:spinner variant="brand"/>
+    </aura:if>
+   
+
+        <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-m-top_x-small">
+            <thead>
+                <tr class="slds-text-title_caps">
+                    <th scope="col">
+                        <div class="slds-truncate" title="Customer Name">Customer Name</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Type">Type</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Customer Name">Active</div>
+                    </th>
+                   
+                  
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.plannedCustomerList}" var="item">
+                
+                    <tr>
+                        <th scope="row" data-label="Customer Name">
+                            <div class="slds-truncate" title=""><a href="{!'/'+item.Account__r.Id}" target="_blank">{!item.Account__r.Name}</a></div>
+                        </th>
+                        <td >
+                            <div class="slds-truncate" title="">
+                                <ui:outputtext value="{!item.Account_Classification__c}"/>
+                            </div>
+                        </td>
+                        <td >
+                            <div class="slds-truncate" title="">
+                                <ui:outputCheckbox value="{!item.Active__c}"/>
+                            </div>
+                        </td>
+                       
+                    </tr>
+                </aura:iteration>
+                <aura:if isTrue="{!v.plannedCustomerList.length==0}">
+                        <tr><td colspan="6"><p align="center">{!$Label.c.Cres_RoutePlan_NoCustomers}</p></td></tr>
+                </aura:if>
+            </tbody>
+        </table>
+       
+</aura:component>

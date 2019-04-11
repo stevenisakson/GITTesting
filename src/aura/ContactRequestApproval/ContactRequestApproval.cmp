@@ -1,0 +1,10 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" controller="SF_UpdateContactController">
+    <aura:attribute name="recordId" type="Id" /> 
+    <aura:attribute name="errormsg" type="String" /> 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> 
+    
+    {!v.errormsg}       
+    <br/>
+    
+    <button  class=" slds-float_right" onclick="{!c.closeModel}" >Close</button >    
+</aura:component>

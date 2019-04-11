@@ -1,0 +1,23 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="item" type="sObject"/>
+    <aura:registerEvent name="selectionChanged" type="c:rowEvent"/>
+        <li role="presentation" class="slds-listbox__item">
+            <a onclick="{!c.toggleSelection}">
+            <div id="listbox-option-unique-id-01" class="{!'slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-media_center '+(v.item.checked? 'slds-is-selected':'')}" role="option">
+                <span class="slds-media__figure">
+                   
+                        <aura:if isTrue="{!v.item.checked}">    
+                            <lightning:icon iconName="utility:check" size="xx-small"/>
+                        </aura:if>
+                   
+                </span>
+                <span class="slds-media__body">
+                    <span class="slds-truncate" title="Option A">
+                        <span class="slds-assistive-text">Current Selection:</span>{!v.item.text}</span>
+                </span>
+            </div>
+           </a>
+        </li>
+        
+ 
+</aura:component>

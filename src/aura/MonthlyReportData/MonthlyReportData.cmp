@@ -1,0 +1,200 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:actionOverride,force:hasRecordId,force:hasSObjectName" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="cfrerror" type="List"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+    
+   
+    
+    <lightning:recordEditForm recordTypeId ="0122100000096rf" objectApiName="CFR_Data__c"
+                           onsuccess="{!c.onSuccess}"    
+                              recordId="{!v.recordId}"
+                              onsubmit="{!c.onSubmit}"
+                               onerror="{!c.onError}"
+                               onload="{!c.OnLoad}"
+                              >
+        
+        <div class="slds-box slds-theme_default slds-is-relative">
+            
+            <aura:if isTrue="{!v.isLoading}">
+                <lightning:spinner variant="brand"/>
+            </aura:if>
+            
+            <div class="slds-grid slds-grid_align-center">
+                <div class="slds-col slds-size_6-of-12">
+                    <div style= "padding-top:10px;background-color:#f1f1f1;border-radius:4px;padding-bottom:10px;padding-right:10px;">
+                        <div class="slds-grid slds-wrap">
+                            
+                            <div class="slds-col slds-size_12-of-12 slds-p-left_small">
+                                <div class="slds-align_absolute-center">
+                                    <h1 style="font-size:20px;"><u><b>CFR Monthly Data Collection</b></u></h1>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_12-of-12" style="padding:2px 1px 2px 1px;">
+                                <aura:if isTrue="{!v.cfrerror.length>0}">
+                                    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" >
+                                        <aura:iteration items="{!v.cfrerror}" var="err">
+                                            <aura:if isTrue="{!err!=''}">    
+                                                {!err}<br></br>
+                                            </aura:if>
+                                        </aura:iteration>
+                                        <div class="slds-notify__close">
+                                            <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close">
+                                                <span>
+                                                    <lightning:icon iconName="action:close" size="x-small" alternativeText="Close" onclick="{!c.closeError}"/>
+                                                </span>
+                                                <span class="slds-assistive-text">Close</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </aura:if>
+                               
+                            </div>
+                            <div class="slds-col slds-size_6-of-12 slds-p-left_small">
+                                
+                                <lightning:inputField fieldName="Month_Year__c" class="pseudoerequire"/>
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                              
+                                <lightning:inputField fieldName="BDM__c" class="pseudoerequire" />
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                                 
+                                <lightning:inputField fieldName="New_D_Proposals_Given__c" class="pseudoerequire" />
+                            </div>
+                            
+                             
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                                
+                                <lightning:inputField fieldName="New_D_Proposal_Landed__c" class="pseudoerequire"/>
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                               
+                                <lightning:inputField fieldName="Organic_Proposals_Given__c" class="pseudoerequire" />
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                                 
+                                <lightning:inputField fieldName="Organic_Proposals_Landed__c" class="pseudoerequire"/>
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                              
+                                <lightning:inputField fieldName="Dealer_Meetings_Held__c" class="pseudoerequire" />
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                                
+                                <lightning:inputField fieldName="Number_of_Dealers_Attended_Meetings__c" class="pseudoerequire" />
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                              
+                                <lightning:inputField fieldName="Farm_Calls__c" class="pseudoerequire" />
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                                 
+                                <lightning:inputField fieldName="New_Skus_Added__c" class="pseudoerequire"/>
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                                
+                                <lightning:inputField fieldName="Dealer_Business_Plan_Meetings__c" class="pseudoerequire" />
+                            </div>
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                                
+                                <lightning:inputField fieldName="Consumer_Events_Equine__c"  class="pseudoerequire"/>
+                            </div>
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                                
+                                <lightning:inputField fieldName="Consumer_Events_Attendance_Equine__c"  class="pseudoerequire"/>
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                              
+                                <lightning:inputField fieldName="Consumer_Events_Attendance_Pet__c" class="pseudoerequire"/>
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                               
+                                <lightning:inputField fieldName="Consumer_Events_Poultry__c" class="pseudoerequire"/>
+                            </div>
+                            
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                                 
+                                <lightning:inputField fieldName="Consumer_Events_Attendance_Poultry__c" class="pseudoerequire"/>
+                            </div>
+                            
+                            
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                             
+                                <lightning:inputField fieldName="Consumer_Events_Beef__c" class="pseudoerequire"/>
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                                
+                                <lightning:inputField fieldName="Consumer_Events_Attendance_Beef__c" class="pseudoerequire"/>
+                            </div>
+                            
+                            
+                            
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                                   
+                                <lightning:inputField fieldName="Consumer_Events_Attendance_Wildlife__c" class="pseudoerequire"/>
+                            </div>
+                            
+                             
+                            <div class="slds-size_6-of-12 slds-p-left_small">
+                                 
+                                <lightning:inputField fieldName="Consumer_Events_Wildlife__c" class="pseudoerequire"/>
+                            </div>
+                            
+                            <div class="slds-col slds-size_12-of-12">
+                                <lightning:button class="slds-m-top_small slds-align_absolute-center" type="submit" label="Submit" />
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </lightning:recordEditForm>
+  
+</aura:component>

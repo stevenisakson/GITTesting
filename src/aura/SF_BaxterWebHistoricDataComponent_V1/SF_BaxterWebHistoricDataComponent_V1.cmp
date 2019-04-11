@@ -1,0 +1,69 @@
+<aura:component controller="Cargill_Lt_AttachmentUpload"
+                implements="force:appHostable,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    
+    <div class="slds-m-around--medium" style="margin-left: 10px;">
+        <div class="slds-tabs--scoped">
+            <ul class="slds-tabs--scoped__nav" role="tablist">
+                <li aura:id="monthlyId" class="slds-tabs--scoped__item slds-text-title--caps slds-active customClassForTab" title="Displays" role="presentation" ><a class="slds-tabs--scoped__link" href="javascript:void(0);" onclick="{!c.monthlyTab}" role="tab" tabindex="0" aria-selected="false" aria-controls="tab-default-1" id="Months_linking">Displays</a></li>
+                <li aura:id="quarterlyId" class="slds-tabs--scoped__item slds-text-title--caps customClassForTab" title="Events" role="presentation"><a class="slds-tabs--scoped__link" href="javascript:void(0);" onclick="{!c.eventLogTab}" role="tab" tabindex="-1" aria-selected="true" aria-controls="tab-default-2" id="events_linking">Events</a></li>
+                <li aura:id="prospectId" class="slds-tabs--scoped__item slds-text-title--caps customClassForTab" title="Prospect List and activities" role="presentation"><a class="slds-tabs--scoped__link" href="javascript:void(0);" onclick="{!c.prospectTab}" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="prospect_linking">Prospect Lists and Activities</a></li>
+                <li aura:id="trainingId" class="slds-tabs--scoped__item slds-text-title--caps customClassForTab" title="Training" role="presentation"><a class="slds-tabs--scoped__link" href="javascript:void(0);" onclick="{!c.trainingTab}" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-4" id="training_linking">Training</a></li>
+            </ul>
+            <div name="tabdataName" aura:id="monthlyTabDataId" id="tab-default-1" class="slds-tabs--scoped__content slds-show customClassForTabData" role="tabpanel" aria-labelledby="Months_linking">
+                <div class="container-fluid">
+                    <!-- Default Display historic component for general -->
+                    <div class="slds-scrollable" style="height:100%;">
+                        <div style="margin-left: 10px;color:#3498DB; margin-bottom: 20px">
+                            <span class="slds-text-heading_small">View Historic Display Data</span>
+                        </div>
+                        <div class="slds-scrollable">
+                            <div class="slds">
+                                <c:SF_BaxterDisplayHistoricDataComponent_V1/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div name="tabdataName" aura:id="quarterlyTabDataId" id="tab-default-2" class="slds-tabs--scoped__content slds-hide customClassForTabData" role="tabpanel" aria-labelledby="events_linking">
+                <div class="slds-scrollable" style="height:100%;">
+                    <div style="margin-left: 10px;color:#3498DB; margin-bottom: 20px">
+                        <span class="slds-text-heading_small">View Historic Events Data</span>
+                    </div>
+                    <div class="slds-scrollable">
+                        <div class="slds">
+                            <c:SF_BaxterEventsHistoricDataComponent_V1/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div name="tabdataName" aura:id="prospectIdTabDataId" id="tab-default-3" class="slds-tabs--scoped__content slds-hide customClassForTabData" role="tabpanel" aria-labelledby="prospect_linking">
+                <div class="slds-scrollable" style="height:100%;">
+                    <div style="margin-left: 10px;color:#3498DB; margin-bottom: 20px">
+                        <span class="slds-text-heading_small">View Historic Prospect Data</span>
+                    </div>
+                    <div class="slds-scrollable">
+                        <div class="slds">
+                            <c:SF_BaxterProspectListHistoricDataComponent_V1/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div name="tabdataName" aura:id="trainingTabDataId" id="tab-default-4" class="slds-tabs--scoped__content slds-hide customClassForTabData" role="tabpanel" aria-labelledby="training_linking">
+                <div class="slds-scrollable" style="height:100%;">
+                    <div style="margin-left: 10px;color:#3498DB; margin-bottom: 20px">
+                        <span class="slds-text-heading_small">View Historic Training Data</span>
+                    </div>
+                    <div class="slds-scrollable">
+                        <div class="slds">
+                            <c:SF_BaxterTrainingHistoricDataComponent_V1/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</aura:component>

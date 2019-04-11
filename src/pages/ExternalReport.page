@@ -1,0 +1,42 @@
+<apex:page sidebar="false" controller="ExternalReportController">
+    <style>
+        .non-floater {overflow:hidden;}
+        iframe { width:100%; padding:0; border:0; hegiht:100%; }
+    </style>
+    <apex:form >
+        <apex:pageBlock title=" " mode="view"><!--
+            <apex:pageBlockSection title="Scorecard" columns="2">
+                
+                <analytics:reportChart reportId="00Oj0000000j22u" size="small" cacheResults="false" showRefreshButton="false"/>
+                <analytics:reportChart reportId="00Oj0000000j22r" size="small" cacheResults="false" showRefreshButton="false"/>
+                <analytics:reportChart reportId="00Oj0000000j22q" size="small" cacheResults="false" showRefreshButton="false"/>
+                <analytics:reportChart reportId="00Oj0000000j22v" size="small" cacheResults="false" showRefreshButton="false"/>
+                <analytics:reportChart reportId="00Oj0000004KgJB" size="small" cacheResults="false" showRefreshButton="false"/>
+                <analytics:reportChart reportId="00Oj0000000j22m" size="small" cacheResults="false" showRefreshButton="false"/>
+                
+            </apex:pageBlockSection>-->
+            <apex:pageBlockSection title="BI Report" columns="1">
+            <div class="non-floater">
+                <apex:iframe src="http://myreports.cargill.com/BOE/OpenDocument/opendoc/openDocument.jsp?&sRefresh=Y&iDocID=AcwEl5C6M3VOjF045nRCzXU&sIDType=CUID&sType=wid&sReportPart=UIREF:RID=1:BID=14&mode=Part&lsMpmCY_Month:=&lsMpmPayer_Code:=&lsMpmCustomer_Code:=&lsMpmFY_Year:={!IF(MONTH(TODAY())<=5,YEAR(TODAY()),YEAR(TODAY())+1)}
+&sWindow=Same" id="EmbeddedBI" scrolling="true" frameborder="0">
+                </apex:iframe>
+                </div>
+            
+            </apex:pageBlockSection>
+            
+         </apex:pageBlock>
+    </apex:form>
+    <c:vfproxy />
+    <c:vfproxy_autoheight />
+<!--     <apex:iframe src="https://myreports-dev.cargill.com/BOE/OpenDocument/1501011842/OpenDocument/opendoc/openDocument.faces?lsMpmEnter%20value(s)%20for%20Payer%20Code=000073&appKind=OpenDocument&sType=wid&sIDType=CUID&isApplication=true&sRefresh=Y&iDocID=ARjBCuGkR5VIt7fe_0aTQSk&shareId=11" id="theFrame" /> -->
+<script>
+    (function() {
+        var windowOnresize = window.onresize;
+        window.onresize = function() {
+            if (windowOnresize) windowOnresize();
+            document.getElementById('theFrame').height = window.innerHeight - 120;
+        };
+    }());
+</script>
+ 
+</apex:page>

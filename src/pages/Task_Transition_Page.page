@@ -1,0 +1,3 @@
+<apex:page sidebar="false" showheader="false" standardController="Task" extensions="TransitionPage_TaskController" action="{!redirectpage}">
+    
+</apex:page>

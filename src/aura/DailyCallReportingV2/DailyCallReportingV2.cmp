@@ -1,0 +1,411 @@
+<aura:component controller="DCRDayCtrlV2" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+<!-- CREATE ATTRIBUTE/VARIABLE-->
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    <aura:attribute name="dcrRecord" type="DCR_Day__c" default="{}"/>
+    <aura:attribute name="userInfo" type="User" default="{}"/>
+    <aura:attribute name="hasCreateAccess" type="Boolean" default="false"/>
+    <aura:attribute name="searchResultDCR" type="DCR_Day__c" />
+    <aura:attribute name="selectedTargetRecordId" type="String"/>
+    <aura:attribute name="searchResultDCRCustomers" type="List" />
+    <!--<aura:attribute name="searchResultPlannedDay" type="Planned_Day__c" />-->
+    <aura:attribute name="searchDate" type="Date" default=''/>
+    <aura:attribute name="searchTarget" type="String"/>
+    <aura:attribute name="dcrerrors" type="list"/>
+    <aura:attribute name="routeName" type="String"/>
+    <aura:attribute name="LOB" type="String"/>
+    <aura:attribute name="LineOfBusiness" type="String"/>
+    <aura:attribute name="OldFirstHalf" type="String"/>
+    <aura:attribute name="OldSecondHalf" type="String"/>
+    <aura:attribute name="OldComments" type="String"/>
+    <aura:attribute name="PlannedDay" type="String"/>
+    <aura:attribute name="conList" type="List"/>
+    <aura:attribute name="UserType" type="String"/>
+    <aura:attribute name="firstHalfValue" type="String" description="stores value when record is submitted for save"/>
+    <aura:attribute name="secondHalfValue" type="String" description="stores value when record is submitted for save"/>
+    <aura:attribute name="commentValue" type="String" description="stores value when record is submitted for save"/>
+	<aura:attribute name="selectedTargetRecord" type="Target__c" default="{}" description="Target "/>
+    <aura:attribute name="selectedRouteRecord" type="Route__c" default="{}" description="Target "/>
+   <!-- <aura:attribute name="selectedPlannedDayRecord" type="Planned_Day__c" default="{}" description="Planned Day "/>-->
+    <aura:attribute name="setFirstHalfValue" type="String" />
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    <aura:attribute name="AccompaniedByValue" type="String" />
+    <aura:attribute name="existingDCRId" type="String" />
+    <aura:attribute name="setSecondHalfValue" type="String" />
+    <aura:attribute name="routeid" type="String" />
+    <aura:attribute name="setStatusValue" type="String" default="Open"/>
+    <aura:attribute name="isOpen" type="Boolean" default="false"/>
+    <aura:attribute name="isTerrSelected" type="Boolean" default="false"/>
+    <aura:attribute name="isAddCustDisabled" type="Boolean" default="false"/>
+    <aura:attribute name="isEditDisabled" type="Boolean" default="false"/>
+    <aura:attribute name="isOutputfield" type="Boolean" default="false"/>
+    <aura:attribute name="isSaveDisabled" type="Boolean" default="false"/>
+    <aura:attribute name="isCancelDisabled" type="Boolean" default="false"/>
+    <aura:attribute name="ismodalOpen" type="Boolean" default="false"/>
+    <aura:attribute name="plannedDeviation" type="Boolean" default="false"/>
+    <aura:attribute name="iterateVisitSec" type="Boolean" default="false"/>
+    <aura:attribute name="dcrLock" type="Boolean" />
+    <aura:attribute name="statusValue" type="String"  />
+    <aura:attribute name="isReadOnly" type="Boolean" default="false"/>
+    <aura:attribute name="showAddCust" type="Boolean" default="false"/>
+    <aura:attribute name="dcrUnlockAccess" type="Boolean" default="false" />
+    <aura:attribute name="dcrActivitySaveCheck" type="Boolean" default="false"/>
+    <aura:attribute name="showVisitSection" type="Boolean" default="false"/>
+    <aura:handler name="change" value="{!v.searchResultDCR}" action="{!c.dcrChange}"/>
+    <aura:handler name="change" value="{!v.searchResultDCRCustomers}" action="{!c.dcrCustomerChange}"/>
+    <aura:handler name="change" value="{!v.dcrActivitySaveCheck}" action="{!c.showSaveToast}"/>
+    <aura:attribute name="isCreateNewDisabled" type="Boolean" default="true"/>
+    <aura:attribute name="isSearchDisabled" type="Boolean" default="false"/>
+    <aura:attribute name="isDateDisabled" type="Boolean" default="false"/>
+    <aura:attribute name="isNewDCRRecord" type="Boolean" default="false"/>
+    <aura:attribute name="isTerritoryDisabled" type="Boolean" default="false"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+    <aura:attribute name="searchErrMsg" type="String" default="No Existing DCR Record Found for the Selected Combination. Please Create New DCR."/>
+    <aura:attribute name="toHideclass" type="String" default="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error slds-hide"/>
+    <aura:handler name="dcrEvent" event="c:Cres_plandayrecordsevent" action="{!c.Search}"/>
+   <div class="slds-box slds-theme_default" style="padding:10px;">
+   
+<!-- No DCR Div Record Error-->  
+    
+<div class="{!v.toHideclass}" role="alert" aura:id="noDCRerror">
+  <span class="slds-assistive-text">No DCR Record Found</span>
+   <span>
+      	<!--<lightning:icon iconName="utility:error" size="medium" alternativeText="No DCR Record Found"/>-->
+   </span>
+  <h2>{!v.searchErrMsg}
+    
+  </h2>
+  <div class="slds-notify__close">
+    <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close">
+      <span>
+        <lightning:icon iconName="action:close" size="x-small" alternativeText="Close" onclick="{!c.closeExDCRError}"/>
+      </span>
+      <span class="slds-assistive-text">Close</span>
+    </button>
+  </div>
+</div>
+ <aura:if isTrue="{!v.isLoading}">
+     <lightning:spinner variant="brand"/>
+ </aura:if>   
+<!-- Date and Territory Search Section-->
+    
+   <!-- <div class=" slds-box slds-theme_default" style="padding:10px;"> -->
+    	<div class="slds-grid slds-gutters slds-wrap">  
+           <div class="slds-col slds-size_2-of-12 slds-p-bottom_medium">  
+               <span>
+               	<b>	<lightning:input  label="Date" aura:id="searchDate" value="{!v.searchDate}" type="Date" name="Day Date" disabled="{!v.isDateDisabled}"/>    </b>
+        	   		<lightning:formattedText aura:id="dayDateError" value="" class="slds-text-color_error" />
+               </span>
+           </div> 
+            
+             <div class="slds-col slds-size_3-of-12">  
+               <span>
+                 <aura:if isTrue="{!v.isTerrSelected}">  
+                <b>	  <lightning:input disabled="true" label="Territory" aura:id="terrOutputfield" value="{!v.selectedTargetRecord.TerrEmpName__c}"/> </b>
+                   <aura:set attribute="else">
+                 <b>    <c:CresTargetLookUp objectAPIName="Target__c" IconName="" selectedRecord="{!v.selectedTargetRecord}" label="Territory" />  </b>
+                   </aura:set>
+                </aura:if>
+                     <lightning:formattedText aura:id="targetError" value="" class="slds-text-color_error" />
+               </span>
+             </div> 
+             
+           <div class="slds-col slds-size_3-of-12 slds-p-top_large">  
+               <span>
+                <lightning:button onclick="{!c.Search}"
+                                  variant="brand"
+                                  label="Search"
+                                  iconName="utility:search"
+                                  disabled="{!v.isSearchDisabled}"
+                                  /> 
+                 <lightning:button onclick="{!c.cancelSearch}"
+                                  variant="brand"
+                                  label="Cancel"
+                                  iconName=""
+                                  />
+                <!-- <lightning:button onclick="{!c.newDCR}"
+                                  variant="brand"
+                                  label="Create New"
+                                  iconName=""
+                                  disabled="{!v.isCreateNewDisabled}"   
+                                  /> -->
+                  <lightning:button onclick="{!c.newDCR}"
+                                     variant="brand"
+                                     label="Create New"
+                                     iconName=""
+                                     disabled="{!if(!v.isCreateNewDisabled &amp;&amp; (v.hasCreateAccess || v.selectedTargetRecord.Employee_Link_To__c==v.userInfo.Id),false,true)}"   
+                                     /> 
+                   
+             </span>
+           </div> 
+    </div>
+  </div>
+    
+  <div class="slds-hide" aura:id="activityPerformedSection">
+    <div class="slds-box slds-theme_default" style="padding:2px 2px 2px 2px;">
+   <!-- <div class="slds-page-section" style="padding:2px 2px 2px 2px; background-color:#fafaf9;">-->
+        <div class="slds-page-section" style="padding:2px 2px 2px 2px; background-color:#fafaf9;">
+        <div class="slds-grid slds-gutters slds-wrap">
+            <div class="slds-col slds-size_0.5-of-3">
+                <span>
+                	<lightning:icon iconName="standard:note" size="medium" alternativeText="Activities Performed"/>
+                </span>
+            </div>
+            <div class="slds-col slds-p-top_xx-small">
+                <span>
+                    <h2 class="slds-page-header__title">Activities Performed</h2>
+                   
+                </span>
+            </div>
+          <div class="slds-col slds-p-top_xx-small"> 
+             <aura:if isTrue="{!v.dcrUnlockAccess}">
+                
+                       
+                       <lightning:button onclick="{!c.unlockDCRRecordClicked}"
+                                         variant="brand"
+                                         label="Unlock DCR" disabled="{!!v.isReadOnly}"
+                                         iconName="utility:unlock"
+                                         class="slds-float_right"
+                                         /> 
+                       
+                
+                     </aura:if>
+              </div> 
+         
+        </div>
+     </div>
+ <!-- </div> -->
+  
+<!-- <div class="slds-box slds-theme_default" style="padding:10px;"> -->
+         <div class="slds-grid slds-wrap">
+            
+            <div class="slds-col slds-size_12-of-12" style="padding:2px 1px 2px 1px;">
+                <aura:if isTrue="{!v.dcrerrors.length>0}">
+                    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" >
+                        <aura:iteration items="{!v.dcrerrors}" var="err">
+                            <aura:if isTrue="{!err!=''}">    
+                                {!err}<br></br>
+                            </aura:if>
+                        </aura:iteration>
+                        <div class="slds-notify__close">
+                            <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close">
+                                <span>
+                                    <lightning:icon iconName="action:close" size="x-small" alternativeText="Close" onclick="{!c.closeExDCRError}"/>
+                                </span>
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                        </div>
+                    </div>
+                </aura:if>
+            </div>
+        </div>
+        
+       <lightning:recordEditForm
+            aura:id="dcrForm"
+            onload="{!c.onload}"
+            recordTypeId='{!$Label.c.Cres_DCRDayRecTypeId}'
+            
+            onsuccess="{!c.handleSuccess}"
+            recordId="{!v.existingDCRId}"
+            onerror="{!c.onError}"
+            objectApiName="DCR_Day__c">
+          
+           <div class="slds-grid slds-gutter">
+
+               <div class="slds-col slds-p-top_xx-small slds-size_1.5-of-12">
+                   <aura:if isTrue="{!v.isOutputfield}">
+                    <!-- <b>  <lightning:outputField fieldName="First_Half__c" />   </b> -->
+                        <b>    <lightning:inputField disabled= "true" fieldName="First_Half__c" aura:id="frstHalfOutput" value="" /> </b>
+                       <aura:set attribute="else">
+                       <b>    <lightning:inputField class="customRequired none" fieldName="First_Half__c" aura:id="frstHalf" value="" /> </b>
+                       </aura:set>
+                   </aura:if> 
+               </div> 
+               <div class="slds-col slds-p-left_x-small slds-p-top_xx-small slds-size_1.5-of-12">
+                   <aura:if isTrue="{!v.isOutputfield}">
+                    <!--   <b>   <lightning:outputField fieldName="Second_Half__c" />   </b> -->
+                        <b>       <lightning:inputField fieldName="Second_Half__c" disabled="true" aura:id="secHalfOutput" value="" /></b>
+                       <aura:set attribute="else">
+                           <b>       <lightning:inputField class="customRequired none" fieldName="Second_Half__c" aura:id="secHalf" value="" /></b>
+                       </aura:set>
+                   </aura:if>
+               </div>
+               <div class="slds-col slds-p-left_x-small slds-p-top_xx-small slds-size_3-of-12">
+                   <aura:if isTrue="{!v.isOutputfield}">
+                  <!--     <b>   <lightning:outputField fieldName="Comments__c" />   </b> -->
+                        <b>       <lightning:inputField fieldName="Comments__c" value="" disabled="true" aura:id="commentsIdOutput"/> </b>
+                       <aura:set attribute="else">
+                          <b>        <lightning:inputField fieldName="Comments__c" value="" aura:id="commentsId"/> </b>
+                       </aura:set>
+                   </aura:if>
+                 
+               </div>
+              
+                <div class="slds-col slds-p-left_x-small slds-p-top_xx-small slds-size_1-of-12">
+                    <b>      <lightning:inputField fieldName="Status__c" disabled="true" value="{!v.statusValue}"/> </b>
+               </div>
+                <div class="slds-col slds-p-left_x-small slds-p-top_xx-small slds-size_1-of-12" style="width:110px;">
+                    <b>      <lightning:outputField fieldName="Line_Of_Business__c"  /> </b>
+               </div>
+              
+              <div class="slds-col slds-p-left_x-small slds-p-top_xx-small slds-size_1-of-12">
+                  <b>      <lightning:outputField fieldName="User_Type__c"  /> </b>
+              </div>
+             
+               <div class="slds-col slds-p-top_x-small">
+ 					<span>
+                     
+                                <lightning:buttonIcon variant="brand" 
+                                                          
+                                                          title="Save"
+                                                          onclick="{!c.openSaveModal}"
+                                                          iconName="utility:save"
+                                                          class="slds-float_right slds-m-left_x-small"
+                                                          disabled="{! or(v.isReadOnly,v.isSaveDisabled)}"
+                                                      alternativeText="Save"/>
+                       
+                                 <lightning:buttonIcon variant="brand"
+                                                    disabled="{! or(v.isReadOnly,v.isEditDisabled)}"
+                                                   iconName="utility:edit"
+                                                   class="slds-float_right"
+                                                   onclick="{! c.activityEditClick }"
+                                                       alternativeText="Edit"
+                                                  />
+                    
+                                 <lightning:buttonIcon variant="brand"
+                                                   disabled="{! or(v.isReadOnly,v.isCancelDisabled)}"
+                                                   class="slds-float_right slds-m-right_x-small"
+                                                   onclick="{! c.activityCancelClik }" alternativeText="Cancel"
+                                                   iconName="utility:close"
+                                                  />
+                    
+                    </span>
+     <!--Use aura:if tag to display Model Box, on the bese of conditions. [isOpen boolean attribute] -->   
+        <aura:if isTrue="{!v.ismodalOpen}">
+            
+            <!--###### MODAL BOX Start######--> 
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeSaveModal }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Please Confirm Save</h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p><b>Change of Activity from Customer visit /  Group meeting will lead to deletion of existing customer visits.
+                            </b>
+                        </p>
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.closeSaveModal }"/>
+                        <lightning:button type="button" onclick="{!c.onSubmit}"
+                                  variant="brand"
+                                  label="Confirm Save" disabled="{!v.isReadOnly}"
+                                  />
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+            
+        </aura:if>
+     </div>
+
+           </div>
+           <lightning:inputField fieldName="Target__c" class='slds-hide' aura:id="targetFieldId" />
+           <lightning:inputField fieldName="Day__c" class='slds-hide' aura:id="dayFieldId" />
+    </lightning:recordEditForm>
+   
+  </div>
+</div> 
+ 
+  
+  <div class="slds-box slds-theme_default" style="padding:2px 2px 2px 2px;">
+    <div class="slds-hide" aura:id="visitSectionHeader">
+      <div class="slds-page-section" style="padding:2px 2px 2px 2px; background-color:#fafaf9;"> 
+        <div class="slds-grid slds-gutters slds-wrap">
+            <div class="slds-col slds-size_0.5-of-3">
+                <span>
+                	<lightning:icon iconName="standard:record" size="medium" alternativeText="Visit Details"/>
+                </span>
+            </div>
+            <div class="slds-col slds-p-top_xx-small">
+                <span>
+                    <h2 class="slds-page-header__title">Visit Detail</h2>
+                </span>
+                
+            </div>
+            <div class="slds-col slds-p-top_xx-small">
+                <span>
+                <!-- <lightning:button  variant='brand' label="Add Customer"  disabled="{!v.isReadOnly || !v.showVisitSection ? 'true':'false'}" onclick="{!c.Adddcrcust}" class="slds-m-left_xxx-small slds-float_right"/>&nbsp; -->
+                <lightning:button  variant='brand' label="Add Customer"  disabled="{!or(v.isReadOnly,v.isAddCustDisabled)}" onclick="{!c.Adddcrcust}" class="slds-m-left_xxx-small slds-float_right"/>&nbsp;
+                    <lightning:button variant='brand' onclick="{!c.openModal}" disabled="{!or(v.isReadOnly,v.isEditDisabled)}" label="Complete" class="slds-float_right"/>
+                </span>
+                
+                 <!--Use aura:if tag to display Model Box, on the bese of conditions. [isOpen boolean attribute] -->   
+        <aura:if isTrue="{!v.isOpen}">
+            
+            <!--###### MODAL BOX Start######--> 
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModal }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Please Confirm Complete</h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p><b>Record will be locked on completion of DCR. Any unsaved changes to the Visit Details will be lost. Please contact your Data Steward to unlock the DCR.
+                            </b>
+                        </p>
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.closeModal }"/>
+                        <lightning:button variant="brand" 
+                                          label="Confirm Finish"
+                                          title="Confirm Finish"
+                                          onclick="{!c.finishClick}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+            
+        </aura:if>
+            </div>
+          </div>
+        </div>
+    </div>
+        <div class="slds-hide" aura:id="visitDetailSection"> 
+
+  
+      
+    <aura:if isTrue="{!v.iterateVisitSec}">
+         <aura:if isTrue="{!v.iterateVisitSec}">
+              <c:Cres_VisitDetailTable selectedTargetRecordId="{!v.selectedTargetRecordId}" isReadOnly="{!v.isReadOnly}"  dcrcustlist="{!v.searchResultDCRCustomers}" existingDCRId="{!v.existingDCRId}" />
+          </aura:if>
+     
+      
+      
+    </aura:if>
+      
+      </div>    
+   </div>
+
+</aura:component>

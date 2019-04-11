@@ -1,0 +1,163 @@
+<apex:page standardController="Event" extensions="LabyrinthEventDeatilPage_ctrl" showHeader="false">
+  <head>
+                <style type="text/css">
+                       @page {
+                                
+                                     div.header {
+                                      padding: 10px;
+                                      position: running(header);
+                           }
+                       div.footer {
+                                display: block;
+                             padding: 5px;
+                               position: running(footer);
+                               padding: 1em;
+                              top: 40px;
+                      }
+                                  
+                    </style>
+                    
+                    <style>
+    
+                        .pageDescription, .pageType {
+                         color: white !important;
+                         }
+                    </style>  
+                    
+</head>
+          <!-- <div class="header">
+              <div><apex:image url="{!$Resource.LabyrinthPortalHeader}" width="100%" height="100%"/></div>
+           </div> -->
+  <apex:form >
+ <!-- <apex:sectionHeader title="Calendar Event" subtitle="{!Event.subject}"/> -->
+<div>
+<table>
+    <tr>
+    <td style="padding-right: 10px;">
+     <img src="{!URLFOR($Resource.LabyrinthLogo)}"  width="300" height="75" id="phHeaderLogoImage"/>
+     </td>  
+    
+     <td >
+       <apex:outputLabel style="font-size: 12px; color:Black;" value="Calendar Event"></apex:outputLabel><br></br>
+       <apex:outputText value="{!Event.subject}" style="font-size: 22px; color:Black;"></apex:outputText>
+     </td>
+     
+   </tr>
+  </table>
+   <apex:outputLink style="color:Black; text-align: Left; float:right;padding-right: 20px;"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+   <a href="javascript: history.go(-1)" style="color:Black; text-align: right; float:right;padding-right: 10px;">Back</a>
+  
+            
+</div>
+       <!-- <div style="background-color:#008B8B;">
+            <apex:sectionHeader title="Calendar Event" subtitle="{!Event.subject}">
+            <!--<apex:outputLink style="color:white; text-align: Left; padding-left: 1180px; " target="_blank" value="/home/home.jsp">Home</apex:outputLink>&nbsp;<b style="Color:White;">|</b> -->
+          <!--  <apex:outputLink style="color:Black; text-align: Left; float:right"  value="/apex/AccountlandingPage">Home</apex:outputLink>
+            </apex:sectionHeader> 
+        </div>  -->
+         
+      <apex:pageBlock mode="maindetail">
+                        <apex:outputPanel style="float:centre">
+                            <div align="center" draggable="false" >
+                               <apex:commandButton value="Edit" action="{!EditEvent}"/>
+                            </div>
+                         </apex:outputPanel>      
+      <!--<apex:pageBlockButtons >
+      <apex:commandButton value="Edit" action="{!EditEvent}"/>
+      </apex:pageBlockButtons>-->
+      
+          <apex:pageBlockSection title="Calendar Details">
+           <apex:pageBlockSectionItem >
+           Assigned To
+             <apex:outputText value="{!Event.owner.name}"></apex:outputText>
+            </apex:pageBlockSectionItem>
+         <!-- <apex:OutputField value="{!Event.ownerid}"/>
+              <apex:OutputField value="{!Event.whatid}"/> -->
+          <apex:pageBlockSectionItem >
+            <apex:outputLabel >Related To</apex:outputLabel>
+            <apex:outputLink value="/apex/LabyrinthAccountDetailPage?id={!Event.whatid}">{!Event.what.name}</apex:outputLink>
+        </apex:pageBlockSectionItem>
+          <apex:OutputField value="{!Event.Subject}"/>
+         <!-- <apex:OutputField value="{!Event.Whoid}"/> -->
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel >Name</apex:outputLabel>
+            <apex:outputLink value="/apex/LabyrinthContactDetailPage?id={!Event.whoid}">{!Event.who.name}</apex:outputLink>
+        </apex:pageBlockSectionItem>
+          <apex:OutputField value="{!Event.StartDateTime}"/>
+          <apex:OutputField value="{!Event.Business_Unit__c}"/>
+          <apex:OutputField value="{!Event.EndDateTime}"/>
+          <apex:OutputField value="{!Event.Sub_Type__c}"/>
+          </apex:pageBlockSection>
+          
+          <apex:pageBlockSection title="Other Information" columns="1">
+          <apex:OutputField value="{!Event.Location}"/>
+          <apex:OutputField value="{!Event.ShowAs}"/>
+          <apex:outputField value="{!Event.Report_Link__c}"/>
+          </apex:pageBlockSection>
+         
+          <apex:pageBlockSection title="Description Information">
+          <apex:OutputField value="{!Event.Description}"/>
+          </apex:pageBlockSection>
+          
+           <apex:pageBlockSection title="System Information">
+         
+         <apex:pageBlockSectionItem >
+           Created By
+             <apex:outputText value="{!Event.CreatedBy.name} {!Event.CreatedBy.CreatedDate}"></apex:outputText>
+            </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+            Last Modified By
+             <apex:outputText value="{!Event.LastModifiedBy.name} {!Event.LastModifiedDate}"></apex:outputText>
+            </apex:pageBlockSectionItem>
+                 
+         </apex:pageBlockSection> 
+         
+      </apex:pageBlock>
+      <apex:pageBlock mode="maindetail" >
+           <apex:pageBlockSection title="Visit Report" >
+           <apex:outputPanel rendered="{!vr.size >0}">
+             <apex:pageBlockTable value="{!vr}" var="v">
+                 <apex:column value="{!v.name}"/>
+                 <apex:column value="{!v.External_Call_Notes__c}"/>
+                 <apex:column value="{!v.Internal_Call_Notes__c}"/>
+             </apex:pageBlockTable>
+         </apex:outputPanel>
+             
+         <apex:outputPanel rendered="{!vr.size <=0}">
+             No records to display
+         </apex:outputPanel>
+         </apex:pageBlockSection>
+         
+       <!--  <apex:pageBlockSection columns="1" id="NotesandAttachments" Title="Attachments">
+             <apex:outputField value="{!Event.Report_Link__c}"/>
+              <apex:outputPanel rendered="{!attachments.size > 0}">                         
+                <apex:pageBlockTable value="{!attachments}" var="att">
+                    
+                   <apex:column headerValue="Action">
+                   <apex:commandLink value="View" onclick="window.open('/servlet/servlet.FileDownload?file={!att.id}')" reRender="none"/> |
+                    
+                   <apex:commandLink action="{!deleteattachment}" onclick="if(!confirm('Are you sure?')) return false;">Del
+                   <apex:param value="{!att.id}" name="idToDel" assignTo="{!attId}"/>
+                   </apex:commandLink> 
+                   </apex:column>
+                    
+                    
+                    <apex:column value="{!att.Name}"/>
+                    <apex:column value="{!att.BodyLength}" />
+                    <apex:column value="{!att.LastModifiedDate}"/>
+                                    
+                </apex:pageBlockTable>
+               </apex:outputPanel>
+              
+               <apex:outputPanel rendered="{!attachments.size <= 0}">
+                No records to display
+               </apex:outputPanel>       
+            </apex:pageBlockSection> -->  
+         
+         
+      </apex:pageBlock>
+  </apex:form>
+ <!-- <apex:relatedList list="Attachments" subject="{!event.id}" />  -->
+ 
+   
+</apex:page>

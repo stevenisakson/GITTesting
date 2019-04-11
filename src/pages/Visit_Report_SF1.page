@@ -1,0 +1,124 @@
+<!--
+    @Author             : Loven Reyes (CloudSherpas)
+    @Date Created       : 2-SEP-2015
+    @Description        : VF page for Visit Report mobile version
+-->
+
+<apex:page showHeader="false" sidebar="true" standardController="Event" extensions="CallSummaryController" standardStylesheets="true">
+    <!-- for sf1 style -->
+    <apex:stylesheet value="{!URLFOR($Resource.jQueryMobile,'CANGAT.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jQueryMobile,'jquery.mobile.icons-1.4.5.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jQueryMobile,'jquery.mobile.structure-1.4.5.min.css')}"/>
+
+    <apex:includescript value="//code.jquery.com/jquery-1.11.1.min.js" />
+    <apex:includeScript value="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"/>
+
+
+    <!-- <apex:includeScript value="{!URLFOR($Resource.Bootstrap,'js/bootstrap.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.JQueryForRichText,'js/bootstrap-markdown.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.Bootstrap,'js/marked.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.Bootstrap,'js/to-markdown.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.JQueryForRichText,'css/bootstrap-markdown.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.Bootstrap,'css/bootstrap.min.css')}"/> -->
+
+    <style>
+        .card-heading {
+            padding: 1px 3px 1px !important;
+            background-color: #1797c0;
+        }
+        .form-group {
+            background-color: #F0F1F2 !important;
+            margin-bottom: 0px !important;
+            padding-top: 0.5% !important;
+        }
+        .form-group label{
+            padding: 1px 3px 1px !important;
+        }
+
+        .btn{
+            font-size: 1.2em !important;
+        }
+    </style>
+
+    <apex:form id="formId">
+        <apex:outputPanel id="opId">
+            <apex:actionFunction action="{!updateTable}" name="saveInJS" reRender="errorId" oncomplete="popmessage({!errorinmobile});">
+                <apex:param value="" assignTo="{!mobileversion}" name="mobilesf1" />
+                <apex:param value="" assignTo="{!external_note}" name="exnote" />
+                <apex:param value="" assignTo="{!internal_note}" name="innote" />
+                <apex:param value="" assignTo="{!errorinmobile}" name="error"/>
+            </apex:actionFunction>
+        </apex:outputPanel>
+
+        <div class="ui-bar" data-role="popup" id="divsf1" data-history="false" data-theme="c">
+            <apex:pageMessages id="errorId"/>
+        </div>
+
+        <apex:outputpanel id="opbody">
+            <div data-role="page" id="pageone">
+                <div data-role="main" class="ui-content">
+                    <h2>Visit Report</h2>
+                    <div data-role="collapsible">
+                        <h4>External Call Notes</h4>
+                        <ul data-role="listview">
+                            <!-- <textarea id="text1Id" name="content" placeholder="Enter note..." rows="7" >{!CallSummaryRecord.External_Call_Notes__c}</textarea> -->
+                            <div id="divecn" class="txtar" contentEditable="true" style="padding:5px; background-color:#ffffff; height:150px; overflow: scroll; font-family:'courier new'"> 
+                                {!CallSummaryRecord.External_Call_Notes__c}
+                            </div> 
+                        </ul>
+                    </div>
+
+                    <div data-role="collapsible">
+                        <h4>Internal Call Notes</h4>
+                        <ul data-role="listview">
+                            <!-- <textarea id="text2Id" name="content" data-provide="markdown" data-width="90%" placeholder="Enter note..." rows="7" >{!CallSummaryRecord.Internal_Call_Notes__c}</textarea> -->
+                            <div id="divicn" class="txtar" contentEditable="true" style="padding:5px; background-color:#ffffff; height:150px; overflow: scroll; font-family:'courier new'"> 
+                                {!CallSummaryRecord.Internal_Call_Notes__c}
+                            </div> 
+                        </ul>
+                    </div>
+
+                    
+                </div>
+
+                <div style="padding-left: 110px; padding-right: 110px;">
+                    <button onclick="saveInJS(true, document.getElementById('divecn').innerHTML, document.getElementById('divicn').innerHTML,false);" type="button" style="padding-bottom: 2px; padding-top: 2px;">Save</button>
+                </div>
+            </div> 
+        </apex:outputpanel>
+    </apex:form>
+
+    <script type="text/javascript">
+
+        // $("#some-textarea").markdown({
+        //     autofocus:false,
+        //     savable:true
+        // })
+
+        $(document).ready(function(){
+            $("#divsf1").popup(
+                {
+                    shadow: true,
+                    transition: 'slidedown',
+                    positionTo: 'window',
+                    overlayTheme: 'c',
+                    corners: true,
+                    dismissible: true
+                }
+            );
+        });
+
+        //Show output for external and internal Notes
+        $('#divecn').html($('#divecn').text());
+        $('#divicn').html($('#divicn').text());
+
+        function popmessage(status){
+            if(status == true){
+                //$("#divsf1").html("");
+            }else{
+                // $("#divsf1").html("Record Saved.");
+            }
+            $("#divsf1").popup('open');
+        }
+    </script>
+</apex:page>

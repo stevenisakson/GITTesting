@@ -1,0 +1,79 @@
+<!--******************************************************************
+** Author: Tumish Tak
+** Date: 11-May-2017
+** Controller: CompetitorDynamicRequestController
+** Description: VF Page for Creating/Editing RequestLineItem
+******************************************************************-->
+
+<apex:page sidebar="true" showHeader="true" title="Request" controller="CompetitorDynamicRequestController">
+    <apex:form >
+            <apex:pageMessages />
+        <apex:pageBlock mode="edit" title="New Request" rendered="{!renderNew}">
+            <div align = "center">
+                <apex:commandButton value="Save" action="{!save}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}" immediate="true"/>   
+            </div>
+            
+            <apex:pageBlockSection title="Request Information" columns="2">
+                
+                <apex:outputField value="{!accountInfo.Name}"/>
+                <apex:inputText label="Description" value="{!reqDescription}"/>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Protected Information" columns="1">
+                
+                <apex:pageblockTable value="{!csFields}" var="FieldName">
+                    <apex:column headerValue="Field Name" value="{!FieldName.Field_Label__c}"/>
+                    <apex:column headerValue="Existing Value" >
+                        <apex:outputField value="{!fields[0].accOld[FieldName.Field_Name__c]}"/>
+                    </apex:column>
+                    <apex:column headerValue="Requested Value">
+                        <apex:inputField value="{!fields[0].accNew[FieldName.Field_Name__c]}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+              
+            </apex:pageBlockSection>    
+            
+            <div align = "center">
+                <apex:commandButton value="Save" action="{!save}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}" immediate="true"/>   
+            </div>
+        
+        </apex:pageBlock>
+        
+        <apex:pageBlock mode="edit" title="Edit Request" rendered="{!renderEdit}">
+            <div align = "center">
+                <apex:commandButton value="Save" action="{!save}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}" immediate="true"/>   
+            </div>
+            
+            <apex:pageBlockSection title="Request Information" columns="2">
+                
+                <apex:outputField value="{!accountInfo.Name}"/>
+                <apex:outputField value="{!getRequestInfo.Description__c}"/>
+                 
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Protected Information" columns="1">
+                
+                <apex:pageblockTable value="{!csFields}" var="FieldName">
+                    <apex:column headerValue="Field Name" value="{!FieldName.Field_Label__c}"/>
+                    <apex:column headerValue="Existing Value" >
+                        <apex:outputField value="{!fields[0].accOld[FieldName.Field_Name__c]}"/>
+                    </apex:column>
+                    <apex:column headerValue="Requested Value">
+                        <apex:inputField value="{!fields[0].accNew[FieldName.Field_Name__c]}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+              
+            </apex:pageBlockSection>    
+            
+            <div align = "center">
+                <apex:commandButton value="Save" action="{!save}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}"  immediate="true"/>   
+            </div>
+        
+        </apex:pageBlock>
+    </apex:form>
+    
+</apex:page>

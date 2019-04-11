@@ -1,0 +1,13 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+     <aura:attribute name="item" type="sObject"/>
+     <aura:registerEvent name="selectionChanged" type="c:rowEvent"/>
+    <li role="presentation" class="slds-listbox__item">
+        <span class="slds-pill" role="option" tabindex="0" aria-selected="true">
+            <span class="slds-pill__label" title="{!item}">{!v.item.text}</span>
+            <span class="slds-icon_container slds-pill__remove" title="Remove">
+                <a onclick="{!c.removeSelection}" value="{!v.item.text}"><lightning:icon iconName="utility:close"/></a>
+                <span class="slds-assistive-text">Press delete or backspace to remove</span>
+            </span>
+        </span>
+    </li>
+</aura:component>

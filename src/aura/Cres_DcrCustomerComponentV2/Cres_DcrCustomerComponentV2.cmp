@@ -1,0 +1,499 @@
+<aura:component controller="DCRDayCtrlV2" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="dcrcustomer" type="SObject"/>
+    <aura:attribute name="selectedTargetRecordId" type="String"/>
+    <aura:attribute name="selectedContactName" type="String"/>
+    <aura:attribute name="dcrerrors" type="list"/>
+    <aura:attribute name="mode" type="String" default="View"/>
+    <aura:attribute name="dcrcustlist" type="list"/>
+    <aura:attribute name="Dcrdayid" type="String"/>
+    <aura:attribute name="state" type="String" default="init"/>
+    <aura:attribute name="productInput2" type="String"/>
+    <aura:attribute name="productInput3" type="String"/>
+    <aura:attribute name="productInput4" type="String"/>
+    <aura:attribute name="productInput5" type="String"/>
+    <aura:attribute name="isReadOnly" type="Boolean" default="false"/>
+    <aura:attribute name="productQuantity2" type="Integer"/>
+    <aura:attribute name="productQuantity3" type="Integer"/>
+    <aura:attribute name="productQuantity4" type="Integer"/>
+    <aura:attribute name="productQuantity5" type="Integer"/>
+    
+    <aura:attribute name="productDetail2" type="String"/>
+    <aura:attribute name="productDetail3" type="String"/>
+    <aura:attribute name="productDetail4" type="String"/>
+    <aura:attribute name="productDetail5" type="String"/>
+    
+    <aura:attribute name="brandReminderQuant2" type="Integer"/>
+    <aura:attribute name="brandReminderQuant3" type="Integer"/>
+    <aura:attribute name="brandReminderQuant4" type="Integer"/>
+    <aura:attribute name="brandReminderQuant5" type="Integer"/>
+    
+    <aura:attribute name="brandReminder2" type="String"/>
+    <aura:attribute name="brandReminder3" type="String"/>
+    <aura:attribute name="brandReminder4" type="String"/>
+    <aura:attribute name="brandReminder5" type="String"/>
+    
+    <aura:attribute name="selectedRoute" type="sObject"/>
+    <aura:attribute name="selectedRouteCustomer" type="sObject"/>
+    
+    <aura:handler name="change" value="{!v.selectedRoute}" action="{!c.routeChanged}"/>
+    <aura:handler name="change" value="{!v.selectedRouteCustomer}" action="{!c.accountChanged}"/>
+    
+    <aura:registerevent name="dcrEvent" type="c:Cres_plandayrecordsevent"/>
+    
+    <aura:attribute name="index" type="Integer"/>
+    <aura:attribute name="Count" type="Integer" default="0"/>
+    
+    <aura:attribute name="Details" type="boolean" default="false" />
+    
+    
+    <aura:attribute name="dcrlist" type="list"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="slds-theme_default">
+        <div class="slds-grid slds-wrap">
+            
+            <div class="slds-col slds-size_12-of-12" style="padding:2px 1px 2px 1px;">
+                <aura:if isTrue="{!v.dcrerrors.length>0}">
+                    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" >
+                        <aura:iteration items="{!v.dcrerrors}" var="err">
+                            <aura:if isTrue="{!err!=''}">    
+                                {!err}<br></br>
+                            </aura:if>
+                        </aura:iteration>
+                    </div>
+                </aura:if>
+            </div>
+        </div>
+        
+        <div class="slds-border_bottom slds-p-top_small">
+            <lightning:recordEditForm 
+                                      objectApiName="DCR_Day__c" 
+                                      aura:id="dcrform"
+                                      onload="{!c.onload}"
+                                      recordId="{!v.dcrcustomer.Id}"
+                                      recordTypeId="{!$Label.c.Cres_DCRCustRecTypeId}"
+                                      onsubmit="{!c.onSubmit}"
+                                      onerror="{!c.onError}"
+                                      onsuccess="{!c.onSuccess}">
+                
+                <!-- One -->
+              
+                    <div class="slds-grid slds-wrap slds-m-bottom_small ">
+                        
+                        <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                            
+                            <aura:if isTrue="{!v.mode=='View'}">
+                                <lightning:outputField fieldName="Route__c" /> 
+                                <aura:set attribute="else">
+                                    <!--  <lightning:inputField fieldName="Account__c"/> -->
+                                    <c:DCRRouteLookUp selectedParentRecordId="{!v.selectedTargetRecordId}" objectAPIName="Route__c" selectedRecord="{!v.selectedRoute}"/>
+                                </aura:set>  
+                            </aura:if>
+                        </div>
+                        <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel ">
+                            <aura:if isTrue="{!v.mode=='View'}">
+                                <lightning:outputField fieldName="Account__c" /> 
+                                <aura:set attribute="else">
+                                    <c:DCRRouteLookUp objectAPIName="RouteCustomers" selectedParentRecord="{!v.selectedRoute}" selectedRecord="{!v.selectedRouteCustomer}"/>
+                                    <!--  <lightning:inputField fieldName="Route__c" />--> 
+                                </aura:set>  
+                            </aura:if>
+                            
+                        </div>
+                        <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                            <aura:if isTrue="{!v.mode=='View'}">
+                                <lightning:outputField fieldName="Contact_Text__c" /> 
+                                <aura:set attribute="else">
+                                    <!--<lightning:inputField fieldName="Contact__c" /> -->
+                                    <c:Cres_ContactCombobox aura:id="contactCombo" selectedItemName="{!v.selectedContactName}" objectName="Contact" parentRecord="{!v.selectedRouteCustomer}"/>
+                                </aura:set>  
+                            </aura:if>
+                        </div>
+                        <div class="slds-col slds-size_1-of-12 largeinputextrawidth slds-p-left_small hideLabel">
+                            <aura:if isTrue="{!v.mode=='View'}">
+                                <lightning:outputField fieldName="Accompanied_By__c" /> 
+                                <aura:set attribute="else">
+                                    <lightning:inputField fieldName="Accompanied_By__c" /> 
+                                </aura:set>  
+                            </aura:if>
+                        </div>
+                        <div class="slds-col slds-size_1-of-12  slds-p-left_small smallinputwidth hideLabel">
+                            <aura:if isTrue="{!v.mode=='View'}">
+                                <lightning:outputField fieldName="POB__c" /> 
+                                <aura:set attribute="else">
+                                    <lightning:inputField fieldName="POB__c" /> 
+                                </aura:set>  
+                            </aura:if>
+                        </div>
+                        
+                        <div class="slds-col slds-size_1-of-12 slds-p-left_small xxlargeinputextrawidth hideLabel">
+                            <aura:if isTrue="{!v.mode=='View'}">
+                                <lightning:outputField fieldName="LOB__c" /> 
+                                <aura:set attribute="else">
+                                    <lightning:inputField fieldName="LOB__c" aura:id="lobField"/> 
+                                </aura:set>  
+                            </aura:if>
+                        </div>
+                        
+                        
+                        <div class="slds-col largeinputextrawidth slds-size_1-of-12 slds-p-left_small hideLabel">
+                            <aura:if isTrue="{!v.mode=='View'}">
+                                <lightning:outputField fieldName="Comments__c" /> 
+                                <aura:set attribute="else">
+                                    <lightning:inputField fieldName="Comments__c" /> 
+                                </aura:set>  
+                            </aura:if>
+                            
+                        </div>
+                        
+                        <div  class="slds-m-left_xxx-small">
+                            <aura:if isTrue="{!v.mode=='Edit'}">
+                              
+                                <lightning:buttonIcon  disabled="{!v.isReadOnly}" size="small" class="slds-m-left_xxx-small" title="Add Brand Reminder" onclick="{!c.addBrandReminder}" iconName="utility:add"></lightning:buttonIcon>
+                                <lightning:buttonIcon  disabled="{!v.isReadOnly}" size="small" class="slds-m-left_xxx-small" title="Save" iconName="utility:save"  type="submit" name="Save" />
+                                <lightning:buttonIcon  disabled="{!v.isReadOnly}" size="small" class="slds-m-left_xxx-small" title="Close" iconName="utility:close"  name="Cancel" onclick="{!c.cancel}"  />
+                                <aura:set attribute="else">
+                                    
+                                    <lightning:buttonIcon  disabled="{!v.isReadOnly}" size="small" class="slds-m-left_xxx-small" title="Edit" iconName="utility:edit"  name="Edit"  onclick="{!c.edit}"/>
+                                    <lightning:buttonIcon  disabled="{!v.isReadOnly}" size="small" class="slds-m-left_xxx-small" title="Delete" iconName="utility:delete" name="Delete"  onclick="{!c.deleteRec}"/>
+                                    <!--a onclick="{!c.toggleCustomers}"><lightning:Icon  iconName="standard:customers"   name="Edit"/></a-->
+                                    <aura:if isTrue="{!!v.Details}">
+                                        <lightning:buttonIcon   size="small"  name="Details" title="Show Details" onclick="{!c.Details}"  iconName="utility:chevrondown"/>
+                                        <aura:set attribute="else">
+                                            <lightning:buttonIcon   size="small" name="Hide Details" title="Hide Details" onclick="{!c.HideDetails}" iconName="utility:chevronup"/>
+                                        </aura:set>
+                                    </aura:if>
+                                </aura:set>
+                            </aura:if>
+                            
+                        </div>
+                        
+                    </div>
+               
+             
+                
+                <aura:if isTrue="{!v.Details}">
+                    
+                    <div class="slds-grid  slds-wrap slds-m-bottom_small">
+                        <div class="slds-col slds-size_4-of-12 " >
+                        </div>
+                        <div class="slds-col ">
+                            
+                            <div class="slds-grid  slds-wrap slds-m-bottom_small smallLabel" style="background-color:#fafaf9;">
+                               
+                                <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                    <aura:if isTrue="true">
+                                        <b>Brand Reminder</b>
+                                    </aura:if>
+                                </div>
+                                <div class="slds-col slds-size_1-of-12 slds-p-left_small mediuminputwidth hideLabel" >
+                                    <aura:if isTrue="true">
+                                        <b>Brand Reminder Quantity</b>
+                                    </aura:if>
+                                </div>
+                                <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel" >
+                                    <aura:if isTrue="true">
+                                        <b>Product Discussed</b>
+                                    </aura:if>
+                                </div>
+                                <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel" >
+                                    <aura:if isTrue="true">
+                                        <b>Product Sample</b>
+                                    </aura:if>
+                                </div>
+                                <div class="slds-col slds-size_1-of-12 slds-p-left_small mediuminputwidth hideLabel" >
+                                    <aura:if isTrue="true">
+                                        <b>Product Sample Quantity</b>
+                                    </aura:if>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <!--row-1-->
+                    <aura:if isTrue="{!v.Count>=1 }">
+                        <div class="slds-grid slds-wrap  slds-m-bottom_small ">
+                            <div class="slds-col slds-size_4-of-12">
+                                
+                            </div>
+                            <div class="slds-col xxlargeinputextrawidth slds-size_1-of-12 slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Brand_Reminder1__c" /> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Brand_Reminder1__c" /> 
+                                    </aura:set>  
+                                </aura:if> 
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 slds-p-left_small mediuminputwidth hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Brand_Reminder1_Quantity__c" /> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Brand_Reminder1_Quantity__c" /> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            <div class="slds-col xxlargeinputextrawidth slds-size_1-of-12 slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product1__c" /> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product1__c" /> 
+                                    </aura:set>  
+                                </aura:if> 
+                            </div>
+                            <div class="slds-col xxlargeinputextrawidth slds-size_1-of-12 slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product_Details1__c" /> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product_Details1__c" /> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 slds-p-left_small mediuminputwidth hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product_Quantity1__c" /> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product_Quantity1__c" /> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                        </div>
+                    </aura:if>
+                    <!--row-2-->
+                    <aura:if isTrue="{!v.Count>=2 }">
+                        <div class="slds-grid slds-wrap slds-m-bottom_small">
+                            <div class="slds-col slds-size_4-of-12">
+                                
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Brand_Reminder2__c"  value="{!v.brandReminder2}" /> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Brand_Reminder2__c" aura:id="brandReminder2" value="{!v.brandReminder2}"/> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-12  slds-p-left_small mediuminputwidth hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Brand_Reminder2_Quantity__c" value="{!v.brandReminderQuant2}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Brand_Reminder2_Quantity__c" aura:id="brandReminderQuant2" value="{!v.brandReminderQuant2}" /> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product2__c" value="{!v.productInput2}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product2__c" aura:id="productInput2" value="{!v.productInput2}" /> 
+                                    </aura:set>  
+                                </aura:if>
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product_Details2__c" value="{!v.productDetail2}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product_Details2__c" aura:id="productDetail2" value="{!v.productDetail2}" /> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 slds-p-left_small mediuminputwidth hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product_Quantity2__c" value="{!v.productQuantity2}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product_Quantity2__c" aura:id="productQuantity2" value="{!v.productQuantity2}" /> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            
+                            &nbsp;&nbsp;
+                            <aura:if isTrue="{!v.mode=='Edit'}">
+                                <lightning:buttonIcon size="small" title="delete" iconName="utility:delete"  name="2"  onclick="{!c.hiderow}"/>
+                            </aura:if>
+                        </div>
+                    </aura:if>
+                    <!-- row-3 -->
+                    <aura:if isTrue="{!v.Count>=3}">
+                        <div class="slds-grid slds-wrap slds-m-bottom_small">
+                            <div class="slds-col slds-size_4-of-12 slds-p-left_xxx-small">
+                                
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Brand_Reminder3__c" value="{!v.brandReminder3}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Brand_Reminder3__c" aura:id="brandReminder3"  value="{!v.brandReminder3}"/> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 slds-p-left_small mediuminputwidth hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Brand_Reminder3_Quantity__c" value="{!v.brandReminderQuant3}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Brand_Reminder3_Quantity__c" aura:id="brandReminderQuant3"  value="{!v.brandReminderQuant3}"/> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product3__c" value="{!v.productInput3}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product3__c"  aura:id="productInput3" value="{!v.productInput3}"/> 
+                                    </aura:set>  
+                                </aura:if>
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product_Details3__c" value="{!v.productDetail3}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product_Details3__c" aura:id="productDetail3" value="{!v.productDetail3}" /> 
+                                    </aura:set>  
+                                </aura:if> 
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 slds-p-left_small mediuminputwidth hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product_Quantity3__c" value="{!v.productQuantity3}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product_Quantity3__c" aura:id="productQuantity3" value="{!v.productQuantity3}"/> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            &nbsp;&nbsp;
+                            <aura:if isTrue="{!v.mode=='Edit'}">
+                                <lightning:buttonIcon size="small" title="delete" iconName="utility:delete"   name="3"  onclick="{!c.hiderow}"/>
+                            </aura:if>
+                        </div>
+                    </aura:if>
+                    <!-- row-4 -->
+                    <aura:if isTrue="{!v.Count>=4}">
+                        <div class="slds-grid slds-wrap slds-m-bottom_small">
+                            <div class="slds-col slds-size_4-of-12  slds-p-left_xxx-small">
+                                
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Brand_Reminder4__c" value="{!v.brandReminder4}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Brand_Reminder4__c" aura:id="brandReminder4"  value="{!v.brandReminder4}"/> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 slds-p-left_small mediuminputwidth hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Brand_Reminder4_Quantity__c" aura:id="brandReminderQuant4" value="{!v.brandReminderQuant4}" /> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Brand_Reminder4_Quantity__c" value="{!v.brandReminderQuant4}"/> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product4__c" value="{!v.productInput4}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product4__c" aura:id="productInput4" value="{!v.productInput4}" /> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product_Details4__c" value="{!v.productDetail4}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product_Details4__c" aura:id="productDetail4" value="{!v.productDetail4}"/> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 slds-p-left_small mediuminputwidth hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product_Quantity4__c" value="{!v.productQuantity4}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product_Quantity4__c" aura:id="productQuantity4"  value="{!v.productQuantity4}"/> 
+                                    </aura:set>  
+                                </aura:if>
+                                
+                            </div>
+                            &nbsp;&nbsp;
+                            <aura:if isTrue="{!v.mode=='Edit'}">
+                                <lightning:buttonIcon size="small" iconName="utility:delete"  title="delete"   name="4"  onclick="{!c.hiderow}" />
+                            </aura:if>
+                        </div>
+                    </aura:if>
+                    <!-- row-5 -->
+                    <aura:if isTrue="{!v.Count>=5}">
+                        <div class="slds-grid slds-wrap slds-m-bottom_small">
+                            <div class="slds-col slds-size_4-of-12 slds-p-left_xxx-small">
+                                
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Brand_Reminder5__c" value="{!v.brandReminder5}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Brand_Reminder5__c" aura:id="brandReminder5" value="{!v.brandReminder5}"/> 
+                                    </aura:set>  
+                                </aura:if> 
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-12  slds-p-left_small mediuminputwidth hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Brand_Reminder5_Quantity__c" value="{!v.brandReminderQuant5}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Brand_Reminder5_Quantity__c" aura:id="brandReminderQuant5" value="{!v.brandReminderQuant5}"/> 
+                                    </aura:set>  
+                                </aura:if> 
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product5__c" value="{!v.productInput5}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product5__c" aura:id="productInput5" value="{!v.productInput5}"/> 
+                                    </aura:set>  
+                                </aura:if> 
+                                
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-12 xxlargeinputextrawidth slds-p-left_small hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product_Details5__c" value="{!v.productDetail5}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product_Details5__c" aura:id="productDetail5" value="{!v.productDetail5}"/> 
+                                    </aura:set>  
+                                </aura:if> 
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-12 slds-p-left_small mediuminputwidth hideLabel">
+                                <aura:if isTrue="{!v.mode=='View'}">
+                                    <lightning:outputField fieldName="Product_Quantity5__c" value="{!v.productQuantity5}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:inputField fieldName="Product_Quantity5__c" aura:id="productQuantity5" value="{!v.productQuantity5}"/> 
+                                    </aura:set>  
+                                </aura:if> 
+                                
+                            </div>
+                            &nbsp;&nbsp;
+                            <aura:if isTrue="{!v.mode=='Edit'}">
+                                <lightning:buttonIcon size="small" iconName="utility:delete"  title="delete" name="5"  onclick="{!c.hiderow}"/>
+                            </aura:if>
+                        </div>
+                    </aura:if>
+                </aura:if>
+            </lightning:recordEditForm>
+        </div>
+    </div>
+    
+</aura:component>

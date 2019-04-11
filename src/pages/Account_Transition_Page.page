@@ -1,0 +1,56 @@
+<!-- *
+* @author : Tom Quattromini, Jesfer Baculod (Cloud Sherpas)
+* @date : Original - 07/28/2015, Last Modified - 09/15/2015
+* @description : Transition page for overriding standard New Account
+* -->
+<apex:page sidebar="false" showheader="false" standardController="Account" extensions="TransitionPage_AccountController" action="{!redirectPage}"/>
+<!--
+	<apex:stylesheet value="{!URLFOR($Resource.jQueryMobile,'CANGAT.min.css')}"/>
+	<apex:stylesheet value="{!URLFOR($Resource.jQueryMobile,'jquery.mobile.icons-1.4.5.min.css')}"/>
+	<apex:stylesheet value="{!URLFOR($Resource.jQueryMobile,'jquery.mobile.structure-1.4.5.min.css')}"/>
+	<apex:includescript value="//code.jquery.com/jquery-1.11.1.min.js" />
+	<apex:includeScript value="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"/>
+-->
+	<!-- <div class="ui-bar" data-role="popup" id="divsf1" data-history="false" >
+		<center><h5>Account Record Types</h5></center>
+		<apex:repeat value="{!recTypelist}" var="rt">
+			<button class="ui-btn ui-corner-all ui-btn-inner" onclick="sforce.one.createRecord('Account','{!rt.Id}');" >{!rt.Name}</button>
+		</apex:repeat>
+	</div>  -->
+<!-- 
+	<div class="ui-bar" id="divsf1" style="display:none;">
+		<div class="ui-bar ui-bar-a">
+			<center><h5>Account Record Types</h5></center>
+		</div>
+		<div class="ui-body ui-body-a">
+			<apex:repeat value="{!recTypelist}" var="rt">
+				<button class="ui-btn ui-corner-all ui-btn-inner" onclick="sforce.one.createRecord('Account','{!rt.Id}');" >{!rt.Name}</button>
+			</apex:repeat>
+		</div>
+	</div>  
+	<script>
+		if( (typeof sforce != 'undefined') && (sforce != null) ) {
+			//Salesforce1 - Displays Account Record Types via popup
+			$(document).ready(function() {
+				$("#divsf1").css('display', 'block');
+				/*$( "#divsf1" ).popup(
+					{
+						shadow: true,
+						transition: 'slidedown',
+						positionTo: 'window',
+						overlayTheme: 'b',
+						corners: true,
+						dismissible: false
+					}
+				);
+				$( "#divsf1" ).popup('open'); */
+			}); 
+		}
+		else {
+			//Redirects the page to the custom Record Type Selection page
+		    window.location.href = '/apex/Account_RecordType_Selection';   
+		} 
+
+	</script>
+</apex:page>
+-->

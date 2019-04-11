@@ -1,0 +1,84 @@
+<!--
+Name:        newRequestInline
+Date:        08 AUG 16
+Description: Controller for newReq_DS page
+History:     08 AUG 16 - Regina Ligan - created controller
+             09 AUG 16 - Sam Oberes - added actionfunction and js to be able to save RLI status.
+-->
+
+<apex:page sidebar="true" showHeader="true" standardController="Request__c" extensions="newRequestInlineController" standardStylesheets="false">
+<head>
+        <!-- Latest compiled and minified CSS -->
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+ 
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+ 
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    </head>
+    <apex:includeScript value="https://code.jquery.com/jquery-1.4.2.js"  />
+    <script type="text/javascript">
+        $j = jQuery.noConflict();
+        function JS_doSave(elem)
+        {
+            console    .log('DBG: elem >>> ' + elem);
+            AF_doSave($j(elem).parent().find('[type=hidden]').val(), $j(elem).val());
+        }
+    </script>
+ <style>
+        .table-cont {
+        max-width: 940px;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+     .table-cont .table {
+        min-width:100%; 
+     }
+    </style>
+    <apex:form >
+    <form>
+      <div class="form-group">
+        <apex:actionFunction name="AF_doSave" action="{!CTRLR_doSave}" rerender="">   
+            <apex:param name="requestLineItemId" value=""/>
+            <apex:param name="currentStatus" value=""/>
+        </apex:actionFunction>
+          <div class = "table-cont">
+            <table class="table table-bordered table-striped">
+                    <thead> 
+                     <tr>
+                     <th>Account Name</th>
+                     <th>Team Member Name</th>
+                     <th>Action</th>                     
+                     <th>Status</th>                                                               
+                     </tr>
+                    </thead>
+                    <tbody>  
+                     <apex:repeat value="{!csFields}" var="rli">
+                      <tr>
+                       <td><apex:outputLink value="/{!rli.Selected_Account_Id__c}">{!rli.Account_Name__c}</apex:outputLink></td>
+                       <td>{!rli.Team_Member__c }</td>
+                       <td>{!rli.Action__c }</td>
+                     <!--  <td> 
+                          <apex:selectList id="actions" value="{!rli.Action__c}" size="1" onchange="JS_doSave(this)" disabled="{!IF(rli.Request__r.Status__c=='Approved'||rli.Request__r.Status__c=='Rejected'||NOT($ObjectType.RequestLineItem__c.Fields.Status__c.updateable), true, false)}">
+                          <apex:selectOptions value="{!actions}"/>
+                          </apex:selectList>
+                          <apex:inputHidden value="{!rli.Id}" id="hiddenField1"/>
+                       </td> -->
+                       <td>
+                          <apex:selectList id="statuses" value="{!rli.Status__c}" size="1" onchange="JS_doSave(this)" disabled="{!IF(rli.Request__r.Status__c=='Approved'||rli.Request__r.Status__c=='Rejected'||NOT($ObjectType.RequestLineItem__c.Fields.Status__c.updateable), true, false)}">
+                          <apex:selectOptions value="{!statuses}"/>
+                          </apex:selectList>
+                          <apex:inputHidden value="{!rli.Id}" id="hiddenField"/> 
+                       </td>
+                      </tr>
+                     </apex:repeat>
+                 </tbody>
+              </table>
+                </div>
+      </div>
+    </form>
+  </apex:form>
+    
+</apex:page>

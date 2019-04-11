@@ -1,0 +1,78 @@
+<aura:component controller="Cres_RouteCustomerComponentctrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="routecustomer" type="SObject"/>
+    <aura:attribute name="mode" type="String" default="View"/>
+    <aura:attribute name="routeerrors" type="list"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="routecustomerlist" type="list"/>
+    <aura:attribute name="index" type="Integer"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+     <aura:attribute name="isdisabled" type="boolean"/>
+    
+    <aura:registerEvent name="cmpEvent" type="c:Cres_RouteCustrowcomponentevent"/>
+   
+    <lightning:recordEditForm 
+                              objectApiName="Route__c" 
+                              aura:id="routeform"
+                              onload="{!c.onload}"
+                              recordId="{!v.routecustomer.Id}"
+                              recordTypeId="012f1000000LJQaAAO"
+                              onsubmit="{!c.onSubmit}"
+                              onerror="{!c.onError}"
+                              onsuccess="{!c.onSuccess}">
+        <aura:if isTrue="{!v.routeerrors.length>0}">
+            <div class="slds-col slds-size_12-of-12" style="padding:2px 1px 2px 1px;">
+                <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" >
+                    <aura:iteration items="{!v.routeerrors}" var="err">
+                        <aura:if isTrue="{!err!=''}">    
+                            {!err}<br></br>
+                        </aura:if>
+                    </aura:iteration>
+                </div>
+            </div>
+        </aura:if>
+        
+        <div class="slds-grid slds-wrap slds-border_bottom slds-p-top_x-small slds-p-bottom_x-small">
+            <div class="slds-col slds-size_3-of-12 slds-p-right_small">
+                <aura:if isTrue="{!v.mode=='View'}">
+                    <lightning:outputField fieldName="Account__c" /> 
+                    <aura:set attribute="else">
+                        <lightning:inputField fieldName="Account__c" /> 
+                    </aura:set>  
+                </aura:if>
+            </div>
+            <div class="slds-col slds-size_2-of-12 slds-p-left-small">
+                <aura:if isTrue="{!v.mode=='View'}">
+                    <lightning:outputField fieldName="Account_Classification__c" /> 
+                </aura:if>
+            </div>
+            <div class="slds-col slds-size_1-of-12 slds-p-left-small">
+                <aura:if isTrue="{!v.mode=='View'}">
+                    <lightning:outputField fieldName="Active__c" /> 
+                    <aura:set attribute="else">
+                        <lightning:inputField fieldName="Active__c" /> 
+                    </aura:set>  
+                </aura:if>
+            </div>
+            <aura:if isTrue="{!v.mode=='View'}">
+                <div>
+                    <div class="slds-col  slds-align_absolute-right ">
+                        <lightning:buttonIcon    onclick="{!c.Edit}" iconName="utility:edit" disabled="{!v.isdisabled}"/>
+                        <lightning:buttonIcon   iconName="utility:delete" name="Delete"  onclick="{!c.deleteRec}" disabled="{!v.isdisabled}"/>
+                        <lightning:buttonIcon   iconName="utility:add" onclick="{!c.Adddcrcust}" disabled="{!v.isdisabled}"/>
+                    </div>
+                </div>
+            </aura:if>
+            <aura:if isTrue="{!v.mode=='Edit'}">
+            <div>
+                <div class="slds-col  slds-align_absolute-right ">
+                    <lightning:buttonIcon   iconName="utility:close" onclick="{!c.cancel}"/>
+                    <lightning:buttonIcon  iconName="utility:save" type="submit"/>
+                </div>
+            </div>
+            </aura:if>
+        </div>
+        
+    </lightning:recordEditForm>
+</aura:component>

@@ -1,0 +1,3 @@
+<apex:page standardController="Account_Rebate__c" extensions="NewRebateRequestShipToController" Action="{!redirectToNewRebate}">
+ 
+</apex:page>

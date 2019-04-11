@@ -1,0 +1,9 @@
+<apex:page >
+<script language="JavaScript">
+function redirect() {
+parent.frames.location.replace("<REGULAR_WIL>")
+}
+redirect();
+</script>
+
+</apex:page>

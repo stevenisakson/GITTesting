@@ -1,0 +1,94 @@
+<aura:component controller="Cres_RouteCustomerComponentctrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="routecustomer" type="SObject"/>
+    <aura:attribute name="routeerrors" type="list"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="mode" type="String" default="View"/>
+    <aura:attribute name="route" type="SObject"/>
+    
+    <aura:attribute name="routecustomerlist" type="list"/>
+    
+    <aura:attribute name="isdisabled" type="boolean"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="cmpEvent" event="c:Cres_RouteCustrowcomponentevent" action="{!c.refresh}"/>
+    
+    
+    <lightning:recordEditForm 
+                              objectApiName="Route__c" 
+                              aura:id="routeform"
+                              recordId="{!v.route.Id}"
+                              >
+        
+        <div class="slds-grid slds-wrap slds-m-top_x-small slds-border_bottom slds-p-top_x-small slds-p-bottom_x-small" style="background-color:#fafaf9;">
+       		
+            <div class="slds-col slds-size_4-of-12">
+                  <b>Territory<lightning:outputField fieldName="Territory__c" /></b>
+            </div>
+            <div class="slds-col slds-size_2-of-12">
+                  <b>Towns Covered<lightning:outputField fieldName="Towns_Covered__c" /></b>
+            </div>
+            <div class="slds-col slds-size_2-of-12">
+                  <b>ASM Notification<lightning:outputField fieldName="Approver1__c" /></b>
+            </div>
+            <div class="slds-col slds-size_2-of-12">
+                  <b>RSM Approval<lightning:outputField fieldName="Approver2__c" /></b>
+            </div>
+            <!--div class="slds-col slds-size_4-of-12 slds-p-top_xxx-small">
+                  <b>Number Of Platinum Customers<lightning:outputField fieldName="Number_Of_Platinum_Customers__c" /></b>
+            </div>
+            <div class="slds-col slds-size_4-of-12 slds-p-top_xxx-small">
+                  <b>Number Of Gold Customers<lightning:outputField fieldName="Number_Of_Gold_Customers__c" /></b>
+            </div>
+            <div class="slds-col slds-size_4-of-12 slds-p-top_xxx-small">
+                  <b>Number Of Diamond Customers<lightning:outputField fieldName="Number_Of_Diamond_Customers__c" /></b>
+            </div-->
+           
+        </div>
+        
+        
+        
+    </lightning:recordEditForm>
+    <div class=" slds-grid slds-wrap slds-wrap slds-m-top_x-small slds-border_bottom slds-p-top_x-small slds-p-bottom_x-small" style="background-color:#fafaf9;">
+        
+            
+            <div class="slds-col slds-size_3-of-12">
+                <aura:if isTrue="true">
+                    <b>Account</b>
+                </aura:if>
+            </div>
+            <div class="slds-col slds-size_2-of-12">
+                <aura:if isTrue="true">
+                    <b>Account Category</b>
+                </aura:if>
+            </div>
+            <div class="slds-col slds-size_1-of-12">
+                <aura:if isTrue="true">
+                    <b>Active</b>
+                </aura:if>
+            </div>
+            
+            <div class="slds-col  slds-float_right">
+                <lightning:button  label="Add New"  onclick="{!c.Adddcrcust}" disabled="{!v.isdisabled}"/>
+            </div>
+        </div>
+    
+    <div>
+        <aura:if isTrue="{!v.routecustomerlist.length > 0}">
+            <aura:iteration items="{!v.routecustomerlist}" var="customer" indexVar="i">
+                <c:Cres_RouteCustrowcomponent index="{!i}" routecustomer="{!customer}" routecustomerlist="{!v.routecustomerlist}" recordId="{!v.recordId}" isdisabled="{!v.isdisabled}"/>
+                
+            </aura:iteration>
+            <aura:set attribute="else">
+                <div class="slds-grid slds-wrap slds-m-bottom_small ">
+                    <div class="slds-col slds-size_12-of-12 slds-align--absolute-center">
+                        No Route Customers available. Please click on 'Add New' button
+                    </div>
+                </div>
+            </aura:set>
+        </aura:if>
+        
+    </div>
+    
+    
+</aura:component>

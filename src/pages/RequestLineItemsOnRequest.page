@@ -1,0 +1,23 @@
+<apex:page standardController="Request__c" extensions="RequestLineItemsOnRequest">
+  <apex:pageBlock >
+        <apex:repeat value="{!request}" var="req" >
+         <apex:pageBlockTable value="{!req.Request_Line_Items__r}" var="reqLineItems" style="width:750px">
+                  <apex:column headerValue="Owner">
+                    <apex:outputText value="{!reqLineItems.LastModifiedBy.Name}"/>
+                  </apex:column>
+                 <apex:column headerValue="Account Name">
+                    <apex:outputText value="{!reqLineItems.Account_Name__c}"/>
+                  </apex:column>
+                  <apex:column headerValue="Status">
+                    <apex:outputText value="{!reqLineItems.Status__c}"/>
+                  </apex:column>
+                  <apex:column headerValue="Action">
+                    <apex:outputText value="{!reqLineItems.Action__c}"/>
+                  </apex:column>
+                  <apex:column headerValue="Team Member">
+                    <apex:outputText value="{!reqLineItems.Team_Member__c}"/>
+                  </apex:column>
+              </apex:pageBlockTable>
+        </apex:repeat>
+    </apex:pageBlock> 
+</apex:page>

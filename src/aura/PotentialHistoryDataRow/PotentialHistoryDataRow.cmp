@@ -1,0 +1,8 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+	 <aura:attribute name="record" type="sObject"/>
+     <aura:attribute name="HeaderList" type="List" description="list of custom setting records "/>
+			
+    		<aura:iteration items="{!v.HeaderList}" var="header" indexVar="i">
+                <c:PotentialHistoryDataColumn record="{!v.record}" columnName = "{!header.Field_API_Name__c}"/> 
+        </aura:iteration>      
+</aura:component>
